@@ -66,15 +66,22 @@
       <forward   name="success"    path="/game.jsp"/>
     </action>
     <action path="/Games"   type="natc.action.GamesAction" name="gamesForm" scope="request" input="/games.jsp">
-      <forward   name="errors"        path="/games.jsp"         />
-      <forward   name="games"         path="/games.jsp"         />
-      <forward   name="off_season"    path="/off_season.jsp"    />
-      <forward   name="rookie_draft"  path="/rookie_draft.jsp"  />
-      <forward   name="training_camp" path="/training_camp.jsp" />
-      <forward   name="roster_cut"    path="/roster_cut.jsp"    />
-      <forward   name="free_agents"   path="/free_agents.jsp"   />
-      <forward   name="awards"        path="/awards.jsp"        />
-      <forward   name="allstars"      path="/allstars.jsp"      />
+      <forward   name="errors"          path="/games.jsp"           />
+      <forward   name="beginning"       path="/beginning.jsp"       />
+      <forward   name="games"           path="/games.jsp"           />
+      <forward   name="manager_changes" path="/manager_changes.jsp" />
+      <forward   name="retired_players" path="/retired_players.jsp" />
+      <forward   name="rookie_draft"    path="/rookie_draft.jsp"    />
+      <forward   name="training_camp"   path="/training_camp.jsp"   />
+      <forward   name="roster_cut"      path="/roster_cut.jsp"      />
+      <forward   name="free_agents"     path="/free_agents.jsp"     />
+      <forward   name="awards"          path="/awards.jsp"          />
+      <forward   name="allstars"        path="/allstars.jsp"        />
+      <forward   name="end_of_pre"      path="/end_of_pre.jsp"      />
+      <forward   name="end_of_reg"      path="/end_of_reg.jsp"      />
+      <forward   name="end_of_post"     path="/end_of_post.jsp"     />
+      <forward   name="end_of_asg"      path="/end_of_asg.jsp"      />
+      <forward   name="end"             path="/end.jsp"             />
     </action>
   </action-mappings>
 

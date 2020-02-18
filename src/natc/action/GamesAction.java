@@ -104,33 +104,23 @@ public class GamesAction extends Action {
 			if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
 			
 				// Get the current year as the base year for the first season
-				Calendar now = Calendar.getInstance();
-				
-				String year = String.valueOf( now.get( Calendar.YEAR ) );
+				String year = Schedule.FIRST_YEAR;
 				
 				// Get a new game service with the above year
 				gameService = new GameServiceImpl( dbConn, year );
 				
 				// No schedule entries exist - initialize natc data
 				gameService.initializeDatabase();
-				
-				// Replace schedule entry with new season entry
-				scheduleEntry = scheduleService.getLastScheduleEntry();
 			}
+			else if ( scheduleEntry.getType().getValue() == ScheduleType.END_OF_SEASON ) {
 			
-			// If the last entry is end of season, generate a new schedule
-			if ( scheduleEntry.getType().getValue() == ScheduleType.END_OF_SEASON ) {
-			
-				// Get a new game service with the next year
-				int next_year = new Integer( scheduleEntry.getYear() ).intValue() + 1;
+				// If the last entry is end of season, generate a new schedule
 				
-				gameService = new GameServiceImpl( dbConn, String.valueOf( next_year ) );
+				// Get a new game service with the next year
+				gameService = new GameServiceImpl( dbConn, String.valueOf( Integer.parseInt( scheduleEntry.getYear() ) + 1 ) );
 				
 				// Start a new season
 				gameService.startNewSeason( scheduleEntry.getYear() );
-				
-				// Replace schedule entry with new season entry
-				scheduleEntry = scheduleService.getLastScheduleEntry();
 			}
 			
 			// Get the next scheduled event
@@ -220,8 +210,8 @@ public class GamesAction extends Action {
 			// Choose the next page to display
 			switch ( scheduleEntry.getType().getValue() ) {
 
-			case ScheduleType.BEGINNING_OF_SEASON:     nextPage = "games";         break;
-			case ScheduleType.OFF_SEASON_MOVES:
+			case ScheduleType.BEGINNING_OF_SEASON:    nextPage = "beginning";         break;
+			case ScheduleType.MANAGER_CHANGES:
 				
 				managerService = (ManagerService)new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
 				
@@ -229,10 +219,27 @@ public class GamesAction extends Action {
 				if ( (data = managerService.getFiredManagers())   != null ) request.setAttribute( "fired_managers",   data );
 				if ( (data = managerService.getHiredManagers())   != null ) request.setAttribute( "hired_managers",   data );
 				
-				nextPage = "off_season";
+				nextPage = "manager_changes";
 				
 				break;
 				
+			case ScheduleType.PLAYER_RETIREMENT:
+				
+				if ( (data = gameService.getRetiredPlayersByTeam())      != null ) request.setAttribute( "retired_team_players", data );
+				if ( (data = gameService.getRetiredPlayersWithoutTeam()) != null ) request.setAttribute( "retired_players",      data );
+				
+				nextPage = "retired_players";
+				
+				break;
+				
+			case ScheduleType.FREE_AGENCY:
+				
+				if ( (data = gameService.getFreeAgentMoves()) != null ) request.setAttribute( "free_agency",  data );
+
+				nextPage = "free_agents";
+				
+				break;
+
 			case ScheduleType.ROOKIE_DRAFT_ROUND_1:
 				
 				if ( (data = gameService.getDraftPicks( 1 )) != null ) {
@@ -297,22 +304,13 @@ public class GamesAction extends Action {
 
 				break;
 
+			case ScheduleType.END_OF_PRESEASON:     nextPage = "end_of_pre";         break;
+				
 			case ScheduleType.ROSTER_CUT:
 				
-				if ( (data = gameService.getReleasedVeteranPlayers()) != null ) request.setAttribute( "released_veterans", data );
-				if ( (data = gameService.getReleasedRookiePlayers())  != null ) request.setAttribute( "released_rookies",  data );
+				if ( (data = gameService.getReleasedPlayers()) != null ) request.setAttribute( "released_players", data );
 				
 				nextPage = "roster_cut";
-				
-				break;
-				
-			case ScheduleType.FREE_AGENT_DRAFT:
-				
-				if ( (data = gameService.getResignedPlayers())        != null ) request.setAttribute( "resigned_players",  data );
-				if ( (data = gameService.getRetiredPlayers())         != null ) request.setAttribute( "retired_players",   data );
-				if ( (data = gameService.getAbandonedRookiePlayers()) != null ) request.setAttribute( "abandoned_rookies", data );
-
-				nextPage = "free_agents";
 				
 				break;
 				
@@ -337,6 +335,8 @@ public class GamesAction extends Action {
 
 				break;
 
+			case ScheduleType.END_OF_REGULAR_SEASON:    nextPage = "end_of_reg";         break;
+				
 			case ScheduleType.AWARDS:
 				
 				managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
@@ -505,6 +505,8 @@ public class GamesAction extends Action {
 				
 				break;
 				
+			case ScheduleType.END_OF_POSTSEASON:    nextPage = "end_of_post";         break;
+				
 			case ScheduleType.ALL_STARS:
 				
 				teamService    = new TeamServiceImpl(    dbConn, scheduleEntry.getYear() );
@@ -546,7 +548,9 @@ public class GamesAction extends Action {
 
 				break;
 
-			case ScheduleType.END_OF_SEASON:           nextPage = "games";         break;
+			case ScheduleType.END_OF_ALLSTAR_GAMES:    nextPage = "end_of_asg";         break;
+				
+			case ScheduleType.END_OF_SEASON:           nextPage = "end";                break;
 			}
 			
 			request.setAttribute( "schedule", scheduleEntry );

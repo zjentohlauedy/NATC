@@ -112,8 +112,20 @@ public class ScheduleServiceImpl implements ScheduleService {
 		try {
 			ps = DatabaseImpl.getScheduleEntrySelectPs( dbConn );
 			
-			ps.setString( 1, lastEntry.getYear()         );
-			ps.setInt(    2, lastEntry.getSequence() + 1 );
+			if ( lastEntry == null ) {
+			
+				ps.setString( 1, Schedule.FIRST_YEAR     );
+				ps.setInt(    2, Schedule.FIRST_SEQUENCE );
+			}
+			else if ( lastEntry.getType().getValue() == ScheduleType.END_OF_SEASON ) {
+			
+				ps.setString( 1, String.valueOf( Integer.parseInt( lastEntry.getYear() ) + 1 ) );
+				ps.setInt(    2, Schedule.FIRST_SEQUENCE                                       );
+			}
+			else {
+				ps.setString( 1, lastEntry.getYear()         );
+				ps.setInt(    2, lastEntry.getSequence() + 1 );
+			}
 			
 			dbRs = ps.executeQuery();
 
@@ -429,8 +441,36 @@ public class ScheduleServiceImpl implements ScheduleService {
 		
 		return cal.getTime().getTime();
 	}
+
+	private long getFirstMondayInNovember( int year ) {
 	
-	private long getPreseasonTime( int year ) {
+		Calendar cal = Calendar.getInstance();
+		
+		cal.set( year, Calendar.NOVEMBER, 1 );
+		
+		while ( cal.get( Calendar.DAY_OF_WEEK ) != Calendar.MONDAY ) {
+		
+			cal.add( Calendar.DAY_OF_YEAR, 1);
+		}
+		
+		return cal.getTime().getTime();
+	}
+	
+	private long getFirstMondayInMay( int year ) {
+	
+		Calendar cal = Calendar.getInstance();
+		
+		cal.set( year, Calendar.MAY, 1 );
+		
+		while ( cal.get( Calendar.DAY_OF_WEEK ) != Calendar.MONDAY ) {
+		
+			cal.add( Calendar.DAY_OF_YEAR, 1);
+		}
+		
+		return cal.getTime().getTime();
+	}
+	
+	private long getFirstMondayInApril( int year ) {
 	
 		Calendar cal = Calendar.getInstance();
 		
@@ -444,11 +484,25 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return cal.getTime().getTime();
 	}
 	
-	private long getRookieDraftTime( int year ) {
+	private long getFirstMondayInMarch( int year ) {
 	
 		Calendar cal = Calendar.getInstance();
 		
 		cal.set( year, Calendar.MARCH, 1 );
+		
+		while ( cal.get( Calendar.DAY_OF_WEEK ) != Calendar.MONDAY ) {
+		
+			cal.add( Calendar.DAY_OF_YEAR, 1);
+		}
+		
+		return cal.getTime().getTime();
+	}
+
+	private long getFirstMondayInFebruary( int year ) {
+	
+		Calendar cal = Calendar.getInstance();
+		
+		cal.set( year, Calendar.FEBRUARY, 1 );
 		
 		while ( cal.get( Calendar.DAY_OF_WEEK ) != Calendar.MONDAY ) {
 		
@@ -493,7 +547,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			
 			DatabaseImpl.beginTransaction( dbConn );
 			
-			int  sequence = 1;
+			int  sequence = Schedule.FIRST_SEQUENCE;
 			long time     = 0;
 			
 			ps = DatabaseImpl.getScheduleInsertPs( dbConn );
@@ -506,16 +560,40 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.BEGINNING_OF_SEASON );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
-			ps.setBoolean( 6, true                             );
+			ps.setBoolean( 6, false                            );
 			
 			ps.executeUpdate();
 			
-			// Off-season moves
+			// Manager Changes
+			time = getFirstMondayInFebruary( Integer.valueOf( year ).intValue() );
+			
+			ps.setString(  1, year                             );
+			ps.setInt(     2, sequence++                       );
+			ps.setInt(     3, ScheduleType.MANAGER_CHANGES     );
+			ps.setNull(    4, Types.VARCHAR                    );
+			ps.setDate(    5, new java.sql.Date( time )        );
+			ps.setBoolean( 6, false                            );
+
+			ps.executeUpdate();
+			
+			// Retirements
+			time = advanceTime( time, 7 ); // next monday
+			
+			ps.setString(  1, year                             );
+			ps.setInt(     2, sequence++                       );
+			ps.setInt(     3, ScheduleType.PLAYER_RETIREMENT   );
+			ps.setNull(    4, Types.VARCHAR                    );
+			ps.setDate(    5, new java.sql.Date( time )        );
+			ps.setBoolean( 6, false                            );
+
+			ps.executeUpdate();
+			
+			// Free Agency
 			time = getTime( Integer.valueOf( year ).intValue(), Calendar.FEBRUARY, 28 );
 			
 			ps.setString(  1, year                             );
 			ps.setInt(     2, sequence++                       );
-			ps.setInt(     3, ScheduleType.OFF_SEASON_MOVES    );
+			ps.setInt(     3, ScheduleType.FREE_AGENCY         );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
 			ps.setBoolean( 6, false                            );
@@ -523,7 +601,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.executeUpdate();
 			
 			// Rookie draft - round 1
-			time = getRookieDraftTime( Integer.valueOf( year ).intValue() ); // first monday in march
+			time = getFirstMondayInMarch( Integer.valueOf( year ).intValue() );
 			
 			ps.setString(  1, year                              );
 			ps.setInt(     2, sequence++                        );
@@ -547,7 +625,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.executeUpdate();
 			
 			// Training camp
-			time = advanceTime( time, 6 ); // monday after draft
+			time = advanceTime( time, 13 ); // monday, two weeks after draft
 			
 			ps.setString(  1, year                       );
 			ps.setInt(     2, sequence++                 );
@@ -559,7 +637,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.executeUpdate();
 			
 			// Preseason
-			time = getPreseasonTime( Integer.valueOf( year ).intValue() ); // first monday in april
+			time = getFirstMondayInApril( Integer.valueOf( year ).intValue() );
 			
 			List preseason = generatePreseasonSchedule();
 			
@@ -584,7 +662,21 @@ public class ScheduleServiceImpl implements ScheduleService {
 				if ( getDayOfWeek( time ) == Calendar.SATURDAY ) time = advanceTime( time, 2 );
 			}
 			
-			// Roster Cut - date should be correct after advancing from last preseason game
+			// End of Preseason
+			time = advanceTime( time, -2 ); // Roll back the last advance
+			
+			ps.setString(  1, year                          );
+			ps.setInt(     2, sequence++                    );
+			ps.setInt(     3, ScheduleType.END_OF_PRESEASON );
+			ps.setNull(    4, Types.VARCHAR                 );
+			ps.setDate(    5, new java.sql.Date( time )     );
+			ps.setBoolean( 6, false                         );
+			
+			ps.executeUpdate();
+			
+			// Roster Cut
+			time = getTime( Integer.valueOf( year ).intValue(), Calendar.APRIL, 30 );
+			
 			ps.setString(  1, year                      );
 			ps.setInt(     2, sequence++                );
 			ps.setInt(     3, ScheduleType.ROSTER_CUT   );
@@ -594,20 +686,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 			
 			ps.executeUpdate();
 			
-			// Free Agent Draft
-			time = advanceTime( time, 11 ); // second friday after cut
-			
-			ps.setString(  1, year                          );
-			ps.setInt(     2, sequence++                    );
-			ps.setInt(     3, ScheduleType.FREE_AGENT_DRAFT );
-			ps.setNull(    4, Types.VARCHAR                 );
-			ps.setDate(    5, new java.sql.Date( time )     );
-			ps.setBoolean( 6, false                         );
-			
-			ps.executeUpdate();
-			
 			// Regular Season
-			time = advanceTime( time, 3 ); // monday after free agency
+			time = getFirstMondayInMay( Integer.valueOf( year ).intValue() );
 			
 			List season = generateSeasonSchedule();
 			
@@ -632,7 +712,22 @@ public class ScheduleServiceImpl implements ScheduleService {
 				if ( getDayOfWeek( time ) == Calendar.SATURDAY ) time = advanceTime( time, 2 );
 			}
 			
-			// Awards - date should be correct after advancing from last regular season game
+			// End of Regular Season
+			time = advanceTime( time, -2 ); // Roll back last advance
+			
+			ps.setString(  1, year                               );
+			ps.setInt(     2, sequence++                         );
+			ps.setInt(     3, ScheduleType.END_OF_REGULAR_SEASON );
+			ps.setNull(    4, Types.VARCHAR                      );
+			ps.setDate(    5, new java.sql.Date( time )          );
+			ps.setBoolean( 6, false                              );
+			
+			ps.executeUpdate();
+			
+			
+			// Awards
+			time = advanceTime( time, 2 ); // Monday following end of season
+			
 			ps.setString(  1, year                      );
 			ps.setInt(     2, sequence++                );
 			ps.setInt(     3, ScheduleType.AWARDS       );
@@ -715,6 +810,18 @@ public class ScheduleServiceImpl implements ScheduleService {
 			
 			ps.executeUpdate();
 
+			// End of Postseason
+			time = advanceTime( time, 1 );
+			
+			ps.setString(  1, year                           );
+			ps.setInt(     2, sequence++                     );
+			ps.setInt(     3, ScheduleType.END_OF_POSTSEASON );
+			ps.setNull(    4, Types.VARCHAR                  );
+			ps.setDate(    5, new java.sql.Date( time )      );
+			ps.setBoolean( 6, false                          );
+			
+			ps.executeUpdate();
+			
 			// All Star Selection
 			time = advanceTime( time, 1 );
 			
@@ -728,7 +835,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.executeUpdate();
 
 			// All Stars Day 1
-			time = advanceTime( time, 5 ); // Saturday after NATC championship
+			time = advanceTime( time, 4 ); // Saturday after NATC championship
 			
 			ps.setString(  1, year                        );
 			ps.setInt(     2, sequence++                  );
@@ -750,9 +857,21 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setBoolean( 6, false                       );
 			
 			ps.executeUpdate();
+
+			// End of allstar weekend
+			time = advanceTime( time, 1 );
+			
+			ps.setString(  1, year                              );
+			ps.setInt(     2, sequence++                        );
+			ps.setInt(     3, ScheduleType.END_OF_ALLSTAR_GAMES );
+			ps.setNull(    4, Types.VARCHAR                     );
+			ps.setDate(    5, new java.sql.Date( time )         );
+			ps.setBoolean( 6, false                             );
+			
+			ps.executeUpdate();
 			
 			// End of season
-			time = advanceTime( time, 1 );
+			time = getFirstMondayInNovember( Integer.valueOf( year ).intValue() );
 			
 			ps.setString(  1, year                       );
 			ps.setInt(     2, sequence++                 );

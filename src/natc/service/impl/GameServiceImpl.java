@@ -34,7 +34,7 @@ import natc.view.DraftView;
 import natc.view.GameView;
 import natc.view.InjuryView;
 import natc.view.ReleaseView;
-import natc.view.ResignView;
+import natc.view.FreeAgentView;
 import natc.view.RetiredView;
 import natc.view.TrainingView;
 
@@ -1198,23 +1198,28 @@ public class GameServiceImpl implements GameService {
 		switch ( event.getType().getValue() ) {
 		
 		case ScheduleType.BEGINNING_OF_SEASON:     /* Nothing to do here */        break;
-		case ScheduleType.OFF_SEASON_MOVES:        processOffSeasonMoves( event ); break;
+		case ScheduleType.MANAGER_CHANGES:         processManagerChanges( event ); break;
+		case ScheduleType.PLAYER_RETIREMENT:       processRetirement( event );     break;
+		case ScheduleType.FREE_AGENCY:             processFreeAgency( event );     break;
 		case ScheduleType.ROOKIE_DRAFT_ROUND_1:    processRookieDraft( event );    break;
 		case ScheduleType.ROOKIE_DRAFT_ROUND_2:    processRookieDraft( event );    break;
 		case ScheduleType.TRAINING_CAMP:           processTrainingCamp( event );   break;
 		case ScheduleType.PRESEASON:               processPreseasonGame( event );  break;
+		case ScheduleType.END_OF_PRESEASON:        /* Nothing to do here */        break;
 		case ScheduleType.ROSTER_CUT:              processRosterCut( event );      break;
-		case ScheduleType.FREE_AGENT_DRAFT:        processFreeAgentDraft( event ); break;
 		case ScheduleType.REGULAR_SEASON:          processSeasonGame( event );     break;
+		case ScheduleType.END_OF_REGULAR_SEASON:   /* Nothing to do here */        break;
 		case ScheduleType.AWARDS:                  processAwards( event );         break;
 		case ScheduleType.POSTSEASON:              setupPlayoffs( event );         break;
 		case ScheduleType.DIVISION_PLAYOFF:        processPostseasonGame( event ); break;
 		case ScheduleType.DIVISION_CHAMPIONSHIP:   processPostseasonGame( event ); break;
 		case ScheduleType.CONFERENCE_CHAMPIONSHIP: processPostseasonGame( event ); break;
 		case ScheduleType.NATC_CHAMPIONSHIP:       processPostseasonGame( event ); break;
+		case ScheduleType.END_OF_POSTSEASON:       /* Nothing to do here */        break;
 		case ScheduleType.ALL_STARS:               selectAllstarTeams( event );    break;
 		case ScheduleType.ALL_STAR_DAY_1:          processAllstarGame( event );    break;
 		case ScheduleType.ALL_STAR_DAY_2:          processAllstarGame( event );    break;
+		case ScheduleType.END_OF_ALLSTAR_GAMES:    /* Nothing to do here */        break;
 		case ScheduleType.END_OF_SEASON:           processEndOfSeason( event );    break;
 		}
 		
@@ -1223,13 +1228,12 @@ public class GameServiceImpl implements GameService {
 		scheduleService.completeScheduleEvent( event );
 	}
 	
-	private void processOffSeasonMoves( Schedule event ) throws SQLException {
+	private void processManagerChanges( Schedule event ) throws SQLException {
 	
 		List   teamList    = null;
 		List   managerList = null;
 		String lastYear    = String.valueOf(  Integer.parseInt( event.getYear() ) - 1 );
 
-		// Get count of teamless managers in pool
 		TeamService    teamService    = new TeamServiceImpl( dbConn, lastYear );
 		PlayerService  playerService  = null;
 		ManagerService managerService = new ManagerServiceImpl( dbConn, event.getYear() );
@@ -1392,6 +1396,144 @@ public class GameServiceImpl implements GameService {
 			}
 		}
 	}
+
+	private void processRetirement( Schedule event ) throws SQLException {
+	
+		PlayerService  playerService  = new PlayerServiceImpl(  dbConn, event.getYear() );
+		
+		playerService.retirePlayers();
+	}
+	
+	private void processFreeAgency( Schedule event ) throws SQLException {
+		
+		List   teamList      = null;
+		List   freeAgentList = null;
+		String lastYear      = String.valueOf(  Integer.parseInt( event.getYear() ) - 1 );
+		
+		TeamService    teamService    = new TeamServiceImpl(    dbConn, lastYear        );
+		PlayerService  playerService  = new PlayerServiceImpl(  dbConn, event.getYear() );
+		ManagerService managerService = new ManagerServiceImpl( dbConn, event.getYear() );
+
+		if ( (teamList = teamService.getTeamList()) != null ) {
+		
+			// Rank teams - sort list using compareto of team object
+			Collections.sort( teamList, new TeamComparator( dbConn, lastYear ) );
+		}
+		else {
+		
+			// No teams last year, this must be the first season, get this years teams and sort by rating descending
+			teamService = new TeamServiceImpl( dbConn, event.getYear() );
+			
+			if ( (teamList = teamService.getTeamList()) == null ) return;
+			
+			Iterator i = teamList.iterator();
+			
+			while ( i.hasNext() ) {
+			
+				Team team = (Team)i.next();
+				
+				team.setPlayers( playerService.getPlayersByTeamId( team.getTeam_id() ) );
+				
+				team.calcTeamRatings();
+			}
+			
+			Collections.sort( teamList, new Comparator() { public int compare( Object arg1, Object arg2 ){
+				/**/                                                           Team t1 = (Team)arg1;
+				/**/                                                           Team t2 = (Team)arg2;
+				/**/                                                           return ((t1.getOffense() + t1.getDefense() + t1.getDiscipline()) > (t2.getOffense() + t2.getDefense() + t2.getDiscipline())) ? 1 : -1; } } );
+		}
+
+		if ( (freeAgentList = playerService.getFreePlayers()) == null ) return;
+		
+		boolean player_selected;
+		
+		do {
+
+			player_selected = false;
+
+			Iterator i = teamList.iterator();
+
+			while ( i.hasNext() ) {
+
+				Team nextTeam = (Team)i.next();
+
+				if ( nextTeam.getManager() == null ) {
+					
+					nextTeam.setManager( managerService.getManagerByTeamId( nextTeam.getTeam_id() ) );
+				}
+				
+				if ( nextTeam.getPlayers() == null ) {
+				
+					nextTeam.setPlayers( playerService.getPlayersByTeamId( nextTeam.getTeam_id() ) );
+				}
+				
+				PlayerComparator pc = null;
+				
+				// Sorter players on each team by rating.
+				switch ( nextTeam.getManager().getStyle() ) {
+				
+				case Manager.STYLE_OFFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false );  break;
+				case Manager.STYLE_DEFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false );  break;
+				case Manager.STYLE_INTANGIBLE: pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false );  break;
+				case Manager.STYLE_PENALTY:    pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false );  break;
+				case Manager.STYLE_BALANCED:   pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false );  break;
+				}
+				
+				Collections.sort( nextTeam.getPlayers(), pc );
+				Collections.sort( freeAgentList,         pc );
+				Collections.reverse( freeAgentList          );
+				
+				Player bestFreeAgent   = (Player)freeAgentList.get( 0 );
+				Player worstTeamPlayer = (Player)nextTeam.getPlayers().get( 0 );
+				
+				/*
+				 * If the team is short one or more players (due to retirement) just select
+				 * the best free agent for the team.
+				 */
+				if ( nextTeam.getPlayers().size() < Constants.PLAYERS_PER_TEAM ) {
+				
+					bestFreeAgent.setTeam_id( nextTeam.getTeam_id() );
+					bestFreeAgent.setSigned( true );
+					bestFreeAgent.setFree_agent( false );
+					
+					playerService.updatePlayer( bestFreeAgent );
+					
+					freeAgentList.remove( 0 );
+					
+					nextTeam.getPlayers().add( bestFreeAgent );
+					
+					player_selected = true;
+				}
+				else if ( pc.compare( bestFreeAgent, worstTeamPlayer ) > 0 ) {
+					
+					bestFreeAgent.setTeam_id( nextTeam.getTeam_id() );
+					bestFreeAgent.setSigned( true );
+					bestFreeAgent.setFree_agent( false );
+					
+					playerService.updatePlayer( bestFreeAgent );
+					
+					worstTeamPlayer.setTeam_id( 0 );
+					worstTeamPlayer.setReleased( true );
+					worstTeamPlayer.setSigned( false );
+					worstTeamPlayer.setFree_agent( true );
+					
+					// Only update released by if the player was not previously released
+					if ( worstTeamPlayer.getFormer_team_id() == 0 ) worstTeamPlayer.setFormer_team_id( nextTeam.getTeam_id() );
+					
+					playerService.updatePlayer( worstTeamPlayer );
+					
+					freeAgentList.remove( 0 );
+					nextTeam.getPlayers().remove( 0 );
+					
+					freeAgentList.add( worstTeamPlayer );
+					nextTeam.getPlayers().add( bestFreeAgent );
+					
+					player_selected = true;
+				}
+			}
+		}
+		while ( player_selected == true );
+	}
 	
 	private void processRookieDraft( Schedule event ) throws SQLException {
 		
@@ -1401,8 +1543,8 @@ public class GameServiceImpl implements GameService {
 		String lastYear   = String.valueOf(  Integer.parseInt( event.getYear() ) - 1 );
 		int    pick       = 0;
 		
-		TeamService    teamService    = new TeamServiceImpl( dbConn, lastYear );
-		PlayerService  playerService  = new PlayerServiceImpl( dbConn, event.getYear() );
+		TeamService    teamService    = new TeamServiceImpl(    dbConn, lastYear        );
+		PlayerService  playerService  = new PlayerServiceImpl(  dbConn, event.getYear() );
 		ManagerService managerService = new ManagerServiceImpl( dbConn, event.getYear() );
 		
 		if ( (teamList = teamService.getTeamList()) != null ) {
@@ -1449,8 +1591,8 @@ public class GameServiceImpl implements GameService {
 			pick = 41;
 		}
 		
-		// Get list of remaining undrafted players
-		if ( (playerList = playerService.getFreePlayers()) == null ) return;
+		// Get list of remaining undrafted rookies
+		if ( (playerList = playerService.getUndraftedRookies()) == null ) return;
 		
 		Iterator i = teamList.iterator();
 		
@@ -1493,18 +1635,7 @@ public class GameServiceImpl implements GameService {
 		
 		PlayerService playerService = new PlayerServiceImpl( dbConn, event.getYear() );
 		
-		List playerList = playerService.getPlayerList();
-		
-		Iterator i = playerList.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Player player = (Player)i.next();
-			
-			player.agePlayer();
-			
-			playerService.updatePlayer( player );
-		}
+		playerService.agePlayers();
 	}
 	
 	private void processPreseasonGame( Schedule event ) throws SQLException {
@@ -1573,102 +1704,15 @@ public class GameServiceImpl implements GameService {
 						Player player = (Player)playerList.get( j );
 						
 						player.setTeam_id( 0 );
+						player.setSigned( false );
 						player.setReleased( true );
-						player.setReleased_by( team.getTeam_id() );
+						player.setFormer_team_id( team.getTeam_id() );
 						
 						playerService.updatePlayer( player );
 					}
 				}
 			}
 		}
-	}
-	
-	private void processFreeAgentDraft( Schedule event ) throws SQLException {
-		
-		List   teamList      = null;
-		List   freeAgentList = null;
-		String lastYear      = String.valueOf(  Integer.parseInt( event.getYear() ) - 1 );
-		
-		TeamService    teamService    = new TeamServiceImpl( dbConn, event.getYear() );
-		PlayerService  playerService  = new PlayerServiceImpl( dbConn, event.getYear() );
-		ManagerService managerService = new ManagerServiceImpl( dbConn, event.getYear() );
-		
-		if ( (teamList = teamService.getTeamList()) == null ) return;
-
-		if ( (freeAgentList = playerService.getFreePlayers()) == null ) return;
-		
-		// Rank teams - sort list using compareto of team object
-		Collections.sort( teamList, new TeamComparator( dbConn, lastYear ) );
-		
-		boolean player_selected;
-		
-		do {
-
-			player_selected = false;
-
-			Iterator i = teamList.iterator();
-
-			while ( i.hasNext() ) {
-
-				Team nextTeam = (Team)i.next();
-
-				if ( nextTeam.getManager() == null ) {
-					
-					nextTeam.setManager( managerService.getManagerByTeamId( nextTeam.getTeam_id() ) );
-				}
-				
-				if ( nextTeam.getPlayers() == null ) {
-				
-					nextTeam.setPlayers( playerService.getPlayersByTeamId( nextTeam.getTeam_id() ) );
-				}
-				
-				PlayerComparator pc = null;
-				
-				// Sorter players on each team by rating.
-				switch ( nextTeam.getManager().getStyle() ) {
-				
-				case Manager.STYLE_OFFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false );  break;
-				case Manager.STYLE_DEFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false );  break;
-				case Manager.STYLE_INTANGIBLE: pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false );  break;
-				case Manager.STYLE_PENALTY:    pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false );  break;
-				case Manager.STYLE_BALANCED:   pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false );  break;
-				}
-				
-				Collections.sort( nextTeam.getPlayers(), pc );
-				Collections.sort( freeAgentList,         pc );
-				Collections.reverse( freeAgentList          );
-				
-				Player bestFreeAgent   = (Player)freeAgentList.get( 0 );
-				Player worstTeamPlayer = (Player)nextTeam.getPlayers().get( 0 );
-				
-				if ( pc.compare( bestFreeAgent, worstTeamPlayer ) > 0 ) {
-					
-					bestFreeAgent.setTeam_id( nextTeam.getTeam_id() );
-					
-					playerService.updatePlayer( bestFreeAgent );
-					
-					worstTeamPlayer.setTeam_id( 0 );
-					worstTeamPlayer.setReleased( true );
-					
-					// Only update released by if the player was not previously released
-					if ( worstTeamPlayer.getReleased_by() == 0 ) worstTeamPlayer.setReleased_by( nextTeam.getTeam_id() );
-					
-					playerService.updatePlayer( worstTeamPlayer );
-					
-					freeAgentList.remove( 0 );
-					nextTeam.getPlayers().remove( 0 );
-					
-					freeAgentList.add( worstTeamPlayer );
-					nextTeam.getPlayers().add( bestFreeAgent );
-					
-					player_selected = true;
-				}
-			}
-		}
-		while ( player_selected == true );
-		
-		// Retire all unselected veteran players.
-		playerService.retirePlayers();
 	}
 	
 	private void processSeasonGame( Schedule event ) throws SQLException {
@@ -2569,154 +2613,283 @@ public class GameServiceImpl implements GameService {
 		return playersList;
 	}
 
-	public List getReleasedRookiePlayers() throws SQLException {
+	public List getReleasedPlayers() throws SQLException {
 
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getReleasedRookiesSelectPs( dbConn );
-			
-			ps.setString(  1, year );
-			ps.setBoolean( 2, true );
-			ps.setBoolean( 3, true );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				ReleaseView releaseView = new ReleaseView();
-				
-				releaseView.setPlayer_id(   dbRs.getInt(    1 ));
-				releaseView.setFirst_name(  dbRs.getString( 2 ));
-				releaseView.setLast_name(   dbRs.getString( 3 ));
-				releaseView.setTeam_id(     dbRs.getInt(    4 ));
-				releaseView.setTeam_abbrev( dbRs.getString( 5 ));
-				releaseView.setDraft_pick(  dbRs.getInt(    6 ));
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( releaseView );
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+
+		List teams = teamService.getTeamList();
+
+		Iterator i = teams.iterator();
+
+		while ( i.hasNext() ) {
+
+			Team team = (Team)i.next();
+
+			PreparedStatement ps          = null;
+			ResultSet         dbRs        = null;
+			List              playersList = null;
+
+			try {
+
+				ps = DatabaseImpl.getReleasedPlayersByTeamSelectPs( dbConn );
+
+				ps.setString(  1, year              );
+				ps.setInt(     2, team.getTeam_id() );
+				ps.setBoolean( 3, true              );
+				ps.setBoolean( 4, false             );
+				ps.setBoolean( 5, false             );
+
+				dbRs = ps.executeQuery();
+
+				playersList = null;
+
+				while ( dbRs.next() ) {
+
+					ReleaseView releaseView = new ReleaseView();
+
+					releaseView.setPlayer_id(      dbRs.getInt(     1 ) );
+					releaseView.setFirst_name(     dbRs.getString(  2 ) );
+					releaseView.setLast_name(      dbRs.getString(  3 ) );
+					releaseView.setTeam_id(        dbRs.getInt(     4 ) );
+					releaseView.setTeam_abbrev(    dbRs.getString(  5 ) );
+					releaseView.setRookie(         dbRs.getBoolean( 6 ) );
+					releaseView.setDraft_pick(     dbRs.getInt(     7 ) );
+					releaseView.setAge(            dbRs.getInt(     8 ) );
+					releaseView.setSeasons_played( dbRs.getInt(     9 ) );
+
+					if ( playersList == null ) playersList = new ArrayList();
+
+					playersList.add( releaseView );
+				}
+
+				if ( playersList == null ) {
+
+					i.remove();
+				}
+				else {
+
+					team.setPlayers( playersList );
+				}
+			}
+			finally {
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
 			}
 		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
+
+		return teams;
 	}
 
-	public List getReleasedVeteranPlayers() throws SQLException {
+	public List getFreeAgentMoves() throws SQLException {
 
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getReleasedVeteransSelectPs( dbConn );
-			
-			ps.setString(  1, year  );
-			ps.setBoolean( 2, false );
-			ps.setBoolean( 3, true  );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				ReleaseView releaseView = new ReleaseView();
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+
+		List teams = teamService.getTeamList();
+
+		Iterator i = teams.iterator();
+
+		while ( i.hasNext() ) {
+
+			Team team = (Team)i.next();
+
+			PreparedStatement ps          = null;
+			ResultSet         dbRs        = null;
+			List              playersList = null;
+
+			try {
+
+				ps = DatabaseImpl.getFreeAgentMovesByTeamSelectPs( dbConn );
+
+				ps.setString(  1, year              );
+				ps.setInt(     2, team.getTeam_id() );
+				ps.setBoolean( 3, true              );
+				ps.setString(  4, year              );
+				ps.setInt(     5, team.getTeam_id() );
+				ps.setBoolean( 6, true              );
+				ps.setString(  7, year              );
+				ps.setInt(     8, team.getTeam_id() );
+				ps.setBoolean( 9, true              );
 				
-				releaseView.setPlayer_id(      dbRs.getInt(    1 ) );
-				releaseView.setFirst_name(     dbRs.getString( 2 ) );
-				releaseView.setLast_name(      dbRs.getString( 3 ) );
-				releaseView.setTeam_id(        dbRs.getInt(    4 ) );
-				releaseView.setTeam_abbrev(    dbRs.getString( 5 ) );
-				releaseView.setAge(            dbRs.getInt(    6 ) );
-				releaseView.setSeasons_played( dbRs.getInt(    7 ) );
+				dbRs = ps.executeQuery();
 				
-				if ( playersList == null ) playersList = new ArrayList();
+				playersList = null;
+
+				while ( dbRs.next() ) {
+
+					FreeAgentView freeAgentView = new FreeAgentView();
+
+					freeAgentView.setStatus(          dbRs.getInt(     1 ) );
+					freeAgentView.setPlayer_id(       dbRs.getInt(     2 ) );
+					freeAgentView.setFirst_name(      dbRs.getString(  3 ) );
+					freeAgentView.setLast_name(       dbRs.getString(  4 ) );
+					freeAgentView.setOld_team_id(     dbRs.getInt(     5 ) );
+					freeAgentView.setOld_team_abbrev( dbRs.getString(  6 ) );
+					freeAgentView.setNew_team_id(     dbRs.getInt(     7 ) );
+					freeAgentView.setNew_team_abbrev( dbRs.getString(  8 ) );
+					freeAgentView.setAge(             dbRs.getInt(     9 ) );
+					freeAgentView.setSeasons_played(  dbRs.getInt(    10 ) );
+
+					if ( playersList == null ) playersList = new ArrayList();
+
+					playersList.add( freeAgentView );
+				}
+
+				if ( playersList == null ) {
 				
-				playersList.add( releaseView );
+					i.remove();
+				}
+				else {
+					
+					team.setPlayers( playersList );
+				}
+			}
+			finally {
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
 			}
 		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
+
+		return teams;
 	}
 
-	public List getResignedPlayers() throws SQLException {
+	public List getRetiredPlayersByTeam() throws SQLException {
 
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
 		
-		try {
+		List teams = teamService.getTeamList();
+		
+		Iterator i = teams.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
 			
-			ps = DatabaseImpl.getResignedPlayersSelectPs( dbConn );
-			
-			ps.setString(  1, year  );
-			ps.setBoolean( 2, true  );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				ResignView resignView = new ResignView();
+			PreparedStatement ps1         = null;
+			PreparedStatement ps2         = null;
+			ResultSet         dbRs1       = null;
+			ResultSet         dbRs2       = null;
+			List              playersList = null;
+
+			try {
 				
-				resignView.setPlayer_id(       dbRs.getInt(    1 ) );
-				resignView.setFirst_name(      dbRs.getString( 2 ) );
-				resignView.setLast_name(       dbRs.getString( 3 ) );
-				resignView.setOld_team_id(     dbRs.getInt(    4 ) );
-				resignView.setOld_team_abbrev( dbRs.getString( 5 ) );
-				resignView.setNew_team_id(     dbRs.getInt(    6 ) );
-				resignView.setNew_team_abbrev( dbRs.getString( 7 ) );
+				ps1 = DatabaseImpl.getRetiredPlayersByTeamSelectPs( dbConn );
 				
-				if ( playersList == null ) playersList = new ArrayList();
+				ps1.setString(  1, year              );
+				ps1.setInt(     2, team.getTeam_id() );
+				ps1.setBoolean( 3, true              );
 				
-				playersList.add( resignView );
+				dbRs1 = ps1.executeQuery();
+
+				playersList = null;
+				
+				while ( dbRs1.next() ) {
+				
+					RetiredView retiredView = new RetiredView();
+					
+					retiredView.setPlayer_id(      dbRs1.getInt(    1 ) );
+					retiredView.setFirst_name(     dbRs1.getString( 2 ) );
+					retiredView.setLast_name(      dbRs1.getString( 3 ) );
+					retiredView.setAge(            dbRs1.getInt(    4 ) );
+					retiredView.setSeasons_played( dbRs1.getInt(    5 ) );
+					
+					ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+					
+					ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+					ps2.setInt( 2, retiredView.getPlayer_id() );
+					
+					dbRs2 = ps2.executeQuery();
+					
+					if ( dbRs2.next() ) {
+						
+						retiredView.setGoals(   dbRs2.getDouble( 1 ) );
+						retiredView.setAssists( dbRs2.getDouble( 2 ) );
+						retiredView.setStops(   dbRs2.getDouble( 3 ) );
+						retiredView.setSteals(  dbRs2.getDouble( 4 ) );
+						retiredView.setPsm(     dbRs2.getDouble( 5 ) );
+						retiredView.setPoints(  dbRs2.getDouble( 6 ) );
+					}
+					
+					DatabaseImpl.closeDbRs( dbRs2 );
+					DatabaseImpl.closeDbStmt( ps2 );
+					
+					if ( playersList == null ) playersList = new ArrayList();
+					
+					playersList.add( retiredView );
+				}
+				
+				if ( playersList == null ) {
+				
+					i.remove();
+				}
+				else {
+					
+					team.setPlayers( playersList );
+				}
+			}
+			finally {
+				
+				DatabaseImpl.closeDbRs( dbRs1 );
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps1 );
+				DatabaseImpl.closeDbStmt( ps2 );
 			}
 		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
 		
-		return playersList;
+		return teams;
 	}
 
-	public List getRetiredPlayers() throws SQLException {
+	public List getRetiredPlayersWithoutTeam() throws SQLException {
 
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
+
+		PreparedStatement ps1         = null;
+		PreparedStatement ps2         = null;
+		ResultSet         dbRs1       = null;
+		ResultSet         dbRs2       = null;
 		List              playersList = null;
-		
+
 		try {
+
+			ps1 = DatabaseImpl.getRetiredPlayersWithoutTeamSelectPs( dbConn );
 			
-			ps = DatabaseImpl.getRetiredPlayersSelectPs( dbConn );
+			ps1.setInt(     1, 0    );
+			ps1.setString(  2, year );
+			ps1.setBoolean( 3, true );
 			
-			ps.setString(  1, year  );
-			ps.setBoolean( 2, true  );
+			dbRs1 = ps1.executeQuery();
+
+			playersList = null;
 			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
+			while ( dbRs1.next() ) {
 			
 				RetiredView retiredView = new RetiredView();
 				
-				retiredView.setPlayer_id(      dbRs.getInt(    1 ) );
-				retiredView.setFirst_name(     dbRs.getString( 2 ) );
-				retiredView.setLast_name(      dbRs.getString( 3 ) );
-				retiredView.setAge(            dbRs.getInt(    4 ) );
-				retiredView.setSeasons_played( dbRs.getInt(    5 ) );
+				retiredView.setPlayer_id(      dbRs1.getInt(    1 ) );
+				retiredView.setFirst_name(     dbRs1.getString( 2 ) );
+				retiredView.setLast_name(      dbRs1.getString( 3 ) );
+				retiredView.setAge(            dbRs1.getInt(    4 ) );
+				retiredView.setSeasons_played( dbRs1.getInt(    5 ) );
+				
+				ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+				
+				ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+				ps2.setInt( 2, retiredView.getPlayer_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+					
+					retiredView.setGoals(   dbRs2.getDouble( 1 ) );
+					retiredView.setAssists( dbRs2.getDouble( 2 ) );
+					retiredView.setStops(   dbRs2.getDouble( 3 ) );
+					retiredView.setSteals(  dbRs2.getDouble( 4 ) );
+					retiredView.setPsm(     dbRs2.getDouble( 5 ) );
+					retiredView.setPoints(  dbRs2.getDouble( 6 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
 				
 				if ( playersList == null ) playersList = new ArrayList();
 				
@@ -2725,8 +2898,10 @@ public class GameServiceImpl implements GameService {
 		}
 		finally {
 			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
 		}
 		
 		return playersList;

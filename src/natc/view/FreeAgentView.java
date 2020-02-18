@@ -1,7 +1,11 @@
 package natc.view;
 
-public class ResignView {
+public class FreeAgentView {
 
+	public static final int STATUS_RELEASED = 0;
+	public static final int STATUS_SIGNED   = 1;
+	
+	private int    status;
 	private int    player_id;
 	private String first_name;
 	private String last_name;
@@ -9,9 +13,12 @@ public class ResignView {
 	private String old_team_abbrev;
 	private int    new_team_id;
 	private String new_team_abbrev;
+	private int    age;
+	private int    seasons_played;
 	
-	public ResignView() {
+	public FreeAgentView() {
 	
+		this.status          = 0;
 		this.player_id       = 0;
 		this.first_name      = null;
 		this.last_name       = null;
@@ -19,6 +26,8 @@ public class ResignView {
 		this.old_team_abbrev = null;
 		this.new_team_id     = 0;
 		this.new_team_abbrev = null;
+		this.age             = 0;
+		this.seasons_played  = 0;
 	}
 
 	public String getFirst_name() {
@@ -75,6 +84,30 @@ public class ResignView {
 
 	public void setPlayer_id(int player_id) {
 		this.player_id = player_id;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public int getSeasons_played() {
+		return seasons_played;
+	}
+
+	public void setSeasons_played(int seasonsPlayed) {
+		seasons_played = seasonsPlayed;
 	}
 	
 }

@@ -93,13 +93,15 @@ CREATE TABLE Players_T
     Rookie          INTEGER,
     Injured         INTEGER,
     Return_Date     DATE,
+    Free_Agent      INTEGER,
+    Signed          INTEGER,
+    Released        INTEGER,
     Retired         INTEGER,
+    Former_Team_Id  INTEGER,
+    Allstar_Team_Id INTEGER,
     Award           INTEGER,
     Draft_Pick      INTEGER,
-    Seasons_Played  INTEGER,
-    Allstar_Team_Id INTEGER,
-    Released        INTEGER,
-    Released_By     INTEGER
+    Seasons_Played  INTEGER
 );
 
 CREATE INDEX Player_Year      ON Players_T ( Year      );
@@ -312,32 +314,6 @@ BEGIN
  RETURN result_var;
 END;
 
-/*
-CREATE FUNCTION getManagerScore( Playoff_Rank INT, Wins INT )
-RETURNS INT
-DETERMINISTIC
-BEGIN
- DECLARE result_var INT;
-
- SET result_var = 0;
-
- IF ( Playoff_Rank = 5 ) THEN
-  SET result_var = result_var + 2;
- END IF;
-
- IF ( Playoff_Rank > 0 ) THEN
-  SET result_var = result_var + 2;
- END IF;
-
- IF ( Wins > 50 ) THEN
-  SET result_var = result_var + 1;
- END IF;
-
- RETURN result_var;
-END;
-*/
-
-
 CREATE PROCEDURE copyTeamsForNewYear ( IN lastYear CHAR(4), IN thisYear CHAR(4) )
 BEGIN
   DECLARE team_id_var     INT;
@@ -530,8 +506,8 @@ BEGIN
            Durability,
            Seasons_Played
     FROM   Players_T
-    WHERE  Year = lastYear
-    AND    Team_Id IS NOT NULL;
+    WHERE  Year    = lastYear
+    AND    Retired = 0;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 

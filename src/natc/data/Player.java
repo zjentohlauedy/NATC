@@ -56,6 +56,8 @@ public class Player {
 	private Date    return_date;
 	
 	private boolean rookie;
+	private boolean free_agent;
+	private boolean signed;
 	private boolean retired;
 	
 	private int     award;
@@ -65,7 +67,7 @@ public class Player {
 	
 	// Tracking roster cuts
 	private boolean released;
-	private int     released_by;
+	private int     former_team_id;
 	
 	private int     score; // not part of player record - used for caching
 
@@ -103,6 +105,8 @@ public class Player {
 		this.duration        = 0;
 		this.return_date     = null;
 		this.rookie          = false;
+		this.free_agent      = false;
+		this.signed          = false;
 		this.retired         = false;
 		this.award           = 0;
 		this.draft_pick      = 0;
@@ -110,7 +114,7 @@ public class Player {
 		this.allstar_team_id = 0;
 		this.score           = 0;
 		this.released        = false;
-		this.released_by     = 0;
+		this.former_team_id  = 0;
 		this.game            = null;
 	}
 	
@@ -146,6 +150,8 @@ public class Player {
 		this.duration        = 0;
 		this.return_date     = null;
 		this.rookie          = rookie;
+		this.free_agent      = false;
+		this.signed          = false;
 		this.retired         = false;
 		this.award           = 0;
 		this.draft_pick      = 0;
@@ -153,7 +159,7 @@ public class Player {
 		this.allstar_team_id = 0;
 		this.score           = 0;
 		this.released        = false;
-		this.released_by     = 0;
+		this.former_team_id  = 0;
 		this.game            = null;
 	}
 
@@ -1174,12 +1180,12 @@ public class Player {
 		this.released = released;
 	}
 
-	public int getReleased_by() {
-		return released_by;
+	public int getFormer_team_id() {
+		return former_team_id;
 	}
 
-	public void setReleased_by(int releasedBy) {
-		released_by = releasedBy;
+	public void setFormer_team_id(int releasedBy) {
+		former_team_id = releasedBy;
 	}
 
 	public int getScore() {
@@ -1244,6 +1250,22 @@ public class Player {
 
 	public void setStarted(boolean started) {
 		this.started = started;
+	}
+
+	public boolean isSigned() {
+		return signed;
+	}
+
+	public void setSigned(boolean signed) {
+		this.signed = signed;
+	}
+
+	public boolean isFree_agent() {
+		return free_agent;
+	}
+
+	public void setFree_agent(boolean freeAgent) {
+		free_agent = freeAgent;
 	}
 
 }

@@ -2,14 +2,15 @@ package natc.view;
 
 public class ReleaseView {
 
-	private int    player_id;
-	private String first_name;
-	private String last_name;
-	private int    team_id;
-	private String team_abbrev;
-	private int    age;
-	private int    seasons_played;
-	private int    draft_pick;
+	private int     player_id;
+	private String  first_name;
+	private String  last_name;
+	private int     team_id;
+	private String  team_abbrev;
+	private int     age;
+	private int     seasons_played;
+	private boolean rookie;
+	private int     draft_pick;
 	
 	public ReleaseView() {
 	
@@ -20,6 +21,7 @@ public class ReleaseView {
 		this.team_abbrev    = null;
 		this.age            = 0;
 		this.seasons_played = 0;
+		this.rookie         = false;
 		this.draft_pick     = 0;
 	}
 
@@ -85,6 +87,14 @@ public class ReleaseView {
 
 	public void setTeam_id(int team_id) {
 		this.team_id = team_id;
+	}
+
+	public boolean isRookie() {
+		return rookie;
+	}
+
+	public void setRookie(boolean rookie) {
+		this.rookie = rookie;
 	}
 	
 }

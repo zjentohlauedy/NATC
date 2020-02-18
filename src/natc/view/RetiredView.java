@@ -7,6 +7,12 @@ public class RetiredView {
 	private String last_name;
 	private int    age;
 	private int    seasons_played;
+	private double goals;
+	private double assists;
+	private double stops;
+	private double steals;
+	private double psm;
+	private double points;
 	
 	public RetiredView() {
 	
@@ -15,6 +21,12 @@ public class RetiredView {
 		this.last_name      = null;
 		this.age            = 0;
 		this.seasons_played = 0;
+		this.goals          = 0.0;
+		this.assists        = 0.0;
+		this.stops          = 0.0;
+		this.steals         = 0.0;
+		this.psm            = 0.0;
+		this.points         = 0.0;
 	}
 
 	public int getAge() {
@@ -55,6 +67,54 @@ public class RetiredView {
 
 	public void setSeasons_played(int seasons_played) {
 		this.seasons_played = seasons_played;
+	}
+
+	public double getGoals() {
+		return goals;
+	}
+
+	public void setGoals(double goals) {
+		this.goals = goals;
+	}
+
+	public double getAssists() {
+		return assists;
+	}
+
+	public void setAssists(double assists) {
+		this.assists = assists;
+	}
+
+	public double getStops() {
+		return stops;
+	}
+
+	public void setStops(double stops) {
+		this.stops = stops;
+	}
+
+	public double getSteals() {
+		return steals;
+	}
+
+	public void setSteals(double steals) {
+		this.steals = steals;
+	}
+
+	public double getPsm() {
+		return psm;
+	}
+
+	public void setPsm(double psm) {
+		this.psm = psm;
+	}
+
+	public double getPoints() {
+		return points;
+	}
+
+	public void setPoints(double points) {
+		this.points = points;
 	}
 	
 }

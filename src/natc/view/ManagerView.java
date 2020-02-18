@@ -9,6 +9,11 @@ public class ManagerView {
 	private String last_name;
 	private int    team_id;
 	private String team_abbrev;
+	private double offense;
+	private double defense;
+	private double intangible;
+	private double penalty;
+	private int    style;
 	private int    seasons;
 	private double win_pct;
 	
@@ -19,6 +24,11 @@ public class ManagerView {
 		this.last_name   = null;
 		this.team_id     = 0;
 		this.team_abbrev = null;
+		this.offense     = 0.0;
+		this.defense     = 0.0;
+		this.intangible  = 0.0;
+		this.penalty     = 0.0;
+		this.style       = 0;
 		this.seasons     = 0;
 		this.win_pct     = 0.0;
 	}
@@ -84,6 +94,46 @@ public class ManagerView {
 
 	public void setWin_pct(double winPct) {
 		win_pct = winPct;
+	}
+
+	public double getOffense() {
+		return offense;
+	}
+
+	public void setOffense(double offense) {
+		this.offense = offense;
+	}
+
+	public double getDefense() {
+		return defense;
+	}
+
+	public void setDefense(double defense) {
+		this.defense = defense;
+	}
+
+	public double getIntangible() {
+		return intangible;
+	}
+
+	public void setIntangible(double intangible) {
+		this.intangible = intangible;
+	}
+
+	public double getPenalty() {
+		return penalty;
+	}
+
+	public void setPenalty(double penalty) {
+		this.penalty = penalty;
+	}
+
+	public int getStyle() {
+		return style;
+	}
+
+	public void setStyle(int style) {
+		this.style = style;
 	}
 	
 }

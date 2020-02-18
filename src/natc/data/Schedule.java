@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Schedule {
 
+	public static final String FIRST_YEAR     = "1971";
+	public static final int    FIRST_SEQUENCE = 1;
+	
 	private String       year;
 	private int          sequence;
 	private ScheduleType type;

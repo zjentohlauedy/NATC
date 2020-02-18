@@ -15,6 +15,7 @@ public class Constants {
 	public static final int NUMBER_OF_TEAMS          =    (NUMBER_OF_DIVISIONS * TEAMS_PER_DIVISION);
 	public static final int TEAMS_PER_CONFERENCE     =    (DIVISIONS_PER_CONFERENCE * TEAMS_PER_DIVISION);
 	public static final int PLAYERS_PER_TEAM         =  12;
+	public static final int INITIAL_PLAYERS          = 600;
 	public static final int ROUNDS_PER_DIV_SERIES    =   7;
 	public static final int ROUNDS_PER_CONF_SERIES   =   3;
 	public static final int OUT_OF_CONFERENCE_GAMES  =   7;

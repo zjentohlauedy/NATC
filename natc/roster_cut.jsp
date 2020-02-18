@@ -49,59 +49,42 @@
   <h2><bean:write name="schedule" property="scheduled"/></h2>
 </logic:present>
 
-<table class="releases">
-  <logic:present name="released_veterans">
-    <tr class="label"><td colspan="4"><bean:message key="releases.label.veterans"  /></td></tr>
+
+<logic:present name="released_players">
+  <table class="releases">
+  <logic:iterate id="team" name="released_players">
+    <tr class="label">
+      <td colspan="4">
+        <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+          <bean:write name="team" property="location" /> <bean:write name="team" property="name" />
+        </html:link>
+      </td>
+    </tr>
     <tr class="heading">
       <td><bean:message key="releases.label.player"  /></td>
-      <td><bean:message key="releases.label.team"    /></td>
       <td><bean:message key="releases.label.age"     /></td>
       <td><bean:message key="releases.label.seasons" /></td>
+      <td><bean:message key="releases.label.pick"    /></td>
     </tr>
-    <logic:iterate id="player" name="released_veterans">
+    <logic:iterate id="releaseView" name="team" property="players">
       <tr>
         <td>
-          <html:link page="/Player.do" paramId="player_id" paramName="player" paramProperty="player_id">
-            <bean:write name="player" property="last_name" />, <bean:write name="player" property="first_name" />
+          <html:link page="/Player.do" paramId="player_id" paramName="releaseView" paramProperty="player_id">
+            <bean:write name="releaseView" property="last_name" />, <bean:write name="releaseView" property="first_name" />
           </html:link>
+          <logic:equal name="releaseView" property="rookie" value="true">
+            <h7><bean:message key="releases.label.rookie" /></h7>
+          </logic:equal>
         </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="player" paramProperty="team_id">
-            <bean:write name="player" property="team_abbrev" />
-          </html:link>
-        </td>
-        <td><bean:write name="player" property="age"            /></td>
-        <td><bean:write name="player" property="seasons_played" /></td>
+        <td><bean:write name="releaseView" property="age"            /></td>
+        <td><bean:write name="releaseView" property="seasons_played" /></td>
+        <td><bean:write name="releaseView" property="draft_pick"     /></td>
       </tr>
     </logic:iterate>
-  </logic:present>
-  <tr class="separator"></tr>
-  <logic:present name="released_rookies">
-    <tr class="label"><td colspan="4"><bean:message key="releases.label.rookies"  /></td></tr>
-    <tr class="heading">
-      <td><bean:message key="releases.label.player"  /></td>
-      <td><bean:message key="releases.label.team"    /></td>
-      <td><bean:message key="releases.label.pick" /></td>
-      <td></td>
-    </tr>
-    <logic:iterate id="player" name="released_rookies">
-      <tr>
-        <td>
-          <html:link page="/Player.do" paramId="player_id" paramName="player" paramProperty="player_id">
-            <bean:write name="player" property="last_name" />, <bean:write name="player" property="first_name" />
-          </html:link>
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="player" paramProperty="team_id">
-            <bean:write name="player" property="team_abbrev" />
-          </html:link>
-        </td>
-        <td><bean:write name="player" property="draft_pick" /></td>
-        <td></td>
-      </tr>
-    </logic:iterate>
-  </logic:present>
-</table>
+    <tr class="separator"></tr>
+  </logic:iterate>
+  </table>
+</logic:present>
 
 </body>
 </html:html>

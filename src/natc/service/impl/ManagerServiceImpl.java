@@ -607,12 +607,17 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				ManagerView managerView = new ManagerView();
 				
-				managerView.setManager_id(  dbRs1.getInt(    1 ) );
-				managerView.setFirst_name(  dbRs1.getString( 2 ) );
-				managerView.setLast_name(   dbRs1.getString( 3 ) );
-				managerView.setSeasons(     dbRs1.getInt(    4 ) );
-				managerView.setTeam_id(     dbRs1.getInt(    5 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 6 ) );
+				managerView.setManager_id(  dbRs1.getInt(     1 ) );
+				managerView.setFirst_name(  dbRs1.getString(  2 ) );
+				managerView.setLast_name(   dbRs1.getString(  3 ) );
+				managerView.setSeasons(     dbRs1.getInt(     4 ) );
+				managerView.setOffense(     dbRs1.getDouble(  5 ) );
+				managerView.setDefense(     dbRs1.getDouble(  6 ) );
+				managerView.setIntangible(  dbRs1.getDouble(  7 ) );
+				managerView.setPenalty(     dbRs1.getDouble(  8 ) );
+				managerView.setStyle(       dbRs1.getInt(     9 ) );
+				managerView.setTeam_id(     dbRs1.getInt(    10 ) );
+				managerView.setTeam_abbrev( dbRs1.getString( 11 ) );
 				
 				ps2 = DatabaseImpl.getManagerCareerWinPctSelectPs( dbConn );
 				
@@ -666,11 +671,16 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				ManagerView managerView = new ManagerView();
 				
-				managerView.setManager_id(  dbRs1.getInt(    1 ) );
-				managerView.setFirst_name(  dbRs1.getString( 2 ) );
-				managerView.setLast_name(   dbRs1.getString( 3 ) );
-				managerView.setTeam_id(     dbRs1.getInt(    4 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 5 ) );
+				managerView.setManager_id(  dbRs1.getInt(     1 ) );
+				managerView.setFirst_name(  dbRs1.getString(  2 ) );
+				managerView.setLast_name(   dbRs1.getString(  3 ) );
+				managerView.setOffense(     dbRs1.getDouble(  4 ) );
+				managerView.setDefense(     dbRs1.getDouble(  5 ) );
+				managerView.setIntangible(  dbRs1.getDouble(  6 ) );
+				managerView.setPenalty(     dbRs1.getDouble(  7 ) );
+				managerView.setStyle(       dbRs1.getInt(     8 ) );
+				managerView.setTeam_id(     dbRs1.getInt(     9 ) );
+				managerView.setTeam_abbrev( dbRs1.getString( 10 ) );
 				
 				ps2 = DatabaseImpl.getManagerTeamWinPctSelectPs( dbConn );
 
@@ -724,12 +734,17 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				ManagerView managerView = new ManagerView();
 				
-				managerView.setManager_id(  dbRs1.getInt(    1 ) );
-				managerView.setFirst_name(  dbRs1.getString( 2 ) );
-				managerView.setLast_name(   dbRs1.getString( 3 ) );
-				managerView.setSeasons(     dbRs1.getInt(    4 ) );
-				managerView.setTeam_id(     dbRs1.getInt(    5 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 6 ) );
+				managerView.setManager_id(  dbRs1.getInt(     1 ) );
+				managerView.setFirst_name(  dbRs1.getString(  2 ) );
+				managerView.setLast_name(   dbRs1.getString(  3 ) );
+				managerView.setSeasons(     dbRs1.getInt(     4 ) );
+				managerView.setOffense(     dbRs1.getDouble(  5 ) );
+				managerView.setDefense(     dbRs1.getDouble(  6 ) );
+				managerView.setIntangible(  dbRs1.getDouble(  7 ) );
+				managerView.setPenalty(     dbRs1.getDouble(  8 ) );
+				managerView.setStyle(       dbRs1.getInt(     9 ) );
+				managerView.setTeam_id(     dbRs1.getInt(    10 ) );
+				managerView.setTeam_abbrev( dbRs1.getString( 11 ) );
 
 				ps2 = DatabaseImpl.getManagerCareerWinPctSelectPs( dbConn );
 

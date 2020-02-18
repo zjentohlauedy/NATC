@@ -21,10 +21,10 @@ public interface GameService {
 	public List getStandoutPlayers() throws SQLException;
 	public List getMostImprovedPlayers() throws SQLException;
 	public List getStandoutRookies() throws SQLException;
-	public List getReleasedVeteranPlayers() throws SQLException;
-	public List getReleasedRookiePlayers() throws SQLException;
-	public List getResignedPlayers() throws SQLException;
-	public List getRetiredPlayers() throws SQLException;
+	public List getReleasedPlayers() throws SQLException;
+	public List getFreeAgentMoves() throws SQLException;
+	public List getRetiredPlayersByTeam() throws SQLException;
+	public List getRetiredPlayersWithoutTeam() throws SQLException;
 	public List getAbandonedRookiePlayers() throws SQLException;
 	public List getInjuriesByDate( Date datestamp ) throws SQLException;
 	public List getRankedAllstarTeams() throws SQLException;

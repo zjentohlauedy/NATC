@@ -3,24 +3,29 @@ package natc.data;
 public class ScheduleType {
 
 	public static final int BEGINNING_OF_SEASON     =  0;
-	public static final int OFF_SEASON_MOVES        =  1;
-	public static final int ROOKIE_DRAFT_ROUND_1    =  2;
-	public static final int ROOKIE_DRAFT_ROUND_2    =  3;
-	public static final int TRAINING_CAMP           =  4;
-	public static final int PRESEASON               =  5;
-	public static final int ROSTER_CUT              =  6;
-	public static final int FREE_AGENT_DRAFT        =  7;
-	public static final int REGULAR_SEASON          =  8;
-	public static final int AWARDS                  =  9;
-	public static final int POSTSEASON              = 10;
-	public static final int DIVISION_PLAYOFF        = 11;
-	public static final int DIVISION_CHAMPIONSHIP   = 12;
-	public static final int CONFERENCE_CHAMPIONSHIP = 13;
-	public static final int NATC_CHAMPIONSHIP       = 14;
-	public static final int ALL_STARS               = 15;
-	public static final int ALL_STAR_DAY_1          = 16;
-	public static final int ALL_STAR_DAY_2          = 17;
-	public static final int END_OF_SEASON           = 18;
+	public static final int MANAGER_CHANGES         =  1;
+	public static final int PLAYER_RETIREMENT       =  2;
+	public static final int FREE_AGENCY             =  3;
+	public static final int ROOKIE_DRAFT_ROUND_1    =  4;
+	public static final int ROOKIE_DRAFT_ROUND_2    =  5;
+	public static final int TRAINING_CAMP           =  6;
+	public static final int PRESEASON               =  7;
+	public static final int END_OF_PRESEASON        =  8;
+	public static final int ROSTER_CUT              =  9;
+	public static final int REGULAR_SEASON          = 10;
+	public static final int END_OF_REGULAR_SEASON   = 11;
+	public static final int AWARDS                  = 12;
+	public static final int POSTSEASON              = 13;
+	public static final int DIVISION_PLAYOFF        = 14;
+	public static final int DIVISION_CHAMPIONSHIP   = 15;
+	public static final int CONFERENCE_CHAMPIONSHIP = 16;
+	public static final int NATC_CHAMPIONSHIP       = 17;
+	public static final int END_OF_POSTSEASON       = 18;
+	public static final int ALL_STARS               = 19;
+	public static final int ALL_STAR_DAY_1          = 20;
+	public static final int ALL_STAR_DAY_2          = 21;
+	public static final int END_OF_ALLSTAR_GAMES    = 22;
+	public static final int END_OF_SEASON           = 23;
 	
 	private int value;
 	
