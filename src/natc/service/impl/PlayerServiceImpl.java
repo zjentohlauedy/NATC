@@ -1570,11 +1570,12 @@ public class PlayerServiceImpl implements PlayerService {
 				PlayerInjuryView playerInjuryView = new PlayerInjuryView();
 				
 				playerInjuryView.setDatestamp(       dbRs.getDate(    1 ) );
-				playerInjuryView.setOpponent(        dbRs.getInt(     2 ) );
-				playerInjuryView.setOpponent_abbrev( dbRs.getString(  3 ) );
-				playerInjuryView.setRoad_game(       dbRs.getBoolean( 4 ) );
-				playerInjuryView.setGame_id(         dbRs.getInt(     5 ) );
-				playerInjuryView.setDuration(        dbRs.getInt(     6 ) );
+				playerInjuryView.setYear(            dbRs.getString(  2 ) );
+				playerInjuryView.setOpponent(        dbRs.getInt(     3 ) );
+				playerInjuryView.setOpponent_abbrev( dbRs.getString(  4 ) );
+				playerInjuryView.setRoad_game(       dbRs.getBoolean( 5 ) );
+				playerInjuryView.setGame_id(         dbRs.getInt(     6 ) );
+				playerInjuryView.setDuration(        dbRs.getInt(     7 ) );
 				
 				if ( injuries == null ) injuries = new ArrayList();
 				

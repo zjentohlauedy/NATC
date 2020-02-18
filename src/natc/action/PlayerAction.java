@@ -38,12 +38,16 @@ public class PlayerAction extends Action {
 		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
 		ScheduleService scheduleService = null;
+		Player          player          = null;
 		String          player_id       = null;
+		String          year            = null;
 		
 		if ( (player_id = (String)request.getParameter( "player_id" )) == null ) {
 			
-			return mapping.findForward( "success" );
+			return mapping.findForward( "not_found" );
 		}
+		
+		year = (String)request.getParameter( "year" );
 		
 		try {
 			
@@ -56,15 +60,32 @@ public class PlayerAction extends Action {
 			
 				throw new Exception( "Cannot get db connection." );
 			}
+
+			if ( year == null ) {
+
+				scheduleService = new ScheduleServiceImpl( dbConn, null );
+
+				Schedule schedule = scheduleService.getLastScheduleEntry();
+
+				year = schedule.getYear();
+				
+				playerService = new PlayerServiceImpl( dbConn, year );
+
+				if ( (player = playerService.getLatestPlayerById( Integer.parseInt( player_id ) )) == null ) {
+				
+					return mapping.findForward( "not_found" );
+				}
+			}
+			else {
 			
-			scheduleService = new ScheduleServiceImpl( dbConn, null );
-			
-			Schedule schedule = scheduleService.getLastScheduleEntry();
-			
-			playerService = new PlayerServiceImpl( dbConn, schedule.getYear() );
-			
-			Player player = playerService.getLatestPlayerById( Integer.parseInt( player_id ) );
-			
+				playerService = new PlayerServiceImpl( dbConn, year );
+				
+				if ( (player = playerService.getPlayerById( Integer.parseInt( player_id ) )) == null ) {
+				
+					return mapping.findForward( "not_found" );
+				}
+			}
+
 			// For this action we want to see what the player's in-game ratings are as well as potential ratings
 			player.setIn_game( true );
 			
@@ -72,7 +93,7 @@ public class PlayerAction extends Action {
 			
 			if ( player.getTeam_id() != 0 ) {
 			
-				teamService = new TeamServiceImpl( dbConn, schedule.getYear() );
+				teamService = new TeamServiceImpl( dbConn, year );
 				
 				Team team = teamService.getTeamById( player.getTeam_id() );
 				

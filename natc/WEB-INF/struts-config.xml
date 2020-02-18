@@ -58,16 +58,19 @@
     </action>
     
     <action path="/Team"    type="natc.action.TeamAction"     >
-      <forward   name="success"    path="/team.jsp"/>
+      <forward   name="success"    path="/team.jsp"   />
+      <forward   name="not_found"  path="/noteam.jsp" />
     </action>
     <action path="/Teams"   type="natc.action.TeamsAction"    >
       <forward   name="success"    path="/teams.jsp"/>
     </action>
     <action path="/Manager" type="natc.action.ManagerAction"  >
-      <forward   name="success"    path="/manager.jsp"/>
+      <forward   name="success"    path="/manager.jsp"   />
+      <forward   name="not_found"  path="/nomanager.jsp" />
     </action>
     <action path="/Player"  type="natc.action.PlayerAction"   >
-      <forward   name="success"    path="/player.jsp"/>
+      <forward   name="success"    path="/player.jsp"   />
+      <forward   name="not_found"  path="/noplayer.jsp" />
     </action>
     <action path="/Players" type="natc.action.PlayersAction"  >
       <forward   name="success"    path="/players.jsp"/>

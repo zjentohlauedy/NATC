@@ -55,6 +55,7 @@ public class GamesAction extends Action {
 		Connection      dbConn          = null;
 		String          nextPage        = null;
 		String          team_id_str     = null;
+		String          player_id_str   = null;
 		
 		try {
 
@@ -72,33 +73,123 @@ public class GamesAction extends Action {
 
 			// If a team ID was specified only get game results for that team and exit
 			if ( (team_id_str = request.getParameter( "team_id" )) != null ) {
+
+				Collection data     = null;
+				String     year     = null;
+				String     type_str = null;
+				int        type     = 0;
+				int        team_id  = Integer.parseInt( team_id_str );
 				
-				int team_id = Integer.parseInt( team_id_str );
+				if ( (year = request.getParameter( "year" )) == null ) {
 				
-				if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) != null ) {
-					
-					Collection preseasonTeamGames  = null;
-					Collection seasonTeamGames     = null;
-					Collection postseasonTeamGames = null;
-					
-					gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
-					
-					if ( (preseasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Preseason )) != null ) {
-
-						request.setAttribute( "preseasonTeamGames", preseasonTeamGames );
+					if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+						
+						return mapping.findForward( "games" );
 					}
+					
+					year = scheduleEntry.getYear();
+				}
 
-					if ( (seasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_RegularSeason )) != null ) {
-
-						request.setAttribute( "seasonTeamGames", seasonTeamGames );
-					}
-
-					if ( (postseasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Postseason )) != null ) {
-
-						request.setAttribute( "postseasonTeamGames", postseasonTeamGames );
-					}
+				if ( (type_str = request.getParameter( "type" )) != null ) {
+				
+					type = Integer.parseInt( type_str );
 				}
 				
+				gameService = new GameServiceImpl( dbConn, year );
+
+				if ( type == 0  ||  type == TeamGame.gt_Preseason ) {
+					
+					if ( (data = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Preseason )) != null ) {
+
+						request.setAttribute( "preseasonTeamGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_RegularSeason ) {
+
+					if ( (data = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_RegularSeason )) != null ) {
+
+						request.setAttribute( "seasonTeamGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_Postseason ) {
+
+					if ( (data = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Postseason )) != null ) {
+
+						request.setAttribute( "postseasonTeamGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_Allstar ) {
+
+					if ( (data = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Allstar )) != null ) {
+
+						request.setAttribute( "allstarTeamGames", data );
+					}
+				}
+
+				return mapping.findForward( "games" );
+			}
+
+			// If a player ID was specified only get game results for that player and exit
+			if ( (player_id_str = request.getParameter( "player_id" )) != null ) {
+
+				Collection data      = null;
+				String     year      = null;
+				String     type_str  = null;
+				int        type      = 0;
+				int        player_id = Integer.parseInt( player_id_str );
+				
+				if ( (year = request.getParameter( "year" )) == null ) {
+				
+					if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+						
+						return mapping.findForward( "games" );
+					}
+					
+					year = scheduleEntry.getYear();
+				}
+
+				if ( (type_str = request.getParameter( "type" )) != null ) {
+				
+					type = Integer.parseInt( type_str );
+				}
+				
+				gameService = new GameServiceImpl( dbConn, year );
+
+				if ( type == 0  ||  type == TeamGame.gt_Preseason ) {
+					
+					if ( (data = gameService.getGamesByPlayerIdAndType( player_id, TeamGame.gt_Preseason )) != null ) {
+
+						request.setAttribute( "preseasonPlayerGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_RegularSeason ) {
+
+					if ( (data = gameService.getGamesByPlayerIdAndType( player_id, TeamGame.gt_RegularSeason )) != null ) {
+
+						request.setAttribute( "seasonPlayerGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_Postseason ) {
+
+					if ( (data = gameService.getGamesByPlayerIdAndType( player_id, TeamGame.gt_Postseason )) != null ) {
+
+						request.setAttribute( "postseasonPlayerGames", data );
+					}
+				}
+
+				if ( type == 0  ||  type == TeamGame.gt_Allstar ) {
+
+					if ( (data = gameService.getGamesByPlayerIdAndType( player_id, TeamGame.gt_Allstar )) != null ) {
+
+						request.setAttribute( "allstarPlayerGames", data );
+					}
+				}
+
 				return mapping.findForward( "games" );
 			}
 

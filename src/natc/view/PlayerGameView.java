@@ -2,6 +2,7 @@ package natc.view;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Date;
 
 public class PlayerGameView {
 
@@ -9,6 +10,12 @@ public class PlayerGameView {
 	private String  last_name;
 	
 	private int     player_id;
+	
+	private int     opponent;
+	private String  opponent_abbrev;
+	private boolean road;
+	private Date    datestamp;
+	private int     game_id;
 	
 	private boolean injured;
 	private boolean started;
@@ -33,6 +40,11 @@ public class PlayerGameView {
 		this.first_name          = null;
 		this.last_name           = null;
 		this.player_id           = 0;
+		this.opponent            = 0;
+		this.opponent_abbrev     = null;
+		this.road                = false;
+		this.datestamp           = null;
+		this.game_id             = 0;
 		this.injured             = false;
 		this.started             = false;
 		this.playing_time        = 0;
@@ -274,6 +286,46 @@ public class PlayerGameView {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	public int getOpponent() {
+		return opponent;
+	}
+
+	public void setOpponent(int opponent) {
+		this.opponent = opponent;
+	}
+
+	public String getOpponent_abbrev() {
+		return opponent_abbrev;
+	}
+
+	public void setOpponent_abbrev(String opponentAbbrev) {
+		opponent_abbrev = opponentAbbrev;
+	}
+
+	public boolean isRoad() {
+		return road;
+	}
+
+	public void setRoad(boolean road) {
+		this.road = road;
+	}
+
+	public int getGame_id() {
+		return game_id;
+	}
+
+	public void setGame_id(int gameId) {
+		game_id = gameId;
+	}
+
+	public Date getDatestamp() {
+		return datestamp;
+	}
+
+	public void setDatestamp(Date datestamp) {
+		this.datestamp = datestamp;
 	}
 	
 }

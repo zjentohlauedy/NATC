@@ -32,6 +32,7 @@ import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
 import natc.view.GameView;
 import natc.view.InjuryView;
+import natc.view.PlayerGameView;
 import natc.view.PlayoffGameView;
 
 public class GameServiceImpl implements GameService {
@@ -2348,6 +2349,63 @@ public class GameServiceImpl implements GameService {
 				if ( games == null ) games = new ArrayList();
 				
 				games.add( gameView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return games;
+	}
+
+	public List getGamesByPlayerIdAndType( int player_id, int type ) throws SQLException {
+		
+		List games = null;
+		
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGamesByPlayerIdAndTypeSelectPs( dbConn );
+			
+			ps.setString( 1, year      );
+			ps.setInt(    2, player_id );
+			ps.setInt(    3, type      );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				PlayerGameView playerGameView = new PlayerGameView();
+				
+				playerGameView.setOpponent(            dbRs.getInt(      1 ) );
+				playerGameView.setRoad(                dbRs.getBoolean(  2 ) );
+				playerGameView.setOpponent_abbrev(     dbRs.getString(   3 ) );
+				playerGameView.setDatestamp(           dbRs.getDate(     4 ) );
+				playerGameView.setGame_id(             dbRs.getInt(      5 ) );
+				playerGameView.setInjured(             dbRs.getBoolean(  6 ) );
+				playerGameView.setStarted(             dbRs.getBoolean(  7 ) );
+				playerGameView.setPlaying_time(        dbRs.getInt(      8 ) );
+				playerGameView.setAttempts(            dbRs.getInt(      9 ) );
+				playerGameView.setGoals(               dbRs.getInt(     10 ) );
+				playerGameView.setAssists(             dbRs.getInt(     11 ) );
+				playerGameView.setTurnovers(           dbRs.getInt(     12 ) );
+				playerGameView.setStops(               dbRs.getInt(     13 ) );
+				playerGameView.setSteals(              dbRs.getInt(     14 ) );
+				playerGameView.setPenalties(           dbRs.getInt(     15 ) );
+				playerGameView.setOffensive_penalties( dbRs.getInt(     16 ) );
+				playerGameView.setPsa(                 dbRs.getInt(     17 ) );
+				playerGameView.setPsm(                 dbRs.getInt(     18 ) );
+				playerGameView.setOt_psa(              dbRs.getInt(     19 ) );
+				playerGameView.setOt_psm(              dbRs.getInt(     20 ) );
+				playerGameView.setPoints(              dbRs.getInt(     21 ) );
+				
+				if ( games == null ) games = new ArrayList();
+				
+				games.add( playerGameView );
 			}
 		}
 		finally {

@@ -46,9 +46,9 @@
   <logic:present name="team">
   <tr class="sublabel">
     <td colspan="2">
-      <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+      <a href='Team.do?team_id=<bean:write name="team" property="team_id"/>&year=<bean:write name="manager" property="year"/>'>
         <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
-      </html:link>
+      </a>
     </td>
   </tr>
   </logic:present>
@@ -214,7 +214,7 @@
   <logic:iterate id="teamStatsView" name="teamOffense">
     <tr>
       <td>
-        <html:link page="/Games.do" paramId="team_id" paramName="team" paramProperty="team_id">
+        <a href='Games.do?team_id=<bean:write name="team" property="team_id" />&year=<bean:write name="manager" property="year" />&type=<bean:write name="teamStatsView" property="type" />'>
           <logic:equal name="teamStatsView" property="type" value="1">
             <bean:message key="team.label.preseason" />
           </logic:equal>
@@ -227,7 +227,7 @@
           <logic:equal name="teamStatsView" property="type" value="4">
             <bean:message key="team.label.allstar" />
           </logic:equal>
-        </html:link>
+        </a>
       </td>
       <td><bean:write name="teamStatsView" property="games"                /></td>
       <td><bean:write name="teamStatsView" property="possessions"          /></td>
@@ -275,7 +275,7 @@
   <logic:iterate id="teamStatsView" name="teamDefense">
     <tr>
       <td>
-        <html:link page="/Games.do" paramId="team_id" paramName="team" paramProperty="team_id">
+        <a href='Games.do?team_id=<bean:write name="team" property="team_id" />&year=<bean:write name="manager" property="year" />&type=<bean:write name="teamStatsView" property="type" />'>
           <logic:equal name="teamStatsView" property="type" value="1">
             <bean:message key="team.label.preseason" />
           </logic:equal>
@@ -288,7 +288,7 @@
           <logic:equal name="teamStatsView" property="type" value="4">
             <bean:message key="team.label.allstar" />
           </logic:equal>
-        </html:link>
+        </a>
       </td>
       <td><bean:write name="teamStatsView" property="games"                /></td>
       <td><bean:write name="teamStatsView" property="possessions"          /></td>
@@ -349,11 +349,15 @@
         <tr>
       </logic:notEqual>
         <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="managerStatsView" paramProperty="team_id">
-            <bean:write name="managerStatsView" property="team_abbrev"/>
-          </html:link>
+          <a href='Team.do?team_id=<bean:write name="managerStatsView" property="team_id" />&year=<bean:write name="managerStatsView" property="year" />'>
+            <bean:write name="managerStatsView" property="team_abbrev" />
+          </a>
         </td>
-        <td><bean:write name="managerStatsView" property="year" /></td>
+        <td>
+          <a href='Manager.do?manager_id=<bean:write name="manager" property="manager_id" />&year=<bean:write name="managerStatsView" property="year" />'>
+            <bean:write name="managerStatsView" property="year" />
+          </a>
+        </td>
         <td><bean:write name="managerStatsView" property="wins" />-<bean:write name="managerStatsView" property="losses" /></td>
         <td>
           <logic:equal name="managerStatsView" property="playoff_rank" value="0">

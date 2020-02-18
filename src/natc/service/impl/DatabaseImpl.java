@@ -2157,6 +2157,44 @@ public class DatabaseImpl {
 		
 		return dbConn.prepareStatement( sql );
 	}
+
+	public static PreparedStatement getGamesByPlayerIdAndTypeSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT tg.Opponent,            "
+			/**/   + "       tg.Road,                "
+			/**/   + "        t.Abbrev,              "
+			/**/   + "       pg.Datestamp,           "
+			/**/   + "       pg.Game_Id,             "
+			/**/   + "       pg.Injured,             "
+			/**/   + "       pg.Started,             "
+			/**/   + "       pg.Playing_Time,        "
+			/**/   + "       pg.Attempts,            "
+			/**/   + "       pg.Goals,               "
+			/**/   + "       pg.Assists,             "
+			/**/   + "       pg.Turnovers,           "
+			/**/   + "       pg.Stops,               "
+			/**/   + "       pg.Steals,              "
+			/**/   + "       pg.Penalties,           "
+			/**/   + "       pg.Offensive_Penalties, "
+			/**/   + "       pg.Psa,                 "
+			/**/   + "       pg.Psm,                 "
+			/**/   + "       pg.Ot_Psa,              "
+			/**/   + "       pg.Ot_Psm,              "
+			/**/   + "       pg.Goals * 3 + pg.Psm   "
+			/**/
+			/**/   + "  FROM Teamgames_T tg, Playergames_T pg, Teams_T t "
+			/**/
+			/**/   + " WHERE tg.Game_Id   = pg.Game_Id  "
+			/**/   + "   AND tg.Team_Id   = pg.Team_Id  "
+			/**/   + "   AND  t.Year      = tg.Year     "
+			/**/   + "   AND  t.Team_Id   = tg.Opponent "
+			/**/   + "   AND pg.Year      = ?           "
+			/**/   + "   AND pg.Player_Id = ?           "
+			/**/   + "   AND pg.Type      = ?           "
+			/**/   + "ORDER BY pg.Game_Id ASC ";
+		
+		return dbConn.prepareStatement( sql );
+	}
 	
 	public static PreparedStatement getTeamPlayerDataSelectPs( Connection dbConn ) throws SQLException {
 	
@@ -2490,7 +2528,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getInjuryHistoryByPlayerIdSelectPs( Connection dbConn ) throws SQLException {
 		
-		String sql = "SELECT TG.Datestamp, TG.Opponent, T.Abbrev, TG.Road, I.Game_Id, I.Duration "
+		String sql = "SELECT TG.Datestamp, TG.Year, TG.Opponent, T.Abbrev, TG.Road, I.Game_Id, I.Duration "
 			/**/   + "  FROM Injuries_T I, TeamGames_T TG, Teams_T T "
 			/**/   + " WHERE  I.Game_Id   = Tg.Game_Id "
 			/**/   + "   AND  I.Team_Id   = Tg.Team_Id "

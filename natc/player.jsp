@@ -67,15 +67,15 @@
         </logic:equal>
       </logic:equal>
       <logic:present name="team">
-        <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+        <a href='Team.do?team_id=<bean:write name="team" property="team_id"/>&year=<bean:write name="player" property="year"/>'>
           <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
-        </html:link>
+        </a>
       </logic:present>
       <logic:present name="rookieInfoView">
         ( Drafted #<bean:write name="rookieInfoView" property="pick"/> in <bean:write name="rookieInfoView" property="year"/> by 
-        <html:link page="/Team.do" paramId="team_id" paramName="rookieInfoView" paramProperty="team_id">
+        <a href='Team.do?team_id=<bean:write name="rookieInfoView" property="team_id"/>&year=<bean:write name="rookieInfoView" property="year"/>'>
           <bean:write name="rookieInfoView" property="team_abbrev"/>
-        </html:link>
+        </a>
         )
       </logic:present>
     </td>
@@ -153,9 +153,9 @@
           <logic:equal name="playerInjuryView" property="road_game" value="true">
               <bean:message key="player.label.at" />
           </logic:equal>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerInjuryView" paramProperty="opponent">
+          <a href='Team.do?team_id=<bean:write name="playerInjuryView" property="opponent"/>&year=<bean:write name="player" property="year"/>'>
             <bean:write name="playerInjuryView" property="opponent_abbrev"/>
-          </html:link>
+          </a>
         </td>
         <td><bean:write name="playerInjuryView" property="durationDsp"/></td>
       </tr>
@@ -194,24 +194,26 @@
     <tr>
       <td>
         <logic:present name="team">
-        <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-          <bean:write name="team" property="abbrev"/>
-        </html:link>
+          <a href='Team.do?team_id=<bean:write name="team" property="team_id"/>&year=<bean:write name="player" property="year"/>'>
+            <bean:write name="team" property="abbrev"/>
+          </a>
         </logic:present>
       </td>
       <td>
-        <logic:equal name="playerStatsView" property="type" value="1">
-          <bean:message key="player.label.preseason" />
-        </logic:equal>
-        <logic:equal name="playerStatsView" property="type" value="2">
-          <bean:message key="player.label.regseason" />
-        </logic:equal>
-        <logic:equal name="playerStatsView" property="type" value="3">
-          <bean:message key="player.label.postseason" />
-        </logic:equal>
-        <logic:equal name="playerStatsView" property="type" value="4">
-          <bean:message key="player.label.allstar" />
-        </logic:equal>
+        <a href='Games.do?player_id=<bean:write name="player" property="player_id" />&year=<bean:write name="player" property="year" />&type=<bean:write name="playerStatsView" property="type" />'>
+          <logic:equal name="playerStatsView" property="type" value="1">
+            <bean:message key="team.label.preseason" />
+          </logic:equal>
+          <logic:equal name="playerStatsView" property="type" value="2">
+            <bean:message key="team.label.regseason" />
+          </logic:equal>
+          <logic:equal name="playerStatsView" property="type" value="3">
+            <bean:message key="team.label.postseason" />
+          </logic:equal>
+          <logic:equal name="playerStatsView" property="type" value="4">
+            <bean:message key="team.label.allstar" />
+          </logic:equal>
+        </a>
       </td>
       <td><bean:write name="playerStatsView" property="games"                /></td>
       <td><bean:write name="playerStatsView" property="games_started"        /></td>
@@ -287,11 +289,15 @@
         <tr>
       </logic:notEqual>
         <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+          <a href='Team.do?team_id=<bean:write name="playerStatsView" property="team_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
             <bean:write name="playerStatsView" property="team_abbrev"/>
-          </html:link>
+          </a>
         </td>
-        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td>
+          <a href='Player.do?player_id=<bean:write name="player" property="player_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
+            <bean:write name="playerStatsView" property="year"                 />
+          </a>
+        </td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
@@ -351,11 +357,15 @@
         <tr>
       </logic:notEqual>
         <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+          <a href='Team.do?team_id=<bean:write name="playerStatsView" property="team_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
             <bean:write name="playerStatsView" property="team_abbrev"/>
-          </html:link>
+          </a>
         </td>
-        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td>
+          <a href='Player.do?player_id=<bean:write name="player" property="player_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
+            <bean:write name="playerStatsView" property="year"                 />
+          </a>
+        </td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
@@ -428,11 +438,15 @@
         <tr>
       </logic:notEqual>
         <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+          <a href='Team.do?team_id=<bean:write name="playerStatsView" property="team_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
             <bean:write name="playerStatsView" property="team_abbrev"/>
-          </html:link>
+          </a>
         </td>
-        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td>
+          <a href='Player.do?player_id=<bean:write name="player" property="player_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
+            <bean:write name="playerStatsView" property="year"                 />
+          </a>
+        </td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
@@ -492,11 +506,15 @@
         <tr>
       </logic:notEqual>
         <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+          <a href='Team.do?team_id=<bean:write name="playerStatsView" property="team_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
             <bean:write name="playerStatsView" property="team_abbrev"/>
-          </html:link>
+          </a>
         </td>
-        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td>
+          <a href='Player.do?player_id=<bean:write name="player" property="player_id"/>&year=<bean:write name="playerStatsView" property="year"/>'>
+            <bean:write name="playerStatsView" property="year"                 />
+          </a>
+        </td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
@@ -542,9 +560,9 @@
           <logic:equal name="playerInjuryView" property="road_game" value="true">
               <bean:message key="player.label.at" />
           </logic:equal>
-          <html:link page="/Team.do" paramId="team_id" paramName="playerInjuryView" paramProperty="opponent">
+          <a href='Team.do?team_id=<bean:write name="playerInjuryView" property="opponent"/>&year=<bean:write name="playerInjuryView" property="year"/>'>
             <bean:write name="playerInjuryView" property="opponent_abbrev"/>
-          </html:link>
+          </a>
         </td>
         <td><bean:write name="playerInjuryView" property="durationDsp"/></td>
       </tr>

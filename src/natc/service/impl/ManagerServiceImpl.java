@@ -306,7 +306,7 @@ public class ManagerServiceImpl implements ManagerService {
 			
 			ps = DatabaseImpl.getManagerByIdSelectPs( dbConn );
 			
-			ps.setString( 1, year      );
+			ps.setString( 1, year       );
 			ps.setInt(    2, manager_id );
 			
 			dbRs = ps.executeQuery();

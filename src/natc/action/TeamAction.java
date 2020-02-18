@@ -41,13 +41,18 @@ public class TeamAction extends Action {
 		Connection      dbConn          = null;
 		ScheduleService scheduleService = null;
 		TeamService     teamService     = null;
-		String          team_id         = null; 
+		Team            team            = null;
 		Manager         manager         = null;
+		Schedule        schedule        = null;
+		String          team_id         = null;
+		String          year            = null;
 		
 		if ( (team_id = (String)request.getParameter( "team_id" )) == null ) {
 		
-			return mapping.findForward( "success" );
+			return mapping.findForward( "not_found" );
 		}
+		
+		year = (String)request.getParameter( "year" );
 		
 		try {
 			
@@ -60,14 +65,22 @@ public class TeamAction extends Action {
 			
 				throw new Exception( "Cannot get db connection." );
 			}
+
+			if ( year == null ) {
+
+				scheduleService = new ScheduleServiceImpl( dbConn, null );
+
+				schedule = scheduleService.getLastScheduleEntry();
+				
+				year = schedule.getYear();
+			}
+
+			teamService = new TeamServiceImpl( dbConn, year );
 			
-			scheduleService = new ScheduleServiceImpl( dbConn, null );
+			if ( (team = teamService.getTeamById( Integer.parseInt( team_id ) )) == null ) {
 			
-			Schedule schedule = scheduleService.getLastScheduleEntry();
-			
-			teamService = new TeamServiceImpl( dbConn, schedule.getYear() );
-			
-			Team team = teamService.getTeamById( Integer.parseInt( team_id ) );
+				return mapping.findForward( "not_found" );
+			}
 			
 			request.setAttribute( "team", team );
 			
@@ -152,8 +165,37 @@ public class TeamAction extends Action {
 					}
 				}
 				
-				if   ( schedule.getType().getValue() < ScheduleType.REGULAR_SEASON ) teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_Preseason     );
-				else                                                                 teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_RegularSeason );
+				if ( schedule != null ) {
+				
+					switch ( schedule.getType().getValue() ) {
+					
+					case ScheduleType.PRESEASON:      
+					case ScheduleType.END_OF_PRESEASON: 
+					case ScheduleType.ROSTER_CUT:              teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_Preseason     ); break;
+					
+					case ScheduleType.REGULAR_SEASON:
+					case ScheduleType.END_OF_REGULAR_SEASON:
+					case ScheduleType.AWARDS:                  teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_RegularSeason ); break;
+					
+					case ScheduleType.POSTSEASON:
+					case ScheduleType.DIVISION_PLAYOFF:
+					case ScheduleType.DIVISION_CHAMPIONSHIP:
+					case ScheduleType.CONFERENCE_CHAMPIONSHIP:
+					case ScheduleType.NATC_CHAMPIONSHIP:
+					case ScheduleType.END_OF_POSTSEASON:       teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_Postseason    ); break;
+					
+					case ScheduleType.ALL_STARS:
+					case ScheduleType.ALL_STAR_DAY_1:
+					case ScheduleType.ALL_STAR_DAY_2:
+					case ScheduleType.END_OF_ALLSTAR_GAMES:    teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_Allstar       ); break;
+					
+					default:                                   teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_RegularSeason ); break;
+					}
+				}
+				else {
+				
+					teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_RegularSeason );
+				}
 				
 				teamPlayers.add( teamPlayerView );
 			}

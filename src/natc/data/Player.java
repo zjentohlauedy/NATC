@@ -872,6 +872,7 @@ public class Player {
 		playerGame.setType(      teamGame.getType()      );
 		playerGame.setPlayer_id(     this.player_id      );
 		playerGame.setTeam_id(   teamGame.getTeam_id()   );
+		playerGame.setInjured(       this.injured        );
 		
 		this.game    = playerGame;
 		this.in_game = true;

@@ -36,13 +36,17 @@ public class ManagerAction extends Action {
 		ScheduleService scheduleService = null;
 		ManagerService  managerService  = null;
 		TeamService     teamService     = null;
+		Manager         manager         = null;
 		String          manager_id      = null;
+		String          year            = null;
 		
 		if ( (manager_id = (String)request.getParameter( "manager_id" )) == null ) {
 			
-			return mapping.findForward( "success" );
+			return mapping.findForward( "not_found" );
 		}
 
+		year = (String)request.getParameter( "year" );
+		
 		try {
 			
 			if ( (dataSource = getDataSource( request, "NATC_DB" )) == null ) {
@@ -54,20 +58,37 @@ public class ManagerAction extends Action {
 			
 				throw new Exception( "Cannot get db connection." );
 			}
+
+			if ( year == null ) {
+
+				scheduleService = new ScheduleServiceImpl( dbConn, null );
+
+				Schedule schedule = scheduleService.getLastScheduleEntry();
+
+				year = schedule.getYear();
+				
+				managerService = new ManagerServiceImpl( dbConn, year );
+				
+				if ( (manager = managerService.getLatestManagerById( Integer.parseInt( manager_id ) )) == null ) {
+					
+					return mapping.findForward( "not_found" );
+				}
+			}
+			else {
+				
+				managerService = new ManagerServiceImpl( dbConn, year );
 			
-			scheduleService = new ScheduleServiceImpl( dbConn, null );
+				if ( (manager = managerService.getManagerById( Integer.parseInt( manager_id ) )) == null ) {
 			
-			Schedule schedule = scheduleService.getLastScheduleEntry();
-			
-			managerService = new ManagerServiceImpl( dbConn, schedule.getYear() );
-			
-			Manager manager = managerService.getLatestManagerById( Integer.parseInt( manager_id ) );
+					return mapping.findForward( "not_found" );
+				}
+			}
 			
 			request.setAttribute( "manager", manager );
 			
 			if ( manager.getTeam_id() != 0 ) {
 			
-				teamService = new TeamServiceImpl( dbConn, schedule.getYear() );
+				teamService = new TeamServiceImpl( dbConn, year );
 				
 				Team team        = teamService.getTeamById( manager.getTeam_id() );
 				List teamOffense = null;

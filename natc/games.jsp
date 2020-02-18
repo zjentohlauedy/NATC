@@ -15,6 +15,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -548,5 +551,298 @@
   </logic:iterate>
 </logic:present>
 
+<logic:present name="preseasonPlayerGames">
+<table class="boxscores">
+  <tr class="label">
+    <td colspan="19"><bean:message key="player.label.preseason"/></td>
+  </tr>
+  <tr class="heading">
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.date"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.opponent"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+  </tr>
+    <tbody id="prePlayerGames">
+    <logic:iterate id="playerGameView" name="preseasonPlayerGames">
+      <tr>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerGameView" paramProperty="game_id">
+            <bean:write name="playerGameView" property="datestamp" />
+          </html:link>
+        </td>
+        <td>
+          <logic:equal name="playerGameView" property="road" value="true">
+            <h7><bean:message key="player.label.at" /></h7>
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerGameView" paramProperty="opponent">
+            <bean:write name="playerGameView" property="opponent_abbrev" />
+          </html:link>
+        </td>
+        <td>
+          <bean:write name="playerGameView" property="gameTimeDsp"          />
+          <logic:equal name="playerGameView" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
+          </logic:equal>
+          <logic:equal name="playerGameView" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
+        </td>
+        <td><bean:write name="playerGameView" property="points"               /></td>
+        <td><bean:write name="playerGameView" property="attempts"             /></td>
+        <td><bean:write name="playerGameView" property="goals"                /></td>
+        <td><bean:write name="playerGameView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerGameView" property="assists"              /></td>
+        <td><bean:write name="playerGameView" property="turnovers"            /></td>
+        <td><bean:write name="playerGameView" property="stops"                /></td>
+        <td><bean:write name="playerGameView" property="steals"               /></td>
+        <td><bean:write name="playerGameView" property="penalties"            /></td>
+        <td><bean:write name="playerGameView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerGameView" property="psa"                  /></td>
+        <td><bean:write name="playerGameView" property="psm"                  /></td>
+        <td><bean:write name="playerGameView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerGameView" property="ot_psa"               /></td>
+        <td><bean:write name="playerGameView" property="ot_psm"               /></td>
+        <td><bean:write name="playerGameView" property="otPsEfficiencyDsp"    /></td>
+      </tr>
+    </logic:iterate>
+    </tbody>
+</table>
+</logic:present>
+
+<logic:present name="seasonPlayerGames">
+<table class="boxscores">
+  <tr class="label">
+    <td colspan="19"><bean:message key="player.label.regseason"/></td>
+  </tr>
+  <tr class="heading">
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.date"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.opponent"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+  </tr>
+    <tbody id="regPlayerGames">
+    <logic:iterate id="playerGameView" name="seasonPlayerGames">
+      <tr>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerGameView" paramProperty="game_id">
+            <bean:write name="playerGameView" property="datestamp" />
+          </html:link>
+        </td>
+        <td>
+          <logic:equal name="playerGameView" property="road" value="true">
+            <h7><bean:message key="player.label.at" /></h7>
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerGameView" paramProperty="opponent">
+            <bean:write name="playerGameView" property="opponent_abbrev" />
+          </html:link>
+        </td>
+        <td>
+          <bean:write name="playerGameView" property="gameTimeDsp"          />
+          <logic:equal name="playerGameView" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
+          </logic:equal>
+          <logic:equal name="playerGameView" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
+        </td>
+        <td><bean:write name="playerGameView" property="points"               /></td>
+        <td><bean:write name="playerGameView" property="attempts"             /></td>
+        <td><bean:write name="playerGameView" property="goals"                /></td>
+        <td><bean:write name="playerGameView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerGameView" property="assists"              /></td>
+        <td><bean:write name="playerGameView" property="turnovers"            /></td>
+        <td><bean:write name="playerGameView" property="stops"                /></td>
+        <td><bean:write name="playerGameView" property="steals"               /></td>
+        <td><bean:write name="playerGameView" property="penalties"            /></td>
+        <td><bean:write name="playerGameView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerGameView" property="psa"                  /></td>
+        <td><bean:write name="playerGameView" property="psm"                  /></td>
+        <td><bean:write name="playerGameView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerGameView" property="ot_psa"               /></td>
+        <td><bean:write name="playerGameView" property="ot_psm"               /></td>
+        <td><bean:write name="playerGameView" property="otPsEfficiencyDsp"    /></td>
+      </tr>
+    </logic:iterate>
+    </tbody>
+</table>
+</logic:present>
+
+<logic:present name="postseasonPlayerGames">
+<table class="boxscores">
+  <tr class="label">
+    <td colspan="19"><bean:message key="player.label.postseason"/></td>
+  </tr>
+  <tr class="heading">
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.date"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.opponent"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+  </tr>
+    <tbody id="postPlayerGames">
+    <logic:iterate id="playerGameView" name="postseasonPlayerGames">
+      <tr>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerGameView" paramProperty="game_id">
+            <bean:write name="playerGameView" property="datestamp" />
+          </html:link>
+        </td>
+        <td>
+          <logic:equal name="playerGameView" property="road" value="true">
+            <h7><bean:message key="player.label.at" /></h7>
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerGameView" paramProperty="opponent">
+            <bean:write name="playerGameView" property="opponent_abbrev" />
+          </html:link>
+        </td>
+        <td>
+          <bean:write name="playerGameView" property="gameTimeDsp"          />
+          <logic:equal name="playerGameView" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
+          </logic:equal>
+          <logic:equal name="playerGameView" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
+        </td>
+        <td><bean:write name="playerGameView" property="points"               /></td>
+        <td><bean:write name="playerGameView" property="attempts"             /></td>
+        <td><bean:write name="playerGameView" property="goals"                /></td>
+        <td><bean:write name="playerGameView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerGameView" property="assists"              /></td>
+        <td><bean:write name="playerGameView" property="turnovers"            /></td>
+        <td><bean:write name="playerGameView" property="stops"                /></td>
+        <td><bean:write name="playerGameView" property="steals"               /></td>
+        <td><bean:write name="playerGameView" property="penalties"            /></td>
+        <td><bean:write name="playerGameView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerGameView" property="psa"                  /></td>
+        <td><bean:write name="playerGameView" property="psm"                  /></td>
+        <td><bean:write name="playerGameView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerGameView" property="ot_psa"               /></td>
+        <td><bean:write name="playerGameView" property="ot_psm"               /></td>
+        <td><bean:write name="playerGameView" property="otPsEfficiencyDsp"    /></td>
+      </tr>
+    </logic:iterate>
+    </tbody>
+</table>
+</logic:present>
+
+<logic:present name="allstarPlayerGames">
+<table class="boxscores">
+  <tr class="label">
+    <td colspan="19"><bean:message key="player.label.allstar"/></td>
+  </tr>
+  <tr class="heading">
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.date"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.opponent"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="player.label.eff"       /></a></td>
+  </tr>
+    <tbody id="asPlayerGames">
+    <logic:iterate id="playerGameView" name="allstarPlayerGames">
+      <tr>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerGameView" paramProperty="game_id">
+            <bean:write name="playerGameView" property="datestamp" />
+          </html:link>
+        </td>
+        <td>
+          <logic:equal name="playerGameView" property="road" value="true">
+            <h7><bean:message key="player.label.at" /></h7>
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerGameView" paramProperty="opponent">
+            <bean:write name="playerGameView" property="opponent_abbrev" />
+          </html:link>
+        </td>
+        <td>
+          <bean:write name="playerGameView" property="gameTimeDsp"          />
+          <logic:equal name="playerGameView" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
+          </logic:equal>
+          <logic:equal name="playerGameView" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
+        </td>
+        <td><bean:write name="playerGameView" property="points"               /></td>
+        <td><bean:write name="playerGameView" property="attempts"             /></td>
+        <td><bean:write name="playerGameView" property="goals"                /></td>
+        <td><bean:write name="playerGameView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerGameView" property="assists"              /></td>
+        <td><bean:write name="playerGameView" property="turnovers"            /></td>
+        <td><bean:write name="playerGameView" property="stops"                /></td>
+        <td><bean:write name="playerGameView" property="steals"               /></td>
+        <td><bean:write name="playerGameView" property="penalties"            /></td>
+        <td><bean:write name="playerGameView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerGameView" property="psa"                  /></td>
+        <td><bean:write name="playerGameView" property="psm"                  /></td>
+        <td><bean:write name="playerGameView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerGameView" property="ot_psa"               /></td>
+        <td><bean:write name="playerGameView" property="ot_psm"               /></td>
+        <td><bean:write name="playerGameView" property="otPsEfficiencyDsp"    /></td>
+      </tr>
+    </logic:iterate>
+    </tbody>
+</table>
+</logic:present>
+
 </body>
 </html:html>
+  
