@@ -64,6 +64,10 @@ h2 {
 	width: 50%;
 }
 
+.round #rank {
+	width: 10%;	
+}
+
 .game {
 	float: left;
 	width: 10%;
@@ -258,6 +262,6 @@ h2 {
 	clear: both;
 }
 
-.round #rank {
-	width: 10%;	
+.playoff_node {
+	width: 80px;
 }

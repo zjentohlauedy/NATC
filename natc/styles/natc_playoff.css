@@ -1,250 +1,247 @@
 
-#bracket {
-  position: absolute;
-  left:     10px;
-  top:      10px;
-  width:    1000;
-  height:   500;
+.bracket {
+  width:    1200px;
+  height:   500px;
 }
 
 #r1d0t1 {
   position: absolute;
   left:     10px;
-  top:      10px;
+  top:      85px;
 }
 
 #r1d0t4 {
   position: absolute;
   left:     10px;
-  top:      70px;
+  top:      149px;
 }
 
 #r1d0t2 {
   position: absolute;
   left:     10px;
-  top:      130px;
+  top:      213px;
 }
 
 #r1d0t3 {
   position: absolute;
   left:     10px;
-  top:      190px;
+  top:      277px;
 }
 
 #r1d1t1 {
   position: absolute;
   left:     10px;
-  top:      250px;
+  top:      341px;
 }
 
 #r1d1t4 {
   position: absolute;
   left:     10px;
-  top:      310px;
+  top:      405px;
 }
 
 #r1d1t2 {
   position: absolute;
   left:     10px;
-  top:      370px;
+  top:      469px;
 }
 
 #r1d1t3 {
   position: absolute;
   left:     10px;
-  top:      430px;
+  top:      533px;
 }
 
 #r1d2t1 {
   position: absolute;
-  left:     990px;
-  top:      10px;
+  left:     1110px;
+  top:      85px;
 }
 
 #r1d2t4 {
   position: absolute;
-  left:     990px;
-  top:      70px;
+  left:     1110px;
+  top:      149px;
 }
 
 #r1d2t2 {
   position: absolute;
-  left:     990px;
-  top:      130px;
+  left:     1110px;
+  top:      213px;
 }
 
 #r1d2t3 {
   position: absolute;
-  left:     990px;
-  top:      190px;
+  left:     1110px;
+  top:      277px;
 }
 
 #r1d3t1 {
   position: absolute;
-  left:     990px;
-  top:      250px;
+  left:     1110px;
+  top:      341px;
 }
 
 #r1d3t4 {
   position: absolute;
-  left:     990px;
-  top:      310px;
+  left:     1110px;
+  top:      405px;
 }
 
 #r1d3t2 {
   position: absolute;
-  left:     990px;
-  top:      370px;
+  left:     1110px;
+  top:      469px;
 }
 
 #r1d3t3 {
   position: absolute;
-  left:     990px;
-  top:      430px;
+  left:     1110px;
+  top:      533px;
 }
 
 
 
 #r2d0t1 {
   position: absolute;
-  left:     110px;
-  top:      40px;
+  left:     148px;
+  top:      117px;
 }
 
 #r2d0t4 {
   position: absolute;
-  left:     110px;
-  top:      40px;
+  left:     148px;
+  top:      117px;
 }
 
 #r2d0t2 {
   position: absolute;
-  left:     110px;
-  top:      160px;
+  left:     148px;
+  top:      245px;
 }
 
 #r2d0t3 {
   position: absolute;
-  left:     110px;
-  top:      160px;
+  left:     148px;
+  top:      245px;
 }
 
 #r2d1t1 {
   position: absolute;
-  left:     110px;
-  top:      280px;
+  left:     148px;
+  top:      373px;
 }
 
 #r2d1t4 {
   position: absolute;
-  left:     110px;
-  top:      280px;
+  left:     148px;
+  top:      373px;
 }
 
 #r2d1t2 {
   position: absolute;
-  left:     110px;
-  top:      400px;
+  left:     148px;
+  top:      501px;
 }
 
 #r2d1t3 {
   position: absolute;
-  left:     110px;
-  top:      400px;
+  left:     148px;
+  top:      501px;
 }
 
 #r2d2t1 {
   position: absolute;
-  left:     890px;
-  top:      40px;
+  left:     972px;
+  top:      117px;
 }
 
 #r2d2t4 {
   position: absolute;
-  left:     890px;
-  top:      40px;
+  left:     972px;
+  top:      117px;
 }
 
 #r2d2t2 {
   position: absolute;
-  left:     890px;
-  top:      160px;
+  left:     972px;
+  top:      245px;
 }
 
 #r2d2t3 {
   position: absolute;
-  left:     890px;
-  top:      160px;
+  left:     972px;
+  top:      245px;
 }
 
 #r2d3t1 {
   position: absolute;
-  left:     890px;
-  top:      280px;
+  left:     972px;
+  top:      373px;
 }
 
 #r2d3t4 {
   position: absolute;
-  left:     890px;
-  top:      280px;
+  left:     972px;
+  top:      373px;
 }
 
 #r2d3t2 {
   position: absolute;
-  left:     890px;
-  top:      400px;
+  left:     972px;
+  top:      501px;
 }
 
 #r2d3t3 {
   position: absolute;
-  left:     890px;
-  top:      400px;
+  left:     972px;
+  top:      501px;
 }
 
 
 
 #r3d0 {
   position: absolute;
-  left:     210px;
-  top:      100px;
+  left:     285px;
+  top:      181px;
 }
 
 #r3d1 {
   position: absolute;
-  left:     210px;
-  top:      340px;
+  left:     285px;
+  top:      437px;
 }
 
 #r3d2 {
   position: absolute;
-  left:     790px;
-  top:      100px;
+  left:     835px;
+  top:      181px;
 }
 
 #r3d3 {
   position: absolute;
-  left:     790px;
-  top:      340px;
+  left:     835px;
+  top:      437px;
 }
 
 
 
 #r4c0 {
   position: absolute;
-  left:     310px;
-  top:      220px;
+  left:     422px;
+  top:      309px;
 }
 
 #r4c1 {
   position: absolute;
-  left:     690px;
-  top:      220px;
+  left:     698px;
+  top:      309px;
 }
 
 
 
 #r5 {
   position: absolute;
-  left:     490px;
+  left:     560px;
   top:      200px;
 }

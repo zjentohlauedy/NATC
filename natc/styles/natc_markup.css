@@ -203,3 +203,15 @@ a:hover {
 	font-style: normal;
 	color: #ffff00;
 }
+
+.playoff_node {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.playoff_node #rank {
+	font-size: 8pt;
+	font-weight: normal;
+	font-style: normal;
+	color: #888800;
+}

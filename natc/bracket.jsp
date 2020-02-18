@@ -37,84 +37,149 @@
 <h1>NATC PLAYOFFS</h1>
 
 <logic:present name="round1">
-  <table class="bracket"><tr><td></td></tr></table>
+  <table border="1" class="bracket"><tr><td></td></tr></table>
 
   <logic:iterate id="team" name="round1">
-    <table id='r1d<bean:write name="team" property="division" />t<bean:write name="team" property="division_rank" />'>
+    <table class="playoff_node" id='r1d<bean:write name="team" property="division" />t<bean:write name="team" property="division_rank" />'>
       <tr>
-        <td id="rank" align="right" valign="middle" height="24">
-          <bean:write name="team" property="division_rank" />
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-            <bean:write name="team" property="abbrev" />
-          </html:link>
-        </td>
-        <td><bean:write name="team" property="round1_wins" /></td>
+        <logic:equal name="team" property="conference" value="0">
+          <td id="rank" align="right" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+          <td align="left">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td><bean:write name="team" property="round1_wins" /></td>
+        </logic:equal>
+        <logic:equal name="team" property="conference" value="1">
+          <td><bean:write name="team" property="round1_wins" /></td>
+          <td align="right">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td id="rank" align="left" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+        </logic:equal>
       </tr>
     </table>
   </logic:iterate>
 
   <logic:iterate id="team" name="round2">
-    <table id='r2d<bean:write name="team" property="division" />t<bean:write name="team" property="division_rank" />'>
+    <table class="playoff_node" id='r2d<bean:write name="team" property="division" />t<bean:write name="team" property="division_rank" />'>
       <tr>
-        <td id="rank">
-          <bean:write name="team" property="division_rank" />
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-            <bean:write name="team" property="abbrev" />
-          </html:link>
-        </td>
-        <td><bean:write name="team" property="round2_wins" /></td>
+        <logic:equal name="team" property="conference" value="0">
+          <td id="rank" align="right" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+          <td align="left">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td><bean:write name="team" property="round2_wins" /></td>
+        </logic:equal>
+        <logic:equal name="team" property="conference" value="1">
+          <td><bean:write name="team" property="round2_wins" /></td>
+          <td align="right">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td id="rank" align="left" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+        </logic:equal>
       </tr>
     </table>
   </logic:iterate>
 
   <logic:iterate id="team" name="round3">
-    <table id='r3d<bean:write name="team" property="division" />'>
+    <table class="playoff_node" id='r3d<bean:write name="team" property="division" />'>
       <tr>
-        <td id="rank">
-          <bean:write name="team" property="division_rank" />
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-            <bean:write name="team" property="abbrev" />
-          </html:link>
-        </td>
-        <td><bean:write name="team" property="round3_wins" /></td>
+        <logic:equal name="team" property="conference" value="0">
+          <td id="rank" align="right" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+          <td align="left">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td><bean:write name="team" property="round3_wins" /></td>
+        </logic:equal>
+        <logic:equal name="team" property="conference" value="1">
+          <td><bean:write name="team" property="round3_wins" /></td>
+          <td align="right">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td id="rank" align="left" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+        </logic:equal>
       </tr>
     </table>
   </logic:iterate>
 
   <logic:iterate id="team" name="round4">
-    <table id='r4c<bean:write name="team" property="conference" />'>
+    <table class="playoff_node" id='r4c<bean:write name="team" property="conference" />'>
       <tr>
-        <td id="rank">
-          <bean:write name="team" property="division_rank" />
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-            <bean:write name="team" property="abbrev" />
-          </html:link>
-        </td>
-        <td></td>
+        <logic:equal name="team" property="conference" value="0">
+          <td id="rank" align="right" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+          <td align="left">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td></td>
+        </logic:equal>
+        <logic:equal name="team" property="conference" value="1">
+          <td></td>
+          <td align="right">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td id="rank" align="left" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+        </logic:equal>
       </tr>
     </table>
   </logic:iterate>
 
   <logic:iterate id="team" name="round5">
-    <table id="r5">
+    <table class="playoff_node" id="r5">
       <tr>
-        <td id="rank">
-          <bean:write name="team" property="division_rank" />
-        </td>
-        <td>
-          <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-            <bean:write name="team" property="abbrev" />
-          </html:link>
-        </td>
-        <td></td>
+        <logic:equal name="team" property="conference" value="0">
+          <td id="rank" align="right" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+          <td align="left">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td></td>
+        </logic:equal>
+        <logic:equal name="team" property="conference" value="1">
+          <td></td>
+          <td align="right">
+            <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+              <bean:write name="team" property="abbrev" />
+            </html:link>
+          </td>
+          <td id="rank" align="left" valign="middle" height="24">
+            <bean:write name="team" property="division_rank" />
+          </td>
+        </logic:equal>
       </tr>
     </table>
   </logic:iterate>
