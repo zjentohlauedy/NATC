@@ -287,6 +287,11 @@ public class GamesAction extends Action {
 					request.setAttribute( "games", data );
 				}
 
+				if ( (data = gameService.getInjuriesByDate( scheduleEntry.getScheduled() )) != null ) {
+					
+					request.setAttribute( "injuries", data );
+				}
+				
 				nextPage = "games";
 
 				break;
@@ -322,6 +327,11 @@ public class GamesAction extends Action {
 					request.setAttribute( "games", data );
 				}
 
+				if ( (data = gameService.getInjuriesByDate( scheduleEntry.getScheduled() )) != null ) {
+					
+					request.setAttribute( "injuries", data );
+				}
+				
 				nextPage = "games";
 
 				break;
@@ -480,6 +490,11 @@ public class GamesAction extends Action {
 					request.setAttribute( "games", data );
 				}
 
+				if ( (data = gameService.getInjuriesByDate( scheduleEntry.getScheduled() )) != null ) {
+					
+					request.setAttribute( "injuries", data );
+				}
+				
 				nextPage = "games";
 				
 				break;
@@ -514,6 +529,11 @@ public class GamesAction extends Action {
 					request.setAttribute( "games", data );
 				}
 
+				if ( (data = gameService.getInjuriesByDate( scheduleEntry.getScheduled() )) != null ) {
+					
+					request.setAttribute( "injuries", data );
+				}
+				
 				nextPage = "games";
 
 				break;

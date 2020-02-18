@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import natc.data.Constants;
+import natc.data.Injury;
 import natc.data.Manager;
 import natc.data.Match;
 import natc.data.Player;
@@ -31,6 +32,7 @@ import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
 import natc.view.DraftView;
 import natc.view.GameView;
+import natc.view.InjuryView;
 import natc.view.ReleaseView;
 import natc.view.ResignView;
 import natc.view.RetiredView;
@@ -363,6 +365,57 @@ public class GameServiceImpl implements GameService {
 		return id;
 	}
 
+	private void findInjuredPlayer( Team t1, Team t2, List injuries ) {
+	
+		ArrayList playersInGame = new ArrayList();
+		
+		playersInGame.addAll( t1.getPlayers() );
+		playersInGame.addAll( t2.getPlayers() );
+		
+		Iterator i = playersInGame.iterator();
+		
+		double total_rating = 0.0;
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			if ( ! player.isIn_game() ) continue;
+				
+			total_rating += (1.0 - player.getDurability()); // Use the inverse of durability rating
+		}
+		
+		i = playersInGame.iterator();
+		
+		double x = Math.random() * total_rating;
+		
+		while ( i.hasNext() ) {
+			
+			Player player = (Player)i.next();
+			
+			if ( ! player.isIn_game() ) continue;
+				
+			x -= (1.0 - player.getDurability()); // Use the inverse of durability rating
+			
+			if ( x <= 0 ) {
+			
+				// This is the injured player
+				player.injurePlayer( t1.getGame().getDatestamp() );
+				
+				Injury injury = new Injury();
+				
+				injury.setGame_id(       t1.getGame().getGame_id() );
+				injury.setTeam_id(   player.getTeam_id()           );
+				injury.setPlayer_id( player.getPlayer_id()         );
+				injury.setDuration(  player.getDuration()          );
+				
+				injuries.add( injury );
+				
+				break;
+			}
+		}
+	}
+	
 	private boolean isPenaltyShotGood( Player shooter, Team offense, Team defense ) {
 	
 		double pbb = 50.0 + (40.0 * shooter.getAdjustedPenalty_shot()) + (10.0 * (offense.getPs_offense() - defense.getPs_defense()));
@@ -375,6 +428,18 @@ public class GameServiceImpl implements GameService {
 		return false;
 	}
 	
+	private void removeInjuredPlayers( List players ) {
+	
+		Iterator i = players.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			if ( player.isInjured() ) i.remove();
+		}
+	}
+	
 	private void simulateOvertime( Team homeTeam, Team roadTeam ) {
 
 		homeTeam.getGame().setOvertime( true );
@@ -383,8 +448,8 @@ public class GameServiceImpl implements GameService {
 		ArrayList homeShooters = new ArrayList( homeTeam.getPlayers() );
 		ArrayList roadShooters = new ArrayList( roadTeam.getPlayers() );
 		
-		//Collections.copy( homeShooters, homeTeam.getPlayers() );
-		//Collections.copy( roadShooters, roadTeam.getPlayers() );
+		removeInjuredPlayers( homeShooters );
+		removeInjuredPlayers( roadShooters );
 		
 		// overtime penalty shots - sort the player list by penalty shot attribute
 		Collections.sort( homeShooters, new Comparator() { public int compare( Object arg1, Object arg2 ){
@@ -399,11 +464,12 @@ public class GameServiceImpl implements GameService {
 			/**/                                                               return (p1.getAdjustedPenalty_shot() > p2.getAdjustedPenalty_shot()) ? 1 : -1; } });
 		Collections.reverse( roadShooters );
 
-		int p = 0;
+		int homeIdx = 0;
+		int roadIdx = 0;
 		
 		while ( homeTeam.getGame().getScore().getScore() == roadTeam.getGame().getScore().getScore() ) {
 		
-			Player shooter = (Player)roadShooters.get( p );
+			Player shooter = (Player)roadShooters.get( roadIdx );
 			
 			// Player and road team get an attempt
 			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
@@ -423,7 +489,7 @@ public class GameServiceImpl implements GameService {
 				roadTeam.getGame().getScore().setScore( roadTeam.getGame().getScore().getScore() + 1 );
 			}
 			
-			shooter = (Player)homeShooters.get( p );
+			shooter = (Player)homeShooters.get( homeIdx );
 			
 			// Player and home team get an attempt
 			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
@@ -443,14 +509,16 @@ public class GameServiceImpl implements GameService {
 				homeTeam.getGame().getScore().setScore( homeTeam.getGame().getScore().getScore() + 1 );
 			}
 			
-			p++;
+			homeIdx++;
+			roadIdx++;
 			
 			// All players have taken a shot, start over from the top
-			if ( p >= homeTeam.getPlayers().size() ) p = 0;
+			if ( homeIdx >= homeTeam.getPlayers().size() ) homeIdx = 0;
+			if ( roadIdx >= roadTeam.getPlayers().size() ) roadIdx = 0;
 		}
 	}
 	
-	private void simulateGame( Team roadTeam, Team homeTeam, int game_type ) {
+	private void simulateGame( Team roadTeam, Team homeTeam, List injuries, int game_type ) {
 		
 		Team    attacker      = null;
 		boolean clock_stopped = true;
@@ -622,6 +690,15 @@ public class GameServiceImpl implements GameService {
 					break;
 				}
 				
+				// Check for an injury
+				if ( Math.random() > 0.999 ) {
+					
+					// There was an injury - 1 in 1000 chance - static
+					findInjuredPlayer( homeTeam, roadTeam, injuries );
+					
+					clock_stopped = true;
+				}
+				
 				// If clock is stopped, substitute players if necessary
 				if ( clock_stopped ) {
 				
@@ -682,7 +759,9 @@ public class GameServiceImpl implements GameService {
 		roadTeam.initPlayerGames();
 		homeTeam.initPlayerGames();
 		
-		simulateGame( roadTeam, homeTeam, type );
+		List injuries = new ArrayList();
+		
+		simulateGame( roadTeam, homeTeam, injuries, type );
 
 		Score homeScore = homeTeam.getGame().getScore();
 		Score roadScore = roadTeam.getGame().getScore();
@@ -918,6 +997,11 @@ public class GameServiceImpl implements GameService {
 			playerService.insertPlayerGame( player.getGame() );
 			
 			playerService.updatePlayerStats( player, type );
+			
+			if ( player.isInjured() ) {
+				
+				playerService.updatePlayerInjury( player );
+			}
 		}
 		
 		i = roadTeam.getPlayers().iterator();
@@ -929,6 +1013,20 @@ public class GameServiceImpl implements GameService {
 			playerService.insertPlayerGame( player.getGame() );
 			
 			playerService.updatePlayerStats( player, type );
+			
+			if ( player.isInjured() ) {
+				
+				playerService.updatePlayerInjury( player );
+			}
+		}
+		
+		i = injuries.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Injury injury = (Injury)i.next();
+			
+			playerService.insertInjury( injury );
 		}
 	}
 
@@ -1029,6 +1127,11 @@ public class GameServiceImpl implements GameService {
 	
 	public void processScheduleEvent( Schedule event ) throws SQLException {
 	
+		// Check for injured players that are ready to return
+		PlayerService playerService = new PlayerServiceImpl( dbConn, event.getYear() );
+		
+		playerService.clearInjuries( event.getScheduled() );
+		
 		switch ( event.getType().getValue() ) {
 		
 		case ScheduleType.BEGINNING_OF_SEASON:     /* Nothing to do here */        break;
@@ -2590,6 +2693,47 @@ public class GameServiceImpl implements GameService {
 		}
 		
 		return playersList;
+	}
+
+	public List getInjuriesByDate(Date datestamp) throws SQLException {
+
+		PreparedStatement ps           = null;
+		ResultSet         dbRs         = null;
+		List              injuriesList = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getInjuriesByDateSelectPs( dbConn );
+			
+			ps.setString( 1,                    year                  );
+			ps.setString( 2,                    year                  );
+			ps.setDate(   3, new java.sql.Date( datestamp.getTime() ) );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				InjuryView injuryView = new InjuryView();
+				
+				injuryView.setPlayer_id(   dbRs.getInt(    1 ) );
+				injuryView.setFirst_name(  dbRs.getString( 2 ) );
+				injuryView.setLast_name(   dbRs.getString( 3 ) );
+				injuryView.setTeam_id(     dbRs.getInt(    4 ) );
+				injuryView.setTeam_abbrev( dbRs.getString( 5 ) );
+				injuryView.setDuration(    dbRs.getInt(    6 ) );
+				
+				if ( injuriesList == null ) injuriesList = new ArrayList();
+				
+				injuriesList.add( injuryView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return injuriesList;
 	}
 
 }

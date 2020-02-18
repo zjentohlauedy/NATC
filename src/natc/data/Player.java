@@ -1,5 +1,8 @@
 package natc.data;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class Player {
 
 	public static final double MAX_FATIGUE_RATE = (1.0 / 300.0); // 5 minutes
@@ -44,6 +47,11 @@ public class Player {
 	private boolean resting;
 	private boolean played_in_game;
 	
+	private double  durability;
+	private boolean injured;
+	private int     duration;
+	private Date    return_date;
+	
 	private boolean rookie;
 	private boolean retired;
 	
@@ -86,6 +94,10 @@ public class Player {
 		this.playing         = false;
 		this.resting         = false;
 		this.played_in_game  = false;
+		this.durability      = 0;
+		this.injured         = false;
+		this.duration        = 0;
+		this.return_date     = null;
 		this.rookie          = false;
 		this.retired         = false;
 		this.award           = 0;
@@ -124,6 +136,10 @@ public class Player {
 		this.playing         = false;
 		this.resting         = false;
 		this.played_in_game  = false;
+		this.durability      = Math.random();
+		this.injured         = false;
+		this.duration        = 0;
+		this.return_date     = null;
 		this.rookie          = true;
 		this.retired         = false;
 		this.award           = 0;
@@ -880,6 +896,39 @@ public class Player {
 		return (int)Math.ceil( (1.0 - this.fatigue) / fatigue_rate );
 	}
 
+	public void injurePlayer( Date injuryDate ) {
+	
+		//    index                        0    1   2   3   4   5   6  7  8  9 10 11 12 13 14
+		//    score                        1    2   3   4   5   6   7  8  9 10 11 12 13 14 15
+		int[] injury_types = new int[] { 999, 112, 84, 56, 28, 21, 14, 7, 6, 5, 4, 3, 2, 1, 0 };
+		
+		int total_score = 120;
+		
+		int roll = (int)Math.round( Math.random() * (double)total_score );
+		
+		for ( int i = 0; i < 15; ++i ) {
+		
+			if ( (roll -= (i + 1)) <= 0 ) {
+			
+				this.duration = injury_types[i];
+				
+				break;
+			}
+		}
+		
+		this.injured = true;
+		
+		Calendar cal = Calendar.getInstance();
+		
+		cal.setTime( injuryDate );
+		
+		cal.add( Calendar.DAY_OF_YEAR, duration + 1 ); // min duration is 0 so earliest return date is tomorrow
+		
+		this.return_date = cal.getTime();
+		
+		this.game.setInjured( true );
+	}
+	
 	public int getPlayer_id() {
 		return player_id;
 	}
@@ -1150,6 +1199,38 @@ public class Player {
 
 	public void setPlayed_in_game(boolean playedInGame) {
 		played_in_game = playedInGame;
+	}
+
+	public double getDurability() {
+		return durability;
+	}
+
+	public void setDurability(double durability) {
+		this.durability = durability;
+	}
+
+	public boolean isInjured() {
+		return injured;
+	}
+
+	public void setInjured(boolean injured) {
+		this.injured = injured;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public Date getReturn_date() {
+		return return_date;
+	}
+
+	public void setReturn_date(Date returnDate) {
+		return_date = returnDate;
 	}
 
 }

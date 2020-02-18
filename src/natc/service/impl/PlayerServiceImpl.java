@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import natc.data.Injury;
 import natc.data.Player;
 import natc.data.PlayerGame;
 import natc.data.PlayerScore;
@@ -151,12 +153,18 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setDouble(  17, player.getEndurance()       );
 			ps.setDouble(  18, player.getConfidence()      );
 			ps.setDouble(  19, player.getVitality()        );
-			ps.setBoolean( 20, player.isRookie()           );
-			ps.setBoolean( 21, player.isRetired()          );
-			ps.setInt(     22, player.getAward()           );
-			ps.setInt(     23, player.getDraft_pick()      );
-			ps.setInt(     24, player.getSeasons_played()  );
-			ps.setBoolean( 25, player.isReleased()         );
+			ps.setDouble(  20, player.getDurability()      );
+			ps.setBoolean( 21, player.isRookie()           );
+			ps.setBoolean( 22, player.isInjured()          );
+			
+			if   ( player.getReturn_date() != null ) ps.setDate( 23, new java.sql.Date( player.getReturn_date().getTime() ) );
+			else                                     ps.setNull( 23,                     Types.DATE                         );
+			
+			ps.setBoolean( 24, player.isRetired()          );
+			ps.setInt(     25, player.getAward()           );
+			ps.setInt(     26, player.getDraft_pick()      );
+			ps.setInt(     27, player.getSeasons_played()  );
+			ps.setBoolean( 28, player.isReleased()         );
 			
 			ps.executeUpdate();
 		}
@@ -214,18 +222,24 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setDouble(  15, player.getEndurance()       );
 			ps.setDouble(  16, player.getConfidence()      );
 			ps.setDouble(  17, player.getVitality()        );
-			ps.setBoolean( 18, player.isRookie()           );
-			ps.setBoolean( 19, player.isRetired()          );
-			ps.setInt(     20, player.getAward()           );
-			ps.setInt(     21, player.getDraft_pick()      );
-			ps.setInt(     22, player.getSeasons_played()  );
-			ps.setBoolean( 23, player.isReleased()         );
+			ps.setDouble(  18, player.getDurability()      );
+			ps.setBoolean( 19, player.isRookie()           );
+			ps.setBoolean( 20, player.isInjured()          );
 			
-			if   ( player.getReleased_by() == 0 ) ps.setNull( 24, Types.INTEGER           );
-			else                                  ps.setInt(  24, player.getReleased_by() );
+			if   ( player.getReturn_date() != null ) ps.setDate( 21, new java.sql.Date( player.getReturn_date().getTime() ) );
+			else                                     ps.setNull( 21,                     Types.DATE                         );
 			
-			ps.setString(  25, year                        );
-			ps.setInt(     26, player.getPlayer_id()       );
+			ps.setBoolean( 22, player.isRetired()          );
+			ps.setInt(     23, player.getAward()           );
+			ps.setInt(     24, player.getDraft_pick()      );
+			ps.setInt(     25, player.getSeasons_played()  );
+			ps.setBoolean( 26, player.isReleased()         );
+			
+			if   ( player.getReleased_by() == 0 ) ps.setNull( 27, Types.INTEGER           );
+			else                                  ps.setInt(  27, player.getReleased_by() );
+			
+			ps.setString(  28, year                        );
+			ps.setInt(     29, player.getPlayer_id()       );
 			
 			ps.executeUpdate();
 		}
@@ -274,14 +288,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 			}
 		}
 		finally {
@@ -342,14 +359,17 @@ public class PlayerServiceImpl implements PlayerService {
 					player.setEndurance(       dbRs2.getDouble(  17 ) );
 					player.setConfidence(      dbRs2.getDouble(  18 ) );
 					player.setVitality(        dbRs2.getDouble(  19 ) );
-					player.setRookie(          dbRs2.getBoolean( 20 ) );
-					player.setRetired(         dbRs2.getBoolean( 21 ) );
-					player.setAward(           dbRs2.getInt(     22 ) );
-					player.setDraft_pick(      dbRs2.getInt(     23 ) );
-					player.setSeasons_played(  dbRs2.getInt(     24 ) );
-					player.setAllstar_team_id( dbRs2.getInt(     25 ) );
-					player.setReleased(        dbRs2.getBoolean( 26 ) );
-					player.setReleased_by(     dbRs2.getInt(     27 ) );
+					player.setDurability(      dbRs2.getDouble(  20 ) );
+					player.setRookie(          dbRs2.getBoolean( 21 ) );
+					player.setInjured(         dbRs2.getBoolean( 22 ) );
+					player.setReturn_date(     dbRs2.getDate(    23 ) );
+					player.setRetired(         dbRs2.getBoolean( 24 ) );
+					player.setAward(           dbRs2.getInt(     25 ) );
+					player.setDraft_pick(      dbRs2.getInt(     26 ) );
+					player.setSeasons_played(  dbRs2.getInt(     27 ) );
+					player.setAllstar_team_id( dbRs2.getInt(     28 ) );
+					player.setReleased(        dbRs2.getBoolean( 29 ) );
+					player.setReleased_by(     dbRs2.getInt(     30 ) );
 				}
 			}
 		}
@@ -487,14 +507,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -549,14 +572,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -680,14 +706,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -741,14 +770,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -809,25 +841,26 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps = DatabaseImpl.getPlayerGameInsertPs( dbConn );
 			
-			ps.setInt(    1,                    playerGame.getGame_id()               );
-			ps.setString( 2,                    playerGame.getYear()                  );
-			ps.setDate(   3, new java.sql.Date( playerGame.getDatestamp().getTime() ) );
-			ps.setInt(    4,                    playerGame.getType()                  );
-			ps.setInt(    5,                    playerGame.getPlayer_id()             );
-			ps.setInt(    6,                    playerGame.getTeam_id()               );
-			ps.setInt(    7,                    playerGame.getPlaying_time()          );
-			ps.setInt(    8,                    playerGame.getAttempts()              );
-			ps.setInt(    9,                    playerGame.getGoals()                 );
-			ps.setInt(   10,                    playerGame.getAssists()               );
-			ps.setInt(   11,                    playerGame.getTurnovers()             );
-			ps.setInt(   12,                    playerGame.getStops()                 );
-			ps.setInt(   13,                    playerGame.getSteals()                );
-			ps.setInt(   14,                    playerGame.getPenalties()             );
-			ps.setInt(   15,                    playerGame.getOffensive_penalties()   );
-			ps.setInt(   16,                    playerGame.getPsa()                   );
-			ps.setInt(   17,                    playerGame.getPsm()                   );
-			ps.setInt(   18,                    playerGame.getOt_psa()                );
-			ps.setInt(   19,                    playerGame.getOt_psm()                );
+			ps.setInt(      1,                    playerGame.getGame_id()               );
+			ps.setString(   2,                    playerGame.getYear()                  );
+			ps.setDate(     3, new java.sql.Date( playerGame.getDatestamp().getTime() ) );
+			ps.setInt(      4,                    playerGame.getType()                  );
+			ps.setInt(      5,                    playerGame.getPlayer_id()             );
+			ps.setInt(      6,                    playerGame.getTeam_id()               );
+			ps.setBoolean(  7,                    playerGame.isInjured()                );
+			ps.setInt(      8,                    playerGame.getPlaying_time()          );
+			ps.setInt(      9,                    playerGame.getAttempts()              );
+			ps.setInt(     10,                    playerGame.getGoals()                 );
+			ps.setInt(     11,                    playerGame.getAssists()               );
+			ps.setInt(     12,                    playerGame.getTurnovers()             );
+			ps.setInt(     13,                    playerGame.getStops()                 );
+			ps.setInt(     14,                    playerGame.getSteals()                );
+			ps.setInt(     15,                    playerGame.getPenalties()             );
+			ps.setInt(     16,                    playerGame.getOffensive_penalties()   );
+			ps.setInt(     17,                    playerGame.getPsa()                   );
+			ps.setInt(     18,                    playerGame.getPsm()                   );
+			ps.setInt(     19,                    playerGame.getOt_psa()                );
+			ps.setInt(     20,                    playerGame.getOt_psm()                );
 			
 			ps.executeUpdate();
 		}
@@ -1122,14 +1155,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -1167,19 +1203,20 @@ public class PlayerServiceImpl implements PlayerService {
 				playerGameView.setFirst_name(          dbRs.getString(   1 ) );
 				playerGameView.setLast_name(           dbRs.getString(   2 ) );
 				playerGameView.setPlayer_id(           dbRs.getInt(      3 ) );
-				playerGameView.setPlaying_time(        dbRs.getInt(      4 ) );
-				playerGameView.setAttempts(            dbRs.getInt(      5 ) );
-				playerGameView.setGoals(               dbRs.getInt(      6 ) );
-				playerGameView.setAssists(             dbRs.getInt(      7 ) );
-				playerGameView.setTurnovers(           dbRs.getInt(      8 ) );
-				playerGameView.setStops(               dbRs.getInt(      9 ) );
-				playerGameView.setSteals(              dbRs.getInt(     10 ) );
-				playerGameView.setPenalties(           dbRs.getInt(     11 ) );
-				playerGameView.setOffensive_penalties( dbRs.getInt(     12 ) );
-				playerGameView.setPsa(                 dbRs.getInt(     13 ) );
-				playerGameView.setPsm(                 dbRs.getInt(     14 ) );
-				playerGameView.setOt_psa(              dbRs.getInt(     15 ) );
-				playerGameView.setOt_psm(              dbRs.getInt(     16 ) );
+				playerGameView.setInjured(             dbRs.getBoolean(  4 ) );
+				playerGameView.setPlaying_time(        dbRs.getInt(      5 ) );
+				playerGameView.setAttempts(            dbRs.getInt(      6 ) );
+				playerGameView.setGoals(               dbRs.getInt(      7 ) );
+				playerGameView.setAssists(             dbRs.getInt(      8 ) );
+				playerGameView.setTurnovers(           dbRs.getInt(      9 ) );
+				playerGameView.setStops(               dbRs.getInt(     10 ) );
+				playerGameView.setSteals(              dbRs.getInt(     11 ) );
+				playerGameView.setPenalties(           dbRs.getInt(     12 ) );
+				playerGameView.setOffensive_penalties( dbRs.getInt(     13 ) );
+				playerGameView.setPsa(                 dbRs.getInt(     14 ) );
+				playerGameView.setPsm(                 dbRs.getInt(     15 ) );
+				playerGameView.setOt_psa(              dbRs.getInt(     16 ) );
+				playerGameView.setOt_psm(              dbRs.getInt(     17 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -1342,14 +1379,17 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setEndurance(       dbRs.getDouble(  17 ) );
 				player.setConfidence(      dbRs.getDouble(  18 ) );
 				player.setVitality(        dbRs.getDouble(  19 ) );
-				player.setRookie(          dbRs.getBoolean( 20 ) );
-				player.setRetired(         dbRs.getBoolean( 21 ) );
-				player.setAward(           dbRs.getInt(     22 ) );
-				player.setDraft_pick(      dbRs.getInt(     23 ) );
-				player.setSeasons_played(  dbRs.getInt(     24 ) );
-				player.setAllstar_team_id( dbRs.getInt(     25 ) );
-				player.setReleased(        dbRs.getBoolean( 26 ) );
-				player.setReleased_by(     dbRs.getInt(     27 ) );
+				player.setDurability(      dbRs.getDouble(  20 ) );
+				player.setRookie(          dbRs.getBoolean( 21 ) );
+				player.setInjured(         dbRs.getBoolean( 22 ) );
+				player.setReturn_date(     dbRs.getDate(    23 ) );
+				player.setRetired(         dbRs.getBoolean( 24 ) );
+				player.setAward(           dbRs.getInt(     25 ) );
+				player.setDraft_pick(      dbRs.getInt(     26 ) );
+				player.setSeasons_played(  dbRs.getInt(     27 ) );
+				player.setAllstar_team_id( dbRs.getInt(     28 ) );
+				player.setReleased(        dbRs.getBoolean( 29 ) );
+				player.setReleased_by(     dbRs.getInt(     30 ) );
 				
 				if ( playerList == null ) playerList = new ArrayList();
 				
@@ -1363,6 +1403,89 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 		
 		return playerList;
+	}
+
+	public void insertInjury(Injury injury) throws SQLException {
+
+		PreparedStatement ps = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getInjuryInsertPs( dbConn );
+			
+			ps.setInt( 1, injury.getGame_id()   );
+			ps.setInt( 2, injury.getPlayer_id() );
+			ps.setInt( 3, injury.getTeam_id()   );
+			ps.setInt( 4, injury.getDuration()  );
+			
+			ps.executeUpdate();
+		}
+		finally {
+		
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+
+	public void updatePlayerInjury(Player player) throws SQLException {
+
+		PreparedStatement ps1       = null;
+		PreparedStatement ps2       = null;
+		ResultSet         dbRs      = null;
+		boolean           isInjured;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getPlayerInjurySelectPs( dbConn );
+			
+			ps1.setString( 1, year                  );
+			ps1.setInt(    2, player.getPlayer_id() );
+			
+			dbRs = ps1.executeQuery();
+			
+			if ( dbRs.next() ) {
+			
+				isInjured = dbRs.getBoolean( 1 );
+				
+				if ( ! isInjured ) {
+				
+					ps2 = DatabaseImpl.getPlayerInjuryUpdatePs( dbConn );
+					
+					ps2.setBoolean( 1,                    player.isInjured()                  );
+					ps2.setDate(    2, new java.sql.Date( player.getReturn_date().getTime() ) );
+					ps2.setString(  3,                    year                                );
+					ps2.setInt(     4,                    player.getPlayer_id()               );
+					
+					ps2.executeUpdate();
+				}
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+	}
+
+	public void clearInjuries( Date gameDate ) throws SQLException {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getClearInjuriesUpdatePs( dbConn );
+			
+			ps.setBoolean( 1,                    false                );
+			ps.setNull(    2,                    Types.DATE           );
+			ps.setString(  3,                    year                 );
+			ps.setDate(    4, new java.sql.Date( gameDate.getTime() ) );
+			
+			ps.executeUpdate();
+		}
+		finally {
+		
+			DatabaseImpl.closeDbStmt( ps );
+		}
 	}
 	
 }

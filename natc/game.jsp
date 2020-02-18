@@ -102,6 +102,9 @@
           <html:link page="/Player.do" paramId="player_id" paramName="player" paramProperty="player_id">
             <bean:write name="player" property="last_name" />, <bean:write name="player" property="first_name" />
           </html:link>
+          <logic:equal name="player" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
         </td>
         <td></td>
         <td><bean:write name="player" property="gameTimeDsp"          /></td>
@@ -177,6 +180,9 @@
           <html:link page="/Player.do" paramId="player_id" paramName="player" paramProperty="player_id">
             <bean:write name="player" property="last_name" />, <bean:write name="player" property="first_name" />
           </html:link>
+          <logic:equal name="player" property="injured" value="true">
+            <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
         </td>
         <td></td>
         <td><bean:write name="player" property="gameTimeDsp"          /></td>

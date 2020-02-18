@@ -57,7 +57,10 @@ public class DatabaseImpl {
 		/**/                                      + "Endurance,       "
 		/**/                                      + "Confidence,      "
 		/**/                                      + "Vitality,        "
+		/**/                                      + "Durability,      "
 		/**/                                      + "Rookie,          "
+		/**/                                      + "Injured,         "
+		/**/                                      + "Return_Date,     "
 		/**/                                      + "Retired,         "
 		/**/                                      + "Award,           "
 		/**/                                      + "Draft_Pick,      "
@@ -961,7 +964,20 @@ public class DatabaseImpl {
 		
 		return dbConn.prepareStatement( sql );
 	}
+
+	public static PreparedStatement getInjuriesByDateSelectPs( Connection dbConn ) throws SQLException {
 	
+		String sql = "SELECT i.Player_Id, p.First_Name, p.Last_Name, i.Team_Id, t.Abbrev, i.Duration "
+			/**/   + "  FROM Injuries_T i, Players_T p, Teams_T t "
+			/**/   + " WHERE i.Player_Id  =  p.Player_Id "
+			/**/   + "   AND p.Year       =  ?           "
+			/**/   + "   AND i.Team_Id    =  t.Team_Id   "
+			/**/   + "   AND t.Year       =  ?           "
+			/**/   + "   AND i.Game_Id    in ( SELECT DISTINCT Game_Id FROM TeamGames_T WHERE Datestamp = ? ) ";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
 	public static PreparedStatement getTeamDefenseByTeamIdSelectPs( Connection dbConn ) throws SQLException {
 	
 		String sql = "SELECT Type,                "
@@ -1204,6 +1220,7 @@ public class DatabaseImpl {
 		String sql = "SELECT p.First_Name,          "
 			/**/   + "       p.Last_Name,           "
 			/**/   + "       p.Player_Id,           "
+			/**/   + "      pg.Injured,             "
 			/**/   + "      pg.Playing_Time,        "
 			/**/   + "      pg.Attempts,            "
 			/**/   + "      pg.Goals,               "
@@ -1746,13 +1763,16 @@ public class DatabaseImpl {
 			/**/   + "                        Endurance,        "
 			/**/   + "                        Confidence,       "
 			/**/   + "                        Vitality,         "
+			/**/   + "                        Durability,       "
 			/**/   + "                        Rookie,           "
+			/**/   + "                        Injured,          "
+			/**/   + "                        Return_Date,      "
 			/**/   + "                        Retired,          "
 			/**/   + "                        Award,            "
 			/**/   + "                        Draft_Pick,       "
 			/**/   + "                        Seasons_Played,   "
 			/**/   + "                        Released )        "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
 
 		return dbConn.prepareStatement( sql );
 	}
@@ -1819,6 +1839,7 @@ public class DatabaseImpl {
 			/**/   + "                            Type,                "
 			/**/   + "                            Player_Id,           "
 			/**/   + "                            Team_Id,             "
+			/**/   + "                            Injured,             "
 			/**/   + "                            Playing_Time,        "
 			/**/   + "                            Attempts,            "
 			/**/   + "                            Goals,               "
@@ -1832,7 +1853,18 @@ public class DatabaseImpl {
 			/**/   + "                            Psm,                 "
 			/**/   + "                            Ot_Psa,              "
 			/**/   + "                            Ot_Psm )             "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getInjuryInsertPs( Connection dbConn ) throws SQLException {
+		
+		String sql = "INSERT INTO Injuries_T ( Game_Id,             "
+			/**/   + "                         Player_Id,           "
+			/**/   + "                         Team_Id,             "
+			/**/   + "                         Duration )           "
+			/**/   + "VALUES ( ?, ?, ?, ? )";
 		
 		return dbConn.prepareStatement( sql );
 	}
@@ -1885,7 +1917,10 @@ public class DatabaseImpl {
 			/**/   +        "Endurance       = ?, "
 			/**/   +        "Confidence      = ?, "
 			/**/   +        "Vitality        = ?, "
+			/**/   +        "Durability      = ?, "
 			/**/   +        "Rookie          = ?, "
+			/**/   +        "Injured         = ?, "
+			/**/   +        "Return_Date     = ?, "
 			/**/   +        "Retired         = ?, "
 			/**/   +        "Award           = ?, "
 			/**/   +        "Draft_Pick      = ?, "
@@ -1948,6 +1983,42 @@ public class DatabaseImpl {
 			/**/
 			/**/   + " WHERE Year     = ? "
 			/**/   + "   AND Sequence = ?";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getPlayerInjurySelectPs( Connection dbConn ) throws SQLException {
+		
+		String sql = "SELECT Injured       "
+			/**/   + "  FROM Players_T     "
+			/**/   + " WHERE Year      = ? "
+			/**/   + "   AND Player_Id = ? ";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getPlayerInjuryUpdatePs( Connection dbConn ) throws SQLException {
+		
+		String sql = "UPDATE Players_T "
+			/**/
+			/**/   + "   SET Injured     = ?, "
+			/**/   + "       Return_Date = ?  "
+			/**/
+			/**/   + " WHERE Year      = ? "
+			/**/   + "   AND Player_Id = ?";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getClearInjuriesUpdatePs( Connection dbConn ) throws SQLException {
+		
+		String sql = "UPDATE Players_T "
+			/**/
+			/**/   + "   SET Injured     = ?, "
+			/**/   + "       Return_Date = ?  "
+			/**/
+			/**/   + " WHERE Year         = ? "
+			/**/   + "   AND Return_Date <= ? ";
 		
 		return dbConn.prepareStatement( sql );
 	}

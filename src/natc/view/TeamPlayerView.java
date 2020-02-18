@@ -12,6 +12,7 @@ public class TeamPlayerView {
 	private int     age;
 	
 	private boolean rookie;
+	private boolean injured;
 	private int     award;
 	private int     allstar_team_id;
 	
@@ -32,6 +33,7 @@ public class TeamPlayerView {
 		this.last_name       = null;
 		this.age             = 0;
 		this.rookie          = false;
+		this.injured         = false;
 		this.award           = 0;
 		this.allstar_team_id = 0;
 		this.rating          = 0.0;
@@ -169,6 +171,14 @@ public class TeamPlayerView {
 
 	public void setTime_per_game(int timePerGame) {
 		time_per_game = timePerGame;
+	}
+
+	public boolean isInjured() {
+		return injured;
+	}
+
+	public void setInjured(boolean injured) {
+		this.injured = injured;
 	}
 	
 }

@@ -26,4 +26,5 @@ public interface GameService {
 	public List getResignedPlayers() throws SQLException;
 	public List getRetiredPlayers() throws SQLException;
 	public List getAbandonedRookiePlayers() throws SQLException;
+	public List getInjuriesByDate( Date datestamp ) throws SQLException;
 }

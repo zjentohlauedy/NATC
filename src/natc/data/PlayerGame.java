@@ -4,29 +4,31 @@ import java.util.Date;
 
 public class PlayerGame {
 
-	private int    game_id;
+	private int     game_id;
 	
-	private String year;
-	private Date   datestamp;
+	private String  year;
+	private Date    datestamp;
 	
-	private int    type;
+	private int     type;
 	
-	private int    player_id;
-	private int    team_id;
+	private int     player_id;
+	private int     team_id;
 	
-	private int    playing_time;
-	private int    attempts;
-	private int    goals;
-	private int    assists;
-	private int    turnovers;
-	private int    stops;
-	private int    steals;
-	private int    penalties;
-	private int    offensive_penalties;
-	private int    psa;
-	private int    psm;
-	private int    ot_psa;
-	private int    ot_psm;
+	private boolean injured;
+	
+	private int     playing_time;
+	private int     attempts;
+	private int     goals;
+	private int     assists;
+	private int     turnovers;
+	private int     stops;
+	private int     steals;
+	private int     penalties;
+	private int     offensive_penalties;
+	private int     psa;
+	private int     psm;
+	private int     ot_psa;
+	private int     ot_psm;
 	
 	public PlayerGame() {
 	
@@ -36,6 +38,7 @@ public class PlayerGame {
 		this.type                = 0;
 		this.player_id           = 0;
 		this.team_id             = 0;
+		this.injured             = false;
 		this.playing_time        = 0;
 		this.attempts            = 0;
 		this.goals               = 0;
@@ -201,6 +204,14 @@ public class PlayerGame {
 
 	public void setOffensive_penalties(int offensive_penalties) {
 		this.offensive_penalties = offensive_penalties;
+	}
+
+	public boolean isInjured() {
+		return injured;
+	}
+
+	public void setInjured(boolean injured) {
+		this.injured = injured;
 	}
 
 }

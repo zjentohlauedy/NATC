@@ -99,6 +99,7 @@ public class TeamAction extends Action {
 				teamPlayerView.setLast_name(       player.getLast_name()       );
 				teamPlayerView.setAge(             player.getAge()             );
 				teamPlayerView.setRookie(          player.isRookie()           );
+				teamPlayerView.setInjured(         player.isInjured()          );
 				teamPlayerView.setAward(           player.getAward()           );
 				teamPlayerView.setAllstar_team_id( player.getAllstar_team_id() );
 				

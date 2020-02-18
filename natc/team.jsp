@@ -354,6 +354,9 @@
         <logic:notEqual name="teamPlayer" property="allstar_team_id" value="0">
           <h7><bean:message key="team.label.allstar" /></h7>
         </logic:notEqual>
+        <logic:equal name="teamPlayer" property="injured" value="true">
+          <h7><bean:message key="team.label.injured" /></h7>
+        </logic:equal>
       </td>
       <td>
         <bean:write name="teamPlayer" property="age"/>

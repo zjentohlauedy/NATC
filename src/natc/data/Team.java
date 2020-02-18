@@ -248,7 +248,15 @@ public class Team {
 
 			Player player = (Player)i.next();
 
-			if ( active_players == 5 ) {
+			if ( player.isInjured() ) {
+				
+				if ( player.isPlaying() ) {
+
+					player.setPlaying( false );
+					player.setResting( true  );
+				}
+			}
+			else if ( active_players == 5 ) {
 
 				if ( player.isPlaying() ) {
 
@@ -305,7 +313,7 @@ public class Team {
 
 					Player player = (Player)i.next();
 
-					if ( ! player.isPlaying() ) {
+					if ( ! player.isPlaying()  &&  ! player.isInjured() ) {
 
 						if ( p == null ) {
 

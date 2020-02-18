@@ -317,6 +317,34 @@
   </logic:iterate>
 </logic:present>
 
+<logic:present name="injuries">
+  <table class="injuries">
+    <tr class="label">
+      <td colspan="3"><bean:message key="games.label.injuries"/></td>
+    </tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.name"     /></td>
+      <td><bean:message key="player.label.team"     /></td>
+      <td><bean:message key="injury.label.duration" /></td>
+    </tr>
+    <logic:iterate id="injury" name="injuries">
+      <tr>
+        <td>
+          <html:link page="/Player.do" paramId="player_id" paramName="injury" paramProperty="player_id">
+            <bean:write name="injury" property="last_name"/>, <bean:write name="injury" property="first_name"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="injury" paramProperty="team_id">
+            <bean:write name="injury" property="team_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="injury" property="durationDsp"/></td>
+      </tr>
+    </logic:iterate>
+  </table>
+</logic:present>
+
 <logic:present name="preseasonTeamGames">
   <h1><bean:message key="games.label.preseason"/></h1>
   <logic:iterate id="game" name="preseasonTeamGames">

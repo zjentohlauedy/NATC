@@ -5,30 +5,33 @@ import java.text.NumberFormat;
 
 public class PlayerGameView {
 
-	private String first_name;
-	private String last_name;
+	private String  first_name;
+	private String  last_name;
 	
-	private int    player_id;
+	private int     player_id;
 	
-	private int    playing_time;
-	private int    attempts;
-	private int    goals;
-	private int    assists;
-	private int    turnovers;
-	private int    stops;
-	private int    steals;
-	private int    penalties;
-	private int    offensive_penalties;
-	private int    psa;
-	private int    psm;
-	private int    ot_psa;
-	private int    ot_psm;
+	private boolean injured;
+	
+	private int     playing_time;
+	private int     attempts;
+	private int     goals;
+	private int     assists;
+	private int     turnovers;
+	private int     stops;
+	private int     steals;
+	private int     penalties;
+	private int     offensive_penalties;
+	private int     psa;
+	private int     psm;
+	private int     ot_psa;
+	private int     ot_psm;
 	
 	public PlayerGameView() {
 	
 		this.first_name          = null;
 		this.last_name           = null;
 		this.player_id           = 0;
+		this.injured             = false;
 		this.playing_time        = 0;
 		this.attempts            = 0;
 		this.goals               = 0;
@@ -243,6 +246,14 @@ public class PlayerGameView {
 
 	public void setOffensive_penalties(int offensive_penalties) {
 		this.offensive_penalties = offensive_penalties;
+	}
+
+	public boolean isInjured() {
+		return injured;
+	}
+
+	public void setInjured(boolean injured) {
+		this.injured = injured;
 	}
 	
 }
