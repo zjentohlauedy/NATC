@@ -4,6 +4,8 @@ var possession     = 0;
 var period         = 0;
 var overtime       = false;
 var clock_stopped  = false;
+var ajax_timer     = null;
+var clock_timer    = null;
 
 function displayTime() {
 
@@ -34,6 +36,7 @@ function displayPeriod() {
 		else {
 
 			document.getElementById('period').innerHTML = 'F';
+			
 		}
 
 		break;
@@ -67,7 +70,14 @@ function manageClock() {
 
 	time_remaining--;
 
-	if ( time_remaining == 0 ) clock_stopped = true;
+	if ( time_remaining == 0 ) {
+		
+		clock_stopped = true;
+		
+		window.clearInterval( clock_timer );
+		
+		clock_timer = null;
+	}
 
 	displayTime();
 }
@@ -83,6 +93,17 @@ function updateGameState( state ) {
 
 	overtime       = (state.childNodes[3].textContent == "true");
 	clock_stopped  = (state.childNodes[5].textContent == "true");
+	
+	if ( clock_stopped ) {
+	
+		window.clearInterval( clock_timer );
+		
+		clock_timer = null;
+	}
+	else if ( clock_timer == null ) {
+
+		clock_timer = window.setInterval( 'manageClock()', 1000 );
+	}
 
 	displayTime();
 	displayPeriod();
@@ -169,6 +190,9 @@ function updateStats( response ) {
 	if ( teamNode.childNodes[26].textContent == 'true' ) {
 		
 		document.getElementById('homeScore'  ).innerHTML = '<em>' + teamNode.childNodes[25].textContent + '</em>';
+
+		window.clearInterval( clock_timer );
+		window.clearInterval( ajax_timer );
 	}
 	else {
 		
@@ -203,6 +227,9 @@ function updateStats( response ) {
 	if ( teamNode.childNodes[26].textContent == 'true' ) {
 		
 		document.getElementById('roadScore'  ).innerHTML = '<em>' + teamNode.childNodes[25].textContent + '</em>';
+
+		window.clearInterval( clock_timer );
+		window.clearInterval( ajax_timer );
 	}
 	else {
 		
@@ -238,8 +265,8 @@ function initGame( gameId, seq, prd, ot, poss, time, clock ) {
 	setAjaxURL( '/natc/Game.do?game_id=' + gameId + '&ajax=1' );
 	setAjaxCallback( updateStats );
 
-	window.setInterval( 'sendAjaxRequest()', 15000 );
-	window.setInterval( 'manageClock()', 1000 );
+	ajax_timer  = window.setInterval( 'sendAjaxRequest()', 5000 );
+	clock_timer = window.setInterval( 'manageClock()', 1000 );
 
 	displayTime();
 	displayPeriod();

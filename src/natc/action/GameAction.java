@@ -1,6 +1,8 @@
 package natc.action;
 
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -25,6 +27,107 @@ import org.apache.struts.action.ActionMapping;
 
 public class GameAction extends Action {
 
+	private Connection dbConn = null;
+	
+	private ActionForward generateAjaxResponse(
+			ActionMapping       mapping,
+			ActionForm          form,
+			HttpServletRequest  request,
+			HttpServletResponse response,
+			int                 game_id
+	) throws Exception {
+
+		TeamService     teamService     = null;
+		PlayerService   playerService   = null;
+		GameService     gameService     = null;
+		StringBuffer    stringBuffer    = null;
+		GameState       gameState;
+		TeamGameView    homeGame;
+		TeamGameView    roadGame;
+		Collection      homePlayers;
+		Collection      roadPlayers;
+		Iterator        i;
+
+		stringBuffer  = new StringBuffer();
+		teamService   = new TeamServiceImpl(   dbConn, null );
+		playerService = new PlayerServiceImpl( dbConn, null );
+		gameService   = new GameServiceImpl(   dbConn, null );
+		
+		stringBuffer.append( "<response>" );
+		
+		if ( (gameState = gameService.getGameState( game_id )) != null ) {
+			
+			stringBuffer.append( "<gameState>" );
+			stringBuffer.append( gameState.toXML() );
+			stringBuffer.append( "</gameState>" );
+		}
+		
+		if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
+			
+			stringBuffer.append( "<homeTeam>" );
+			
+			stringBuffer.append( homeGame.toXML() );
+
+			if ( (homePlayers = playerService.getPlayerGamesForTeamByGame( game_id, homeGame.getTeam_id() )) != null ) {
+
+				stringBuffer.append( "<players>" );
+				
+				i = homePlayers.iterator();
+				
+				while ( i.hasNext() ) {
+				
+					PlayerGameView playerGame = (PlayerGameView)i.next();
+					
+					stringBuffer.append( "<player>" );
+					
+					stringBuffer.append( playerGame.toXML() );
+					
+					stringBuffer.append( "</player>" );
+				}
+				
+				stringBuffer.append( "</players>" );
+			}
+
+			stringBuffer.append( "</homeTeam>" );
+		}
+
+		if ( (roadGame = teamService.getRoadGame( game_id )) != null ) {
+			
+			stringBuffer.append( "<roadTeam>" );
+			
+			stringBuffer.append( roadGame.toXML() );
+
+			if ( (roadPlayers = playerService.getPlayerGamesForTeamByGame( game_id, roadGame.getTeam_id() )) != null ) {
+
+				stringBuffer.append( "<players>" );
+				
+				i = roadPlayers.iterator();
+				
+				while ( i.hasNext() ) {
+				
+					PlayerGameView playerGame = (PlayerGameView)i.next();
+					
+					stringBuffer.append( "<player>" );
+					
+					stringBuffer.append( playerGame.toXML() );
+					
+					stringBuffer.append( "</player>" );
+				}
+				
+				stringBuffer.append( "</players>" );
+			}
+
+			stringBuffer.append( "</roadTeam>" );
+		}
+		
+		stringBuffer.append( "</response>" );
+		
+		response.getWriter().println(stringBuffer.toString());
+		response.getWriter().close();
+		
+		return null;
+	}
+	
 	public ActionForward execute(
 			ActionMapping       mapping,
 			ActionForm          form,
@@ -36,16 +139,12 @@ public class GameAction extends Action {
 		Connection      dbConn          = null;
 		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
-		GameService     gameService     = null;
 		String          game_id_str     = null;
 		int             game_id;
-		boolean         ajax_request    = false;
-		
-		if ( request.getParameter( "ajax" ) != null ) ajax_request = true;
 		
 		if ( (game_id_str = request.getParameter( "game_id" )) == null ) {
 		
-			if ( ajax_request ) return null;
+			if ( request.getParameter( "ajax" ) != null ) return null;
 			
 			return mapping.findForward( "success" );
 		}
@@ -63,124 +162,44 @@ public class GameAction extends Action {
 			
 				throw new Exception( "Cannot get db connection." );
 			}
+
+			if ( request.getParameter( "ajax" ) != null ) {
+
+				return generateAjaxResponse( mapping, form, request, response, game_id );
+			}
 			
 			teamService   = new TeamServiceImpl(   dbConn, null );
 			playerService = new PlayerServiceImpl( dbConn, null );
-			gameService   = new GameServiceImpl(   dbConn, null );
 
-			GameState    gameState;
 			TeamGameView homeGame;
 			TeamGameView roadGame;
 			Collection   homePlayers;
 			Collection   roadPlayers;
-			Iterator     i;
 
-			if ( ajax_request ) {
+			if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
 
-				StringBuffer stringBuffer = new StringBuffer();
+				request.setAttribute( "homeGame", homeGame );
 
-				stringBuffer.append( "<response>" );
-				
-				if ( (gameState = gameService.getGameState( game_id )) != null ) {
-					
-					stringBuffer.append( "<gameState>" );
-					stringBuffer.append( gameState.toXML() );
-					stringBuffer.append( "</gameState>" );
+				if ( (homePlayers = playerService.getPlayerGamesForTeamByGame( game_id, homeGame.getTeam_id() )) != null ) {
+
+					request.setAttribute( "homePlayers", homePlayers );
 				}
-				
-				if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
-					
-					stringBuffer.append( "<homeTeam>" );
-					
-					stringBuffer.append( homeGame.toXML() );
-
-					if ( (homePlayers = playerService.getPlayerGamesForTeamByGame( game_id, homeGame.getTeam_id() )) != null ) {
-
-						stringBuffer.append( "<players>" );
-						
-						i = homePlayers.iterator();
-						
-						while ( i.hasNext() ) {
-						
-							PlayerGameView playerGame = (PlayerGameView)i.next();
-							
-							stringBuffer.append( "<player>" );
-							
-							stringBuffer.append( playerGame.toXML() );
-							
-							stringBuffer.append( "</player>" );
-						}
-						
-						stringBuffer.append( "</players>" );
-					}
-
-					stringBuffer.append( "</homeTeam>" );
-				}
-
-				if ( (roadGame = teamService.getRoadGame( game_id )) != null ) {
-					
-					stringBuffer.append( "<roadTeam>" );
-					
-					stringBuffer.append( roadGame.toXML() );
-
-					if ( (roadPlayers = playerService.getPlayerGamesForTeamByGame( game_id, roadGame.getTeam_id() )) != null ) {
-
-						stringBuffer.append( "<players>" );
-						
-						i = roadPlayers.iterator();
-						
-						while ( i.hasNext() ) {
-						
-							PlayerGameView playerGame = (PlayerGameView)i.next();
-							
-							stringBuffer.append( "<player>" );
-							
-							stringBuffer.append( playerGame.toXML() );
-							
-							stringBuffer.append( "</player>" );
-						}
-						
-						stringBuffer.append( "</players>" );
-					}
-
-					stringBuffer.append( "</roadTeam>" );
-				}
-				
-				stringBuffer.append( "</response>" );
-				
-				response.getWriter().println(stringBuffer.toString());
-				response.getWriter().close();
 			}
-			else {
 
-				if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
+			if ( (roadGame = teamService.getRoadGame( game_id )) != null ) {
 
-					request.setAttribute( "homeGame", homeGame );
+				request.setAttribute( "roadGame", roadGame );
 
-					if ( (homePlayers = playerService.getPlayerGamesForTeamByGame( game_id, homeGame.getTeam_id() )) != null ) {
+				if ( (roadPlayers = playerService.getPlayerGamesForTeamByGame( game_id, roadGame.getTeam_id() )) != null ) {
 
-						request.setAttribute( "homePlayers", homePlayers );
-					}
+					request.setAttribute( "roadPlayers", roadPlayers );
 				}
-
-				if ( (roadGame = teamService.getRoadGame( game_id )) != null ) {
-
-					request.setAttribute( "roadGame", roadGame );
-
-					if ( (roadPlayers = playerService.getPlayerGamesForTeamByGame( game_id, roadGame.getTeam_id() )) != null ) {
-
-						request.setAttribute( "roadPlayers", roadPlayers );
-					}
-				}
-
 			}
 		}
 		finally {
-			
+
 			try { dbConn.close(); } catch ( Exception e ) {}
 		}
-		
-		if ( ajax_request ) return null;
 		
 		return mapping.findForward( "success" );
 	}

@@ -80,6 +80,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 		try {
 			ps = DatabaseImpl.getLastScheduleEntrySelectPs( dbConn );
 			
+			ps.setInt( 1, Schedule.st_Completed );
+			
 			dbRs = ps.executeQuery();
 
 			if ( dbRs.next() ) {
@@ -91,7 +93,41 @@ public class ScheduleServiceImpl implements ScheduleService {
 				schedule.setType(      new ScheduleType( dbRs.getInt(     3 ) ) );
 				schedule.setData(                        dbRs.getString(  4 )   );
 				schedule.setScheduled(                   dbRs.getDate(    5 )   );
-				schedule.setCompleted(                   dbRs.getBoolean( 6 )   );
+				schedule.setStatus(                      dbRs.getInt(     6 )   );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return schedule;
+	}
+
+	public Schedule getCurrentScheduleEntry() throws SQLException {
+		
+		Schedule          schedule = null;
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			ps = DatabaseImpl.getLastScheduleEntrySelectPs( dbConn );
+			
+			ps.setInt( 1, Schedule.st_InProgress );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				schedule = new Schedule();
+				
+				schedule.setYear(                        dbRs.getString(  1 )   );
+				schedule.setSequence(                    dbRs.getInt(     2 )   );
+				schedule.setType(      new ScheduleType( dbRs.getInt(     3 ) ) );
+				schedule.setData(                        dbRs.getString(  4 )   );
+				schedule.setScheduled(                   dbRs.getDate(    5 )   );
+				schedule.setStatus(                      dbRs.getInt(     6 )   );
 			}
 		}
 		finally {
@@ -138,7 +174,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				nextEntry.setType(      new ScheduleType( dbRs.getInt(     3 ) ) );
 				nextEntry.setData(                        dbRs.getString(  4 )   );
 				nextEntry.setScheduled(                   dbRs.getDate(    5 )   );
-				nextEntry.setCompleted(                   dbRs.getBoolean( 6 )   );
+				nextEntry.setStatus(                      dbRs.getInt(     6 )   );
 			}
 		}
 		finally {
@@ -560,7 +596,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.BEGINNING_OF_SEASON );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
-			ps.setBoolean( 6, false                            );
+			ps.setInt(     6, Schedule.st_Scheduled            );
 			
 			ps.executeUpdate();
 			
@@ -572,7 +608,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.MANAGER_CHANGES     );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
-			ps.setBoolean( 6, false                            );
+			ps.setInt(     6, Schedule.st_Scheduled            );
 
 			ps.executeUpdate();
 
@@ -584,7 +620,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.PLAYER_CHANGES      );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
-			ps.setBoolean( 6, false                            );
+			ps.setInt(     6, Schedule.st_Scheduled            );
 
 			ps.executeUpdate();
 			
@@ -596,7 +632,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ROOKIE_DRAFT_ROUND_1 );
 			ps.setNull(    4, Types.VARCHAR                     );
 			ps.setDate(    5, new java.sql.Date( time )         );
-			ps.setBoolean( 6, false                             );
+			ps.setInt(     6, Schedule.st_Scheduled             );
 			
 			ps.executeUpdate();
 			
@@ -608,7 +644,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ROOKIE_DRAFT_ROUND_2 );
 			ps.setNull(    4, Types.VARCHAR                     );
 			ps.setDate(    5, new java.sql.Date( time )         );
-			ps.setBoolean( 6, false                             );
+			ps.setInt(     6, Schedule.st_Scheduled             );
 			
 			ps.executeUpdate();
 			
@@ -620,7 +656,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.TRAINING_CAMP );
 			ps.setNull(    4, Types.VARCHAR              );
 			ps.setDate(    5, new java.sql.Date( time )  );
-			ps.setBoolean( 6, false                      );
+			ps.setInt(     6, Schedule.st_Scheduled      );
 			
 			ps.executeUpdate();
 			
@@ -640,7 +676,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				ps.setInt(     3, ScheduleType.PRESEASON    );
 				ps.setString(  4, data                      );
 				ps.setDate(    5, new java.sql.Date( time ) );
-				ps.setBoolean( 6, false                     );
+				ps.setInt(     6, Schedule.st_Scheduled     );
 				
 				ps.executeUpdate();
 				
@@ -658,7 +694,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.END_OF_PRESEASON );
 			ps.setNull(    4, Types.VARCHAR                 );
 			ps.setDate(    5, new java.sql.Date( time )     );
-			ps.setBoolean( 6, false                         );
+			ps.setInt(     6, Schedule.st_Scheduled         );
 			
 			ps.executeUpdate();
 			
@@ -670,7 +706,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ROSTER_CUT   );
 			ps.setNull(    4, Types.VARCHAR             );
 			ps.setDate(    5, new java.sql.Date( time ) );
-			ps.setBoolean( 6, false                     );
+			ps.setInt(     6, Schedule.st_Scheduled     );
 			
 			ps.executeUpdate();
 			
@@ -690,7 +726,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				ps.setInt(     3, ScheduleType.REGULAR_SEASON );
 				ps.setString(  4, data                        );
 				ps.setDate(    5, new java.sql.Date( time )   );
-				ps.setBoolean( 6, false                       );
+				ps.setInt(     6, Schedule.st_Scheduled       );
 				
 				ps.executeUpdate();
 				
@@ -708,7 +744,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.END_OF_REGULAR_SEASON );
 			ps.setNull(    4, Types.VARCHAR                      );
 			ps.setDate(    5, new java.sql.Date( time )          );
-			ps.setBoolean( 6, false                              );
+			ps.setInt(     6, Schedule.st_Scheduled              );
 			
 			ps.executeUpdate();
 			
@@ -721,7 +757,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.AWARDS       );
 			ps.setNull(    4, Types.VARCHAR             );
 			ps.setDate(    5, new java.sql.Date( time ) );
-			ps.setBoolean( 6, false                     );
+			ps.setInt(     6, Schedule.st_Scheduled     );
 			
 			ps.executeUpdate();
 			
@@ -733,7 +769,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.POSTSEASON   );
 			ps.setNull(    4, Types.VARCHAR             );
 			ps.setDate(    5, new java.sql.Date( time ) );
-			ps.setBoolean( 6, false                     );
+			ps.setInt(     6, Schedule.st_Scheduled     );
 			
 			ps.executeUpdate();
 			
@@ -747,7 +783,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				ps.setInt(     3, ScheduleType.DIVISION_PLAYOFF );
 				ps.setNull(    4, Types.VARCHAR                 );
 				ps.setDate(    5, new java.sql.Date( time )     );
-				ps.setBoolean( 6, false                         );
+				ps.setInt(     6, Schedule.st_Scheduled         );
 
 				ps.executeUpdate();
 				
@@ -762,7 +798,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				ps.setInt(     3, ScheduleType.DIVISION_CHAMPIONSHIP );
 				ps.setNull(    4, Types.VARCHAR                      );
 				ps.setDate(    5, new java.sql.Date( time )          );
-				ps.setBoolean( 6, false                              );
+				ps.setInt(     6, Schedule.st_Scheduled              );
 
 				ps.executeUpdate();
 				
@@ -779,7 +815,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				ps.setInt(     3, ScheduleType.CONFERENCE_CHAMPIONSHIP );
 				ps.setNull(    4, Types.VARCHAR                        );
 				ps.setDate(    5, new java.sql.Date( time )            );
-				ps.setBoolean( 6, false                                );
+				ps.setInt(     6, Schedule.st_Scheduled                );
 
 				ps.executeUpdate();
 				
@@ -794,7 +830,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.NATC_CHAMPIONSHIP );
 			ps.setNull(    4, Types.VARCHAR                  );
 			ps.setDate(    5, new java.sql.Date( time )      );
-			ps.setBoolean( 6, false                          );
+			ps.setInt(     6, Schedule.st_Scheduled          );
 			
 			ps.executeUpdate();
 
@@ -806,7 +842,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.END_OF_POSTSEASON );
 			ps.setNull(    4, Types.VARCHAR                  );
 			ps.setDate(    5, new java.sql.Date( time )      );
-			ps.setBoolean( 6, false                          );
+			ps.setInt(     6, Schedule.st_Scheduled          );
 			
 			ps.executeUpdate();
 			
@@ -818,7 +854,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ALL_STARS     );
 			ps.setNull(    4, Types.VARCHAR              );
 			ps.setDate(    5, new java.sql.Date( time )  );
-			ps.setBoolean( 6, false                      );
+			ps.setInt(     6, Schedule.st_Scheduled      );
 			
 			ps.executeUpdate();
 
@@ -830,7 +866,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ALL_STAR_DAY_1 );
 			ps.setNull(    4, Types.VARCHAR               );
 			ps.setDate(    5, new java.sql.Date( time )   );
-			ps.setBoolean( 6, false                       );
+			ps.setInt(     6, Schedule.st_Scheduled       );
 			
 			ps.executeUpdate();
 
@@ -842,7 +878,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.ALL_STAR_DAY_2 );
 			ps.setNull(    4, Types.VARCHAR               );
 			ps.setDate(    5, new java.sql.Date( time )   );
-			ps.setBoolean( 6, false                       );
+			ps.setInt(     6, Schedule.st_Scheduled       );
 			
 			ps.executeUpdate();
 
@@ -854,7 +890,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     3, ScheduleType.END_OF_ALLSTAR_GAMES );
 			ps.setNull(    4, Types.VARCHAR                     );
 			ps.setDate(    5, new java.sql.Date( time )         );
-			ps.setBoolean( 6, false                             );
+			ps.setInt(     6, Schedule.st_Scheduled             );
 			
 			ps.executeUpdate();
 			
@@ -865,8 +901,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     2, sequence++                 );
 			ps.setInt(     3, ScheduleType.END_OF_SEASON );
 			ps.setNull(    4, Types.VARCHAR              );
-			ps.setDate(    5, new java.sql.Date( time ) );
-			ps.setBoolean( 6, false                     );
+			ps.setDate(    5, new java.sql.Date( time )  );
+			ps.setInt(     6, Schedule.st_Scheduled      );
 			
 			ps.executeUpdate();
 			
@@ -895,7 +931,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setInt(     1,                    schedule.getType().getValue()       );
 			ps.setString(  2,                    schedule.getData()                  );
 			ps.setDate(    3, new java.sql.Date( schedule.getScheduled().getTime() ) );
-			ps.setBoolean( 4,                    schedule.isCompleted()              );
+			ps.setInt(     4,                    schedule.getStatus()                );
 			
 			ps.setString(  5, schedule.getYear()     );
 			ps.setInt(     6, schedule.getSequence() );
@@ -916,7 +952,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			
 			ps = DatabaseImpl.getScheduleCompleteUpdatePs( dbConn );
 			
-			ps.setBoolean( 1, true                   );
+			ps.setInt(     1, Schedule.st_Completed  );
 			ps.setString(  2, schedule.getYear()     );
 			ps.setInt(     3, schedule.getSequence() );
 			
@@ -952,7 +988,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				schedule.setType(      new ScheduleType( dbRs.getInt(     3 ) ) );
 				schedule.setData(                        dbRs.getString(  4 )   );
 				schedule.setScheduled(                   dbRs.getDate(    5 )   );
-				schedule.setCompleted(                   dbRs.getBoolean( 6 )   );
+				schedule.setStatus(                      dbRs.getInt(     6 )   );
 
 				ScheduleData scheduleData = new ScheduleData();
 

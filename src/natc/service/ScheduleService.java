@@ -8,6 +8,7 @@ import natc.data.Schedule;
 public interface ScheduleService {
 
 	public Schedule getLastScheduleEntry() throws SQLException;
+	public Schedule getCurrentScheduleEntry() throws SQLException;
 	public Schedule getNextScheduleEntry( Schedule schedule ) throws SQLException;
 	public void     generateSchedule() throws SQLException;
 	public void     updateScheduleEntry( Schedule schedule ) throws SQLException;

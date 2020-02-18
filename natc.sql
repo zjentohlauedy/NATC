@@ -285,7 +285,7 @@ CREATE TABLE Schedule_T
     Type      INTEGER,
     Data      VARCHAR(50),
     Scheduled    DATE,
-    Completed INTEGER
+    Status    INTEGER
 );
 
 CREATE INDEX Schedule_Year     ON Schedule_T ( Year     );

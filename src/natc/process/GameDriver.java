@@ -13,9 +13,24 @@ import natc.service.GameService;
 import natc.service.impl.GameServiceImpl;
 import natc.service.impl.RealtimeGameServiceImpl;
 
-public class GameDriver {
+public class GameDriver implements Runnable {
 
-	private static char[] rnd_seed = { 0xF8, 0xF4, 0xE1, 0xEc, 0xB2, 0xB3 }; 
+	private static char[] rnd_seed = { 0xF8, 0xF4, 0xE1, 0xEc, 0xB2, 0xB3 };
+	
+	private Connection dbConn;
+	private String     year;
+	private Match      match;
+	private Date       date;
+	private int        type;
+	
+	public GameDriver( Connection dbConn, String year ) {
+	
+		this.dbConn = dbConn;
+		this.year   = year;
+		this.match  = null;
+		this.date   = null;
+		this.type   = 0;
+	}
 	
 	/**
 	 * @param args
@@ -34,12 +49,13 @@ public class GameDriver {
 		
 			dbConn = DriverManager.getConnection( "jdbc:mysql://localhost:3306/natc", "natc", makeSeed( rnd_seed ) );
 			
-			gameService = new RealtimeGameServiceImpl( dbConn, "2001" );
+			gameService = new RealtimeGameServiceImpl( dbConn, "2003" );
 			
 			Match match = new Match();
 			
-			match.setHome_team_id( 1 );
-			match.setRoad_team_id( 2 );
+			match.setHome_team_id(  5 );
+			match.setRoad_team_id( 16 );
+			
 			Calendar cal = Calendar.getInstance();
 
 			cal.setTime( new Date() );
@@ -92,4 +108,74 @@ public class GameDriver {
 		
 		return String.valueOf( new_seed );
 	}
+
+	public void run() {
+		
+		if ( match == null ) {
+		
+			System.out.println( "Match is not set. Nothing to do here." );
+			
+			return;
+		}
+		
+		if ( type == 0 ) {
+		
+			System.out.println( "Unknown game type. Exiting." );
+			
+			return;
+		}
+		
+		GameService      gameService = new RealtimeGameServiceImpl( dbConn, year );
+		SimpleDateFormat dateFormat  = new SimpleDateFormat( "yyyy.MM.dd.HH.mm.ss" );
+
+		Calendar cal = Calendar.getInstance();
+
+		cal.setTime( new Date() );
+
+		int year  = cal.get( Calendar.YEAR         );
+		int month = cal.get( Calendar.MONTH        );
+		int day   = cal.get( Calendar.DAY_OF_MONTH );
+
+		cal.setTimeZone( TimeZone.getTimeZone( "America/Indianapolis" ) );
+
+		cal.set( year, month, day, 16, 5 );
+
+		long timeDifference = cal.getTime().getTime() - (new Date()).getTime();
+		
+		if ( timeDifference > 0 ) {
+
+			System.out.println( dateFormat.format( new Date() ) + " Sleeping for " + String.valueOf( ((float)timeDifference / 1000.0) ) + " seconds." );
+			
+			//Thread.sleep( timeDifference );
+		}
+		
+		try {
+			
+			gameService.processMatch( match, date, type );
+		}
+		catch ( Exception e ) {
+			
+			System.out.println( dateFormat.format( new Date() ) + " Exception received: " + e.getLocalizedMessage() );
+			
+			e.printStackTrace();
+			
+			return;
+		}
+	}
+
+	public void setDate(Date date) {
+		
+		this.date = date;
+	}
+
+	public void setMatch(Match match) {
+		
+		this.match = match;
+	}
+
+	public void setType(int type) {
+		
+		this.type = type;
+	}
+	
 }

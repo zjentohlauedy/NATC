@@ -14,28 +14,28 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getLastScheduleEntrySelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Completed FROM Schedule_T WHERE Completed = 1 ORDER BY Scheduled DESC LIMIT 1";
+		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Status FROM Schedule_T WHERE Status = ? ORDER BY Scheduled DESC LIMIT 1";
 		
 		return dbConn.prepareStatement( sql );
 	}
 	
 	public static PreparedStatement getScheduleEntrySelectPs( Connection dbConn ) throws SQLException {
 		
-		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Completed FROM Schedule_T WHERE Year = ? AND Sequence = ? LIMIT 1";
+		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Status FROM Schedule_T WHERE Year = ? AND Sequence = ? LIMIT 1";
 		
 		return dbConn.prepareStatement( sql );
 	}
 	
 	public static PreparedStatement getScheduleEntriesByTypeSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Completed FROM Schedule_T WHERE Year = ? AND Type = ?";
+		String sql = "SELECT Year, Sequence, Type, Data, Scheduled, Status FROM Schedule_T WHERE Year = ? AND Type = ?";
 		
 		return dbConn.prepareStatement( sql );
 	}
 
 	public static PreparedStatement getScheduleInsertPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "INSERT INTO Schedule_T ( Year, Sequence, Type, Data, Scheduled, Completed ) VALUES ( ?, ?, ?, ?, ?, ? )";
+		String sql = "INSERT INTO Schedule_T ( Year, Sequence, Type, Data, Scheduled, Status ) VALUES ( ?, ?, ?, ?, ?, ? )";
 		
 		return dbConn.prepareStatement( sql );
 	}
@@ -47,7 +47,7 @@ public class DatabaseImpl {
 			/**/   + "   SET Type      = ?, "
 			/**/   + "       Data      = ?, "
 			/**/   + "       Scheduled = ?, "
-			/**/   + "       Completed = ?  "
+			/**/   + "       Status    = ?  "
 			/**/
 			/**/   + " WHERE Year     = ? "
 			/**/   + "   AND Sequence = ?";
@@ -57,7 +57,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getScheduleCompleteUpdatePs( Connection dbConn ) throws SQLException {
 	
-		String sql = "UPDATE Schedule_T SET Completed = ? WHERE Year = ? AND Sequence = ?";
+		String sql = "UPDATE Schedule_T SET Status = ? WHERE Year = ? AND Sequence = ?";
 		
 		return dbConn.prepareStatement( sql );
 	}

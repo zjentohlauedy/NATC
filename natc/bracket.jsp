@@ -19,24 +19,12 @@
 </head>
 <body>
 
-<table class="menuwrap">
-  <tr>
-    <td>
-      <ul class="menu">
-        <li><a href="/natc/Main.do?page=games"   ><bean:message key="title.games"   /></a></li>
-        <li><a href="/natc/Main.do?page=news"    ><bean:message key="title.news"    /></a></li>
-        <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
-        <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
-        <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
-        <li><a href="/natc/Champs.do"            ><bean:message key="title.champs"  /></a></li>
-      </ul>
-    </td>
-  </tr>
-</table>
+<jsp:include page="menu.jsp" />
 
 <h1>NATC PLAYOFFS</h1>
 <html:errors/>
 
+<!--
 <html:form method="POST" action="/Games">
 
 <html:select property="operation">
@@ -47,6 +35,7 @@
 </html:select>
 <html:submit><bean:message key="games.label.next"/></html:submit>
 </html:form>
+-->
 
 <logic:present name="schedule">
   <h2><bean:write name="schedule" property="scheduled"/></h2>
@@ -166,7 +155,7 @@
           </html:link>
         </td>
         <td>
-          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+          <html:link page="/Watch.do" paramId="game_id" paramName="game" paramProperty="game_id">
             <logic:equal name="game" property="road_win" value="true">
               <em><bean:write name="game" property="road_score"/></em>
             </logic:equal>
@@ -184,7 +173,7 @@
           </html:link>
         </td>
         <td>
-          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+          <html:link page="/Watch.do" paramId="game_id" paramName="game" paramProperty="game_id">
             <logic:equal name="game" property="home_win" value="true">
               <em><bean:write name="game" property="home_score"/></em>
             </logic:equal>

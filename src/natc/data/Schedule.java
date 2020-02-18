@@ -9,12 +9,16 @@ public class Schedule {
 	public static final String FIRST_YEAR     = "1971";
 	public static final int    FIRST_SEQUENCE = 1;
 	
+	public static final int    st_Scheduled   = 0;
+	public static final int    st_InProgress  = 1;
+	public static final int    st_Completed   = 2;
+	
 	private String       year;
 	private int          sequence;
 	private ScheduleType type;
 	private String       data;
 	private Date         scheduled;
-	private boolean      completed;
+	private int          status;
 	
 	private List         matches;
 	
@@ -25,7 +29,7 @@ public class Schedule {
 		this.type      = null;
 		this.data      = null;
 		this.scheduled = null;
-		this.completed = false;
+		this.status    = st_Scheduled;
 		this.matches   = null;
 	}
 
@@ -50,14 +54,6 @@ public class Schedule {
 			
 			matches.add( match );
 		}		
-	}
-
-	public boolean isCompleted() {
-		return completed;
-	}
-
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
 	}
 
 	public String getData() {
@@ -106,6 +102,14 @@ public class Schedule {
 
 	public void setYear(String year) {
 		this.year = year;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 	
 }

@@ -22,35 +22,21 @@
 </head>
 <body onload="init()">
 
-  <logic:present name="gameState">
-    <script type="text/javascript">
-      function init() {
-
-    	  initGame( '<bean:write name="gameState" property="game_id" />',
-    			  	'<bean:write name="gameState" property="sequence" />',
-    			  	'<bean:write name="gameState" property="period" />',
-    			  	'<bean:write name="gameState" property="overtime" />',
-    	    	  	'<bean:write name="gameState" property="possession" />',
-    	    	  	'<bean:write name="gameState" property="time_remaining" />',
-    	    	  	'<bean:write name="gameState" property="clock_stopped" />' );
-      }
-    </script>
-  </logic:present>
+<logic:present name="gameState">
+  <script type="text/javascript">
+    function init() {
+   	  initGame( '<bean:write name="gameState" property="game_id" />',
+  			  	'<bean:write name="gameState" property="sequence" />',
+  			  	'<bean:write name="gameState" property="period" />',
+  			  	'<bean:write name="gameState" property="overtime" />',
+   	    	  	'<bean:write name="gameState" property="possession" />',
+  	    	  	'<bean:write name="gameState" property="time_remaining" />',
+  	    	  	'<bean:write name="gameState" property="clock_stopped" />' );
+    }
+  </script>
+</logic:present>
   
-<table class="menuwrap">
-  <tr>
-    <td>
-      <ul class="menu">
-        <li><a href="/natc/Main.do?page=games"   ><bean:message key="title.games"   /></a></li>
-        <li><a href="/natc/Main.do?page=news"    ><bean:message key="title.news"    /></a></li>
-        <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
-        <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
-        <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
-        <li><a href="/natc/Champs.do"            ><bean:message key="title.champs"  /></a></li>
-      </ul>
-    </td>
-  </tr>
-</table>
+<jsp:include page="menu.jsp" />
 
 <h1>GAME</h1>
 

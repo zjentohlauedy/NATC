@@ -17,27 +17,28 @@
   </style>
   
   <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  <script type="text/javascript" src="scripts/natc_ajax.js"></script>
+  <script type="text/javascript" src="scripts/natc_games.js"></script>
   
 </head>
-<body>
+<body onload="init()">
 
-<table class="menuwrap">
-  <tr>
-    <td>
-      <ul class="menu">
-        <li><a href="/natc/Main.do?page=games"   ><bean:message key="title.games"   /></a></li>
-        <li><a href="/natc/Main.do?page=news"    ><bean:message key="title.news"    /></a></li>
-        <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
-        <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
-        <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
-      </ul>
-    </td>
-  </tr>
-</table>
+<logic:present name="schedule">
+  <logic:equal name="schedule" property="status" value="1" >
+    <script type="text/javascript">
+      function init() {
+   	    initGames();
+      }
+    </script>
+  </logic:equal>
+</logic:present>
+  
+<jsp:include page="menu.jsp" />
 
 <h1>GAMES</h1>
 <html:errors/>
 
+<!--
 <html:form method="POST" action="/Games">
 
 <html:select property="operation">
@@ -48,6 +49,7 @@
 </html:select>
 <html:submit><bean:message key="games.label.next"/></html:submit>
 </html:form>
+-->
 
 <logic:present name="schedule">
   <h2><bean:write name="schedule" property="scheduled"/></h2>
@@ -317,7 +319,7 @@
 
 <logic:present name="games">
   <logic:iterate id="game" name="games">
-    <table class="game">
+    <table class="game" id='g<bean:write name="game" property="game_id" />'>
       <tr>
         <td>
           <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="road_team_id">

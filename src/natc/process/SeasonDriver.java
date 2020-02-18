@@ -13,6 +13,7 @@ import natc.service.PlayerService;
 import natc.service.ScheduleService;
 import natc.service.impl.GameServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
+import natc.service.impl.RealtimeGameServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 
 public class SeasonDriver {
@@ -39,6 +40,14 @@ public class SeasonDriver {
 			dbConn = DriverManager.getConnection( "jdbc:mysql://localhost:3306/natc", "natc", makeSeed( rnd_seed ) );
 			
 			scheduleService = new ScheduleServiceImpl( dbConn, null );
+
+			// Make sure there are no schedule entries in progress
+			if ( (scheduleEntry = scheduleService.getCurrentScheduleEntry()) != null ) {
+			
+				System.out.println( "Schedule entry (" + scheduleEntry.getYear() + ":" + String.valueOf( scheduleEntry.getSequence() ) + ") is in progress. Exiting." );
+				
+				return;
+			}
 			
 			// Find out what the program did last
 			if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
@@ -69,10 +78,21 @@ public class SeasonDriver {
 			// Get the next scheduled event
 			scheduleEntry = scheduleService.getNextScheduleEntry( scheduleEntry );
 
-			gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
+			if ( scheduleEntry.getType().getValue() == ScheduleType.NATC_CHAMPIONSHIP ) {
+				
+				gameService = new RealtimeGameServiceImpl( dbConn, scheduleEntry.getYear() );
+			}
+			else {
+
+				gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
+			}
 			
 			System.out.println( dateFormat.format( new Date() ) + " Processing Schedule Entry..." );
 
+			scheduleEntry.setStatus( Schedule.st_InProgress );
+			
+			scheduleService.updateScheduleEntry( scheduleEntry );
+			
 			switch ( scheduleEntry.getType().getValue() ) {
 			
 			case ScheduleType.BEGINNING_OF_SEASON:     System.out.println( dateFormat.format( new Date() ) + " Official Start of " + scheduleEntry.getYear() + " season." ); break;
@@ -97,7 +117,7 @@ public class SeasonDriver {
 			case ScheduleType.ALL_STAR_DAY_1:          System.out.println( dateFormat.format( new Date() ) + " All Star Games Day 1." ); break;
 			case ScheduleType.ALL_STAR_DAY_2:          System.out.println( dateFormat.format( new Date() ) + " All Star Games Day 2." ); break;
 			case ScheduleType.END_OF_ALLSTAR_GAMES:    System.out.println( dateFormat.format( new Date() ) + " Official End of All Star Games." ); break;
-			case ScheduleType.END_OF_SEASON:           System.out.println( dateFormat.format( new Date() ) + " Official End of " + scheduleEntry.getYear() + "Season." ); break;
+			case ScheduleType.END_OF_SEASON:           System.out.println( dateFormat.format( new Date() ) + " Official End of " + scheduleEntry.getYear() + " Season." ); break;
 			}
 			
 			gameService.processScheduleEvent( scheduleEntry );

@@ -18,23 +18,12 @@
 </head>
 <body>
 
-<table class="menuwrap">
-  <tr>
-    <td>
-      <ul class="menu">
-        <li><a href="/natc/Main.do?page=games"   ><bean:message key="title.games"   /></a></li>
-        <li><a href="/natc/Main.do?page=news"    ><bean:message key="title.news"    /></a></li>
-        <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
-        <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
-        <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
-      </ul>
-    </td>
-  </tr>
-</table>
+<jsp:include page="menu.jsp" />
 
 <h1>END OF SEASON</h1>
 <html:errors/>
 
+<!--
 <html:form method="POST" action="/Games">
 
 <html:select property="operation">
@@ -44,6 +33,7 @@
 <html:submit><bean:message key="games.label.next"/></html:submit>
 
 </html:form>
+-->
 
 <logic:present name="schedule">
   <h2><bean:write name="schedule" property="scheduled"/></h2>

@@ -21,22 +21,88 @@
 </head>
 <body>
 
-<table class="menuwrap">
-  <tr>
-    <td>
-      <ul class="menu">
-        <li><a href="/natc/Main.do?page=games"   ><bean:message key="title.games"   /></a></li>
-        <li><a href="/natc/Main.do?page=news"    ><bean:message key="title.news"    /></a></li>
-        <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
-        <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
-        <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
-      </ul>
-    </td>
-  </tr>
-</table>
+<jsp:include page="menu.jsp" />
 
 <h1>GAME</h1>
 
+<table class="gamebyperiod" id="scoreboard">
+  <tr class="heading">
+    <td class="posind"></td>
+    <td></td>
+    <td class="period"><bean:message key="game.label.period1"  /></td>
+    <td class="period"><bean:message key="game.label.period2"  /></td>
+    <td class="period"><bean:message key="game.label.period3"  /></td>
+    <td class="period"><bean:message key="game.label.period4"  /></td>
+    <td class="period"><bean:message key="game.label.period5"  /></td>
+    <td class="period"><bean:message key="game.label.overtime" /></td>
+    <td><bean:message key="game.label.score"    /></td>
+  </tr>
+  <logic:present name="roadGame">
+    <tr>
+      <td id="roadPoss"></td>
+      <th>
+        <html:link page="/Team.do" paramId="team_id" paramName="roadGame" paramProperty="team_id">
+          <bean:write name="roadGame" property="location" />
+        </html:link>
+      </td>
+      <td id="roadP1Score">
+        <bean:write name="roadGame" property="period1_score"/>
+      </td>
+      <td id="roadP2Score">
+        <bean:write name="roadGame" property="period2_score"/>
+      </td>
+      <td id="roadP3Score">
+        <bean:write name="roadGame" property="period3_score"/>
+      </td>
+      <td id="roadP4Score">
+        <bean:write name="roadGame" property="period4_score"/>
+      </td>
+      <td id="roadP5Score">
+        <bean:write name="roadGame" property="period5_score"/>
+      </td>
+      <td id="roadOtScore">
+        <bean:write name="roadGame" property="overtime_score"/>
+      </td>
+      <td id="roadScore">
+        <bean:write name="roadGame" property="total_score"/>
+      </td>
+    </tr>
+  </logic:present>
+  <logic:present name="homeGame">
+    <tr>
+      <td id="homePoss"></td>
+      <th>
+        <html:link page="/Team.do" paramId="team_id" paramName="homeGame" paramProperty="team_id">
+          <bean:write name="homeGame" property="location" />
+        </html:link>
+      </td>
+      <td id="homeP1Score">
+        <bean:write name="homeGame" property="period1_score"/>
+      </td>
+      <td id="homeP2Score">
+        <bean:write name="homeGame" property="period2_score"/>
+      </td>
+      <td id="homeP3Score">
+        <bean:write name="homeGame" property="period3_score"/>
+      </td>
+      <td id="homeP4Score">
+        <bean:write name="homeGame" property="period4_score"/>
+      </td>
+      <td id="homeP5Score">
+        <bean:write name="homeGame" property="period5_score"/>
+      </td>
+      <td id="homeOtScore">
+        <bean:write name="homeGame" property="overtime_score"/>
+      </td>
+      <td id="homeScore">
+        <bean:write name="homeGame" property="total_score"/>
+        <!-- <h7><bean:message key="games.label.ot_indicator"/></h7> -->
+      </td>
+    </tr>
+  </logic:present>
+</table>
+
+<!--
 <table class="game_long">
   <logic:present name="roadGame">
     <tr>
@@ -76,6 +142,7 @@
     </tr>
   </logic:present>
 </table>
+-->
 
 <table class="boxscores">
   <tr class="heading">
