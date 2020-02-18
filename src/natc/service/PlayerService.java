@@ -46,4 +46,8 @@ public interface PlayerService {
 	public List           getManagerialCandidates() throws SQLException;
 	public RookieInfoView getRookieInfo( int player_id ) throws SQLException;
 	public void           agePlayers() throws SQLException;
+	public List           getDraftPicks( int start_pick ) throws SQLException;
+	public List           getMostImprovedPlayers() throws SQLException;
+	public List           getStandoutPlayers() throws SQLException;
+	public List           getStandoutRookies() throws SQLException;
 }

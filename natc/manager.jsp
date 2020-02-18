@@ -15,6 +15,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -323,20 +326,21 @@
       <td></td>
     </tr>
     <tr class="heading">
-      <td><bean:message key="manager.label.team"    /></td>
-      <td><bean:message key="manager.label.year"    /></td>
-      <td><bean:message key="manager.label.record"  /></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.team"    /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.year"    /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.record"  /></a></td>
       <td><bean:message key="manager.label.finish"  /></td>
-      <td><bean:message key="manager.label.avg_top" /></td>
-      <td><bean:message key="manager.label.score"   /></td>
-      <td><bean:message key="manager.label.eff"     /></td>
-      <td><bean:message key="manager.label.ps_eff"  /></td>
-      <td><bean:message key="manager.label.avg_top" /></td>
-      <td><bean:message key="manager.label.score"   /></td>
-      <td><bean:message key="manager.label.eff"     /></td>
-      <td><bean:message key="manager.label.ps_eff"  /></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.avg_top" /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.score"   /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.eff"     /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.ps_eff"  /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.avg_top" /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.score"   /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.eff"     /></a></td>
+      <td><a href="" onclick="return sortTable( null, this )"><bean:message key="manager.label.ps_eff"  /></a></td>
       <td><bean:message key="manager.label.awards"  /></td>
     </tr>
+    <tbody id="seasonList">
     <logic:iterate id="managerStatsView" name="history">
       <logic:equal name="managerStatsView" property="year" value="Total">
         <tr class="totals">
@@ -344,81 +348,83 @@
       <logic:notEqual name="managerStatsView" property="year" value="Total">
         <tr>
       </logic:notEqual>
-      <td>
-        <html:link page="/Team.do" paramId="team_id" paramName="managerStatsView" paramProperty="team_id">
-          <bean:write name="managerStatsView" property="team_abbrev"/>
-        </html:link>
-      </td>
-      <td><bean:write name="managerStatsView" property="year" /></td>
-      <td><bean:write name="managerStatsView" property="wins" />-<bean:write name="managerStatsView" property="losses" /></td>
-      <td>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="0">
-          <logic:equal name="managerStatsView" property="division_rank" value="0">
-            <bean:message key="team.label.na" />
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="managerStatsView" paramProperty="team_id">
+            <bean:write name="managerStatsView" property="team_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="managerStatsView" property="year" /></td>
+        <td><bean:write name="managerStatsView" property="wins" />-<bean:write name="managerStatsView" property="losses" /></td>
+        <td>
+          <logic:equal name="managerStatsView" property="playoff_rank" value="0">
+            <logic:equal name="managerStatsView" property="division_rank" value="0">
+              <bean:message key="team.label.na" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="5">
+              <bean:message key="team.label.fifth" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="6">
+              <bean:message key="team.label.sixth" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="7">
+              <bean:message key="team.label.seventh" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="8">
+              <bean:message key="team.label.eighth" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="9">
+              <bean:message key="team.label.ninth" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="10">
+              <bean:message key="team.label.last" />
+            </logic:equal>
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="5">
-            <bean:message key="team.label.fifth" />
+          <logic:equal name="managerStatsView" property="playoff_rank" value="1">
+            <logic:equal name="managerStatsView" property="division_rank" value="1">
+              <bean:message key="team.label.first" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="2">
+              <bean:message key="team.label.second" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="3">
+              <bean:message key="team.label.third" />
+            </logic:equal>
+            <logic:equal name="managerStatsView" property="division_rank" value="4">
+              <bean:message key="team.label.fourth" />
+            </logic:equal>
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="6">
-            <bean:message key="team.label.sixth" />
+          <logic:equal name="managerStatsView" property="playoff_rank" value="2">
+            <bean:message key="team.label.div_runner_up" />
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="7">
-            <bean:message key="team.label.seventh" />
+          <logic:equal name="managerStatsView" property="playoff_rank" value="3">
+            <bean:message key="team.label.division_champ" />
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="8">
-            <bean:message key="team.label.eighth" />
+          <logic:equal name="managerStatsView" property="playoff_rank" value="4">
+            <bean:message key="team.label.conference_champ" />
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="9">
-            <bean:message key="team.label.ninth" />
+          <logic:equal name="managerStatsView" property="playoff_rank" value="5">
+            <bean:message key="team.label.natc_champ" />
           </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="10">
-            <bean:message key="team.label.last" />
+        </td>
+        <td><bean:write name="managerStatsView" property="offAvgPossessionTimeDsp" /></td>
+        <td><bean:write name="managerStatsView" property="off_points"              /></td>
+        <td><bean:write name="managerStatsView" property="offScoringEfficiencyDsp" /></td>
+        <td><bean:write name="managerStatsView" property="offPsEfficiencyDsp"      /></td>
+        <td><bean:write name="managerStatsView" property="defAvgPossessionTimeDsp" /></td>
+        <td><bean:write name="managerStatsView" property="def_points"              /></td>
+        <td><bean:write name="managerStatsView" property="defScoringEfficiencyDsp" /></td>
+        <td><bean:write name="managerStatsView" property="defPsEfficiencyDsp"      /></td>
+        <td>
+          <logic:equal name="managerStatsView" property="award" value="1">
+            <bean:message key="manager.label.moty" />
           </logic:equal>
-        </logic:equal>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="1">
-          <logic:equal name="managerStatsView" property="division_rank" value="1">
-            <bean:message key="team.label.first" />
-          </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="2">
-            <bean:message key="team.label.second" />
-          </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="3">
-            <bean:message key="team.label.third" />
-          </logic:equal>
-          <logic:equal name="managerStatsView" property="division_rank" value="4">
-            <bean:message key="team.label.fourth" />
-          </logic:equal>
-        </logic:equal>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="2">
-          <bean:message key="team.label.div_runner_up" />
-        </logic:equal>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="3">
-          <bean:message key="team.label.division_champ" />
-        </logic:equal>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="4">
-          <bean:message key="team.label.conference_champ" />
-        </logic:equal>
-        <logic:equal name="managerStatsView" property="playoff_rank" value="5">
-          <bean:message key="team.label.natc_champ" />
-        </logic:equal>
-      </td>
-      <td><bean:write name="managerStatsView" property="offAvgPossessionTimeDsp" /></td>
-      <td><bean:write name="managerStatsView" property="off_points"              /></td>
-      <td><bean:write name="managerStatsView" property="offScoringEfficiencyDsp" /></td>
-      <td><bean:write name="managerStatsView" property="offPsEfficiencyDsp"      /></td>
-      <td><bean:write name="managerStatsView" property="defAvgPossessionTimeDsp" /></td>
-      <td><bean:write name="managerStatsView" property="def_points"              /></td>
-      <td><bean:write name="managerStatsView" property="defScoringEfficiencyDsp" /></td>
-      <td><bean:write name="managerStatsView" property="defPsEfficiencyDsp"      /></td>
-      <td>
-        <logic:equal name="managerStatsView" property="award" value="1">
-          <bean:message key="manager.label.moty" />
-        </logic:equal>
-        <logic:notEqual name="managerStatsView" property="allstar_team_id" value="0">
-          <bean:message key="manager.label.allstar_award" />
-        </logic:notEqual>
-      </td>
+          <logic:notEqual name="managerStatsView" property="allstar_team_id" value="0">
+            <bean:message key="manager.label.allstar_award" />
+          </logic:notEqual>
+        </td>
+      </tr>
     </logic:iterate>
+    </tbody>
   </table>
 </logic:present>
 

@@ -76,6 +76,41 @@ public class TeamServiceImpl implements TeamService {
 		this.year   = year;
 	}
 	
+	private void copyTeamFromResultSet( Team team, ResultSet resultSet ) throws SQLException {
+
+		team.setTeam_id(          resultSet.getInt(     1 ) );
+		team.setYear(             resultSet.getString(  2 ) );
+		team.setLocation(         resultSet.getString(  3 ) );
+		team.setName(             resultSet.getString(  4 ) );
+		team.setAbbrev(           resultSet.getString(  5 ) );
+		team.setConference(       resultSet.getInt(     6 ) );
+		team.setDivision(         resultSet.getInt(     7 ) );
+		team.setPreseason_games(  resultSet.getInt(     8 ) );
+		team.setPreseason_wins(   resultSet.getInt(     9 ) );
+		team.setPreseason_losses( resultSet.getInt(    10 ) );
+		team.setGames(            resultSet.getInt(    11 ) );
+		team.setWins(             resultSet.getInt(    12 ) );
+		team.setLosses(           resultSet.getInt(    13 ) );
+		team.setDivision_wins(    resultSet.getInt(    14 ) );
+		team.setDivision_losses(  resultSet.getInt(    15 ) );
+		team.setOoc_wins(         resultSet.getInt(    16 ) );
+		team.setOoc_losses(       resultSet.getInt(    17 ) );
+		team.setOt_wins(          resultSet.getInt(    18 ) );
+		team.setOt_losses(        resultSet.getInt(    19 ) );
+		team.setRoad_wins(        resultSet.getInt(    20 ) );
+		team.setRoad_losses(      resultSet.getInt(    21 ) );
+		team.setHome_wins(        resultSet.getInt(    22 ) );
+		team.setHome_losses(      resultSet.getInt(    23 ) );
+		team.setDivision_rank(    resultSet.getInt(    24 ) );
+		team.setPlayoff_rank(     resultSet.getInt(    25 ) );
+		team.setPlayoff_games(    resultSet.getInt(    26 ) );
+		team.setRound1_wins(      resultSet.getInt(    27 ) );
+		team.setRound2_wins(      resultSet.getInt(    28 ) );
+		team.setRound3_wins(      resultSet.getInt(    29 ) );
+		team.setExpectation(      resultSet.getDouble( 30 ) );
+		team.setDrought(          resultSet.getInt(    31 ) );
+	}
+	
 	public void generateTeams() throws SQLException {
 		
 		if ( year == null ) {
@@ -200,37 +235,7 @@ public class TeamServiceImpl implements TeamService {
 				
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -264,37 +269,7 @@ public class TeamServiceImpl implements TeamService {
 				
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -330,37 +305,7 @@ public class TeamServiceImpl implements TeamService {
 				
 				team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				// Get manager
 				ManagerService managerService = new ManagerServiceImpl( dbConn, year );
@@ -420,37 +365,7 @@ public class TeamServiceImpl implements TeamService {
 			
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -485,37 +400,7 @@ public class TeamServiceImpl implements TeamService {
 			
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -961,37 +846,7 @@ public class TeamServiceImpl implements TeamService {
 			
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -1264,37 +1119,7 @@ public class TeamServiceImpl implements TeamService {
 			
 				Team team = new Team();
 				
-				team.setTeam_id(          dbRs.getInt(     1 ) );
-				team.setYear(             dbRs.getString(  2 ) );
-				team.setLocation(         dbRs.getString(  3 ) );
-				team.setName(             dbRs.getString(  4 ) );
-				team.setAbbrev(           dbRs.getString(  5 ) );
-				team.setConference(       dbRs.getInt(     6 ) );
-				team.setDivision(         dbRs.getInt(     7 ) );
-				team.setPreseason_games(  dbRs.getInt(     8 ) );
-				team.setPreseason_wins(   dbRs.getInt(     9 ) );
-				team.setPreseason_losses( dbRs.getInt(    10 ) );
-				team.setGames(            dbRs.getInt(    11 ) );
-				team.setWins(             dbRs.getInt(    12 ) );
-				team.setLosses(           dbRs.getInt(    13 ) );
-				team.setDivision_wins(    dbRs.getInt(    14 ) );
-				team.setDivision_losses(  dbRs.getInt(    15 ) );
-				team.setOoc_wins(         dbRs.getInt(    16 ) );
-				team.setOoc_losses(       dbRs.getInt(    17 ) );
-				team.setOt_wins(          dbRs.getInt(    18 ) );
-				team.setOt_losses(        dbRs.getInt(    19 ) );
-				team.setRoad_wins(        dbRs.getInt(    20 ) );
-				team.setRoad_losses(      dbRs.getInt(    21 ) );
-				team.setHome_wins(        dbRs.getInt(    22 ) );
-				team.setHome_losses(      dbRs.getInt(    23 ) );
-				team.setDivision_rank(    dbRs.getInt(    24 ) );
-				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
-				team.setPlayoff_games(    dbRs.getInt(    26 ) );
-				team.setRound1_wins(      dbRs.getInt(    27 ) );
-				team.setRound2_wins(      dbRs.getInt(    28 ) );
-				team.setRound3_wins(      dbRs.getInt(    29 ) );
-				team.setExpectation(      dbRs.getDouble( 30 ) );
-				team.setDrought(          dbRs.getInt(    31 ) );
+				copyTeamFromResultSet( team, dbRs );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				

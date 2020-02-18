@@ -18,9 +18,9 @@ function getTextValue( element ) {
 
 		if      ( element.childNodes[i].nodeType == document.TEXT_NODE       ) str += element.childNodes[i].nodeValue;
 		else if ( element.childNodes[i].nodeType == document.ELEMENT_NODE &&
-				element.childNodes[i].tagName  == "BR"                     ) str += " ";
+				  element.childNodes[i].tagName  == "BR"                     ) str += " ";
 		else if ( element.childNodes[i].nodeType == document.ELEMENT_NODE &&
-				element.childNodes[i].tagName  == "IMG"                    ) str += element.childNodes[i].id;
+				  element.childNodes[i].tagName  == "IMG"                    ) str += element.childNodes[i].id;
 		else                                                                   str += getTextValue( element.childNodes[i] );
 	}
 
@@ -64,10 +64,12 @@ function findTBody( element ) {
 	}
 }
 
-function sortTable( element ) {
+function sortTable( tbodyId, element ) {
 
-	elementId = findTBody( element );
-	column    = element.parentNode.cellIndex
+	if   ( tbodyId == null ) elementId = findTBody( element );
+	else                     elementId = tbodyId;
+	
+	column = element.parentNode.cellIndex
 
 	if ( lastElementId == elementId  &&  lastColumn == column ) direction = (direction == 0) ? 1 : 0;
 	else                                                        direction = 0;
@@ -79,11 +81,15 @@ function sortTable( element ) {
 
 	for (var i = 0; i < plist.rows.length - 1; ++i ) {
 
+		if ( plist.rows[i].className == "totals" ) continue;
+		
 		var minIndex = i;
 		var minValue = getTextValue( plist.rows[i].cells[column] );
 
 		for ( var j = i + 1; j < plist.rows.length; ++j ) {
 
+			if ( plist.rows[j].className == "totals" ) continue;
+			
 			var nextValue = getTextValue( plist.rows[j].cells[column] );
 
 			if ( compareValues( minValue, nextValue ) > 0 ) {

@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,6 @@ import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
 import natc.view.GameView;
 import natc.view.ManagerAwardsView;
-import natc.view.ManagerView;
 
 public class GamesAction extends Action {
 
@@ -220,17 +220,23 @@ public class GamesAction extends Action {
 				}
 			};
 			
+			teamService    = new TeamServiceImpl(    dbConn, scheduleEntry.getYear() );
+			managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
+			playerService  = new PlayerServiceImpl(  dbConn, scheduleEntry.getYear() );
+			
 			// Choose the next page to display
 			switch ( scheduleEntry.getType().getValue() ) {
 
 			case ScheduleType.BEGINNING_OF_SEASON:    nextPage = "beginning";         break;
 			case ScheduleType.MANAGER_CHANGES:
 				
-				managerService = (ManagerService)new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
+				/*
+				if ( (data = managerService.getRetiredManagersByTeam(null)) != null ) request.setAttribute( "retired_managers", data );
+				if ( (data = managerService.getFiredManagersByTeam(0))   != null ) request.setAttribute( "fired_managers",   data );
+				if ( (data = managerService.getHiredManagersByTeam(0))   != null ) request.setAttribute( "hired_managers",   data );
+				*/
 				
-				if ( (data = managerService.getRetiredManagers()) != null ) request.setAttribute( "retired_managers", data );
-				if ( (data = managerService.getFiredManagers())   != null ) request.setAttribute( "fired_managers",   data );
-				if ( (data = managerService.getHiredManagers())   != null ) request.setAttribute( "hired_managers",   data );
+				if ( (data = managerService.getManagerMovesByTeam()) != null ) request.setAttribute( "manager_moves", data );
 				
 				nextPage = "manager_changes";
 				
@@ -255,7 +261,7 @@ public class GamesAction extends Action {
 
 			case ScheduleType.ROOKIE_DRAFT_ROUND_1:
 				
-				if ( (data = gameService.getDraftPicks( 1 )) != null ) {
+				if ( (data = playerService.getDraftPicks( 1 )) != null ) {
 				
 					request.setAttribute( "draft_picks", data );
 				}
@@ -266,7 +272,7 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.ROOKIE_DRAFT_ROUND_2:
 				
-				if ( (data = gameService.getDraftPicks( 41 )) != null ) {
+				if ( (data = playerService.getDraftPicks( 41 )) != null ) {
 					
 					request.setAttribute( "draft_picks", data );
 				}
@@ -277,9 +283,9 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.TRAINING_CAMP:
 				
-				if ( (data = gameService.getStandoutPlayers())     != null ) request.setAttribute( "standout_players", data );
-				if ( (data = gameService.getStandoutRookies())     != null ) request.setAttribute( "standout_rookies", data );
-				if ( (data = gameService.getMostImprovedPlayers()) != null ) request.setAttribute( "most_improved",    data );
+				if ( (data = playerService.getStandoutPlayers())     != null ) request.setAttribute( "standout_players", data );
+				if ( (data = playerService.getStandoutRookies())     != null ) request.setAttribute( "standout_rookies", data );
+				if ( (data = playerService.getMostImprovedPlayers()) != null ) request.setAttribute( "most_improved",    data );
 				
 				nextPage = "training_camp";
 				
@@ -359,9 +365,6 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.AWARDS:
 				
-				managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
-				playerService  = new PlayerServiceImpl(  dbConn, scheduleEntry.getYear() );
-				
 				if ( (data = playerService.getPlayerAwards()) != null ) {
 				
 					request.setAttribute( "awards", data );
@@ -381,8 +384,7 @@ public class GamesAction extends Action {
 			case ScheduleType.CONFERENCE_CHAMPIONSHIP:
 			case ScheduleType.NATC_CHAMPIONSHIP:
 
-				teamService = new TeamServiceImpl( dbConn, scheduleEntry.getYear() );
-				
+				/*
 				List round1 = null;
 				
 				if ( (round1 = teamService.getPlayoffTeams()) != null ) {
@@ -510,6 +512,91 @@ public class GamesAction extends Action {
 					request.setAttribute( "round4", round4 );
 					request.setAttribute( "round5", round5 );
 				}
+				*/
+
+				Iterator        i               = null;
+				Team            team            = null;
+				List            round1          = null;
+				List            round2          = null;
+				List            round3          = null;
+				List            round4          = null;
+				List            round5          = null;
+				List            playoffGameInfo = null; 
+
+				round1 = teamService.getPlayoffTeams();
+				
+				i = round1.iterator();
+				
+				while ( i.hasNext() ) {
+				
+					team = (Team)i.next();
+					
+					if ( team.getPlayoff_rank() >= 2 ) {
+					
+						if ( round2 == null ) round2 = new ArrayList();
+						
+						round2.add( team );
+					}
+				}
+
+				if ( round2 != null ) {
+					i = round2.iterator();
+
+					while ( i.hasNext() ) {
+
+						team = (Team)i.next();
+
+						if ( team.getPlayoff_rank() >= 3 ) {
+
+							if ( round3 == null ) round3 = new ArrayList();
+
+							round3.add( team );
+						}
+					}
+				}
+
+				if ( round3 != null ) {
+					i = round3.iterator();
+
+					while ( i.hasNext() ) {
+
+						team = (Team)i.next();
+
+						if ( team.getPlayoff_rank() >= 4 ) {
+
+							if ( round4 == null ) round4 = new ArrayList();
+
+							round4.add( team );
+						}
+					}
+				}
+
+				if ( round4 != null ) {
+					i = round4.iterator();
+
+					while ( i.hasNext() ) {
+
+						team = (Team)i.next();
+
+						if ( team.getPlayoff_rank() >= 5 ) {
+
+							if ( round5 == null ) round5 = new ArrayList();
+
+							round5.add( team );
+						}
+					}
+				}
+
+				request.setAttribute( "round1", round1 );
+				request.setAttribute( "round2", round2 );
+				request.setAttribute( "round3", round3 );
+				request.setAttribute( "round4", round4 );
+				request.setAttribute( "round5", round5 );
+				
+				if ( (playoffGameInfo = gameService.getPlayoffGameInfo()) != null ) {
+					
+					request.setAttribute( "playoffGameInfo", playoffGameInfo );
+				}
 
 				if ( (data = gameService.getGamesByDate( scheduleEntry.getScheduled() )) != null ) {
 
@@ -521,7 +608,7 @@ public class GamesAction extends Action {
 					request.setAttribute( "injuries", data );
 				}
 				
-				nextPage = "games";
+				nextPage = "bracket";
 				
 				break;
 				
@@ -539,8 +626,6 @@ public class GamesAction extends Action {
 					if   ( gameView.getRoad_win().booleanValue() ) winner = gameView.getRoad_team_id().intValue();
 					else                                           winner = gameView.getHome_team_id().intValue();
 					
-					teamService = new TeamServiceImpl( dbConn, scheduleEntry.getYear() );
-					
 					if ( (champion = teamService.getTeamById( winner )) != null ) request.setAttribute( "champion", champion );
 				}
 
@@ -549,10 +634,6 @@ public class GamesAction extends Action {
 				break;
 				
 			case ScheduleType.ALL_STARS:
-				
-				teamService    = new TeamServiceImpl(    dbConn, scheduleEntry.getYear() );
-				playerService  = new PlayerServiceImpl(  dbConn, scheduleEntry.getYear() );
-				managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
 				
 				int allstarTeamIds[] = teamService.getAllstarTeamIds();
 				
@@ -610,10 +691,12 @@ public class GamesAction extends Action {
 		return mapping.findForward( nextPage );
 	}
 	
+	/*
 	private void swapElement( List set, int idx1, int idx2 ) {
 	
 		Object x = set.get( idx1 );
 		set.set( idx1, set.get( idx2 ) );
 		set.set( idx2, x );
 	}
+	*/
 }

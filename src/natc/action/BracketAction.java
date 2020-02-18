@@ -2,7 +2,7 @@ package natc.action;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import natc.data.Schedule;
 import natc.data.Team;
 import natc.service.GameService;
 import natc.service.TeamService;
@@ -33,6 +34,7 @@ public class BracketAction extends Action {
 		DataSource      dataSource      = null;
 		Connection      dbConn          = null;
 		TeamService     teamService     = null;
+		GameService     gameService     = null;
 		Iterator        i               = null;
 		Team            team            = null;
 		List            round1          = null;
@@ -40,6 +42,7 @@ public class BracketAction extends Action {
 		List            round3          = null;
 		List            round4          = null;
 		List            round5          = null;
+		List            playoffGameInfo = null; 
 		
 		try {
 			
@@ -118,6 +121,16 @@ public class BracketAction extends Action {
 			request.setAttribute( "round3", round3 );
 			request.setAttribute( "round4", round4 );
 			request.setAttribute( "round5", round5 );
+			
+			gameService = new GameServiceImpl( dbConn, "1980" );
+			
+			if ( (playoffGameInfo = gameService.getPlayoffGameInfo()) != null ) request.setAttribute( "playoffGameInfo", playoffGameInfo );
+			
+			Schedule schedule = new Schedule();
+			
+			schedule.setScheduled( new Date() );
+			
+			request.setAttribute( "schedule", schedule );
 		}
 		finally {
 			

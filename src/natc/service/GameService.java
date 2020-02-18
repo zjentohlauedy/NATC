@@ -18,17 +18,13 @@ public interface GameService {
 	public List     getRankedTeamsByDivision( int division ) throws SQLException;
 	public List     getRankedTeamList() throws SQLException;
 	public List     getRankedRookieList() throws SQLException;
-	public List     getDraftPicks( int start_pick ) throws SQLException;
-	public List     getStandoutPlayers() throws SQLException;
-	public List     getMostImprovedPlayers() throws SQLException;
-	public List     getStandoutRookies() throws SQLException;
 	public List     getReleasedPlayers() throws SQLException;
 	public List     getFreeAgentMoves() throws SQLException;
 	public List     getRetiredPlayersByTeam() throws SQLException;
 	public List     getRetiredPlayersWithoutTeam() throws SQLException;
-	public List     getAbandonedRookiePlayers() throws SQLException;
 	public List     getInjuriesByDate( Date datestamp ) throws SQLException;
 	public List     getRankedAllstarTeams() throws SQLException;
 	public GameView getChampionshipGame() throws SQLException;
 	public List     getChampionships() throws SQLException;
+	public List     getPlayoffGameInfo() throws SQLException;
 }

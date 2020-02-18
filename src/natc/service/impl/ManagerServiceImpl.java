@@ -31,6 +31,33 @@ public class ManagerServiceImpl implements ManagerService {
 		this.year   = year;
 	}
 
+	private void copyManagerFromResultSet( Manager manager, ResultSet resultSet ) throws SQLException {
+
+		manager.setManager_id(      resultSet.getInt(      1 ) );
+		manager.setTeam_id(         resultSet.getInt(      2 ) );
+		manager.setPlayer_id(       resultSet.getInt(      3 ) );
+		manager.setYear(            resultSet.getString(   4 ) );
+		manager.setFirst_name(      resultSet.getString(   5 ) );
+		manager.setLast_name(       resultSet.getString(   6 ) );
+		manager.setAge(             resultSet.getInt(      7 ) );
+		manager.setOffense(         resultSet.getDouble(   8 ) );
+		manager.setDefense(         resultSet.getDouble(   9 ) );
+		manager.setIntangible(      resultSet.getDouble(  10 ) );
+		manager.setPenalties(       resultSet.getDouble(  11 ) );
+		manager.setVitality(        resultSet.getDouble(  12 ) );
+		manager.setStyle(           resultSet.getInt(     13 ) );
+		manager.setNew_hire(        resultSet.getBoolean( 14 ) );
+		manager.setReleased(        resultSet.getBoolean( 15 ) );
+		manager.setRetired(         resultSet.getBoolean( 16 ) );
+		manager.setFormer_team_id(  resultSet.getInt(     17 ) );
+		manager.setAllstar_team_id( resultSet.getInt(     18 ) );
+		manager.setAward(           resultSet.getInt(     19 ) );
+		manager.setSeasons(         resultSet.getInt(     20 ) );
+		manager.setScore(           resultSet.getInt(     21 ) );
+		manager.setTotal_seasons(   resultSet.getInt(     22 ) );
+		manager.setTotal_score(     resultSet.getInt(     23 ) );
+	}
+	
 	private int getNextManagerId() throws SQLException {
 	
 		PreparedStatement ps   = null;
@@ -252,29 +279,7 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				Manager manager = new Manager();
 				
-				manager.setManager_id(      dbRs.getInt(      1 ) );
-				manager.setTeam_id(         dbRs.getInt(      2 ) );
-				manager.setPlayer_id(       dbRs.getInt(      3 ) );
-				manager.setYear(            dbRs.getString(   4 ) );
-				manager.setFirst_name(      dbRs.getString(   5 ) );
-				manager.setLast_name(       dbRs.getString(   6 ) );
-				manager.setAge(             dbRs.getInt(      7 ) );
-				manager.setOffense(         dbRs.getDouble(   8 ) );
-				manager.setDefense(         dbRs.getDouble(   9 ) );
-				manager.setIntangible(      dbRs.getDouble(  10 ) );
-				manager.setPenalties(       dbRs.getDouble(  11 ) );
-				manager.setVitality(        dbRs.getDouble(  12 ) );
-				manager.setStyle(           dbRs.getInt(     13 ) );
-				manager.setNew_hire(        dbRs.getBoolean( 14 ) );
-				manager.setReleased(        dbRs.getBoolean( 15 ) );
-				manager.setRetired(         dbRs.getBoolean( 16 ) );
-				manager.setFormer_team_id(  dbRs.getInt(     17 ) );
-				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setAward(           dbRs.getInt(     19 ) );
-				manager.setSeasons(         dbRs.getInt(     20 ) );
-				manager.setScore(           dbRs.getInt(     21 ) );
-				manager.setTotal_seasons(   dbRs.getInt(     22 ) );
-				manager.setTotal_score(     dbRs.getInt(     23 ) );
+				copyManagerFromResultSet( manager, dbRs );
 				
 				if ( managers == null ) managers = new ArrayList();
 				
@@ -310,29 +315,7 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				manager = new Manager();
 
-				manager.setManager_id(      dbRs.getInt(      1 ) );
-				manager.setTeam_id(         dbRs.getInt(      2 ) );
-				manager.setPlayer_id(       dbRs.getInt(      3 ) );
-				manager.setYear(            dbRs.getString(   4 ) );
-				manager.setFirst_name(      dbRs.getString(   5 ) );
-				manager.setLast_name(       dbRs.getString(   6 ) );
-				manager.setAge(             dbRs.getInt(      7 ) );
-				manager.setOffense(         dbRs.getDouble(   8 ) );
-				manager.setDefense(         dbRs.getDouble(   9 ) );
-				manager.setIntangible(      dbRs.getDouble(  10 ) );
-				manager.setPenalties(       dbRs.getDouble(  11 ) );
-				manager.setVitality(        dbRs.getDouble(  12 ) );
-				manager.setStyle(           dbRs.getInt(     13 ) );
-				manager.setNew_hire(        dbRs.getBoolean( 14 ) );
-				manager.setReleased(        dbRs.getBoolean( 15 ) );
-				manager.setRetired(         dbRs.getBoolean( 16 ) );
-				manager.setFormer_team_id(  dbRs.getInt(     17 ) );
-				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setAward(           dbRs.getInt(     19 ) );
-				manager.setSeasons(         dbRs.getInt(     20 ) );
-				manager.setScore(           dbRs.getInt(     21 ) );
-				manager.setTotal_seasons(   dbRs.getInt(     22 ) );
-				manager.setTotal_score(     dbRs.getInt(     23 ) );
+				copyManagerFromResultSet( manager, dbRs );
 			}
 		}
 		finally {
@@ -374,30 +357,8 @@ public class ManagerServiceImpl implements ManagerService {
 				if ( dbRs2.next() ) {
 					
 					manager = new Manager();
-
-					manager.setManager_id(      dbRs2.getInt(      1 ) );
-					manager.setTeam_id(         dbRs2.getInt(      2 ) );
-					manager.setPlayer_id(       dbRs2.getInt(      3 ) );
-					manager.setYear(            dbRs2.getString(   4 ) );
-					manager.setFirst_name(      dbRs2.getString(   5 ) );
-					manager.setLast_name(       dbRs2.getString(   6 ) );
-					manager.setAge(             dbRs2.getInt(      7 ) );
-					manager.setOffense(         dbRs2.getDouble(   8 ) );
-					manager.setDefense(         dbRs2.getDouble(   9 ) );
-					manager.setIntangible(      dbRs2.getDouble(  10 ) );
-					manager.setPenalties(       dbRs2.getDouble(  11 ) );
-					manager.setVitality(        dbRs2.getDouble(  12 ) );
-					manager.setStyle(           dbRs2.getInt(     13 ) );
-					manager.setNew_hire(        dbRs2.getBoolean( 14 ) );
-					manager.setReleased(        dbRs2.getBoolean( 15 ) );
-					manager.setRetired(         dbRs2.getBoolean( 16 ) );
-					manager.setFormer_team_id(  dbRs2.getInt(     17 ) );
-					manager.setAllstar_team_id( dbRs2.getInt(     18 ) );
-					manager.setAward(           dbRs2.getInt(     19 ) );
-					manager.setSeasons(         dbRs2.getInt(     20 ) );
-					manager.setScore(           dbRs2.getInt(     21 ) );
-					manager.setTotal_seasons(   dbRs2.getInt(     22 ) );
-					manager.setTotal_score(     dbRs2.getInt(     23 ) );
+					
+					copyManagerFromResultSet( manager, dbRs2 );
 				}
 			}
 		}
@@ -432,30 +393,7 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				manager = new Manager();
 
-				manager.setManager_id(      dbRs.getInt(      1 ) );
-				manager.setTeam_id(         dbRs.getInt(      2 ) );
-				manager.setPlayer_id(       dbRs.getInt(      3 ) );
-				manager.setYear(            dbRs.getString(   4 ) );
-				manager.setFirst_name(      dbRs.getString(   5 ) );
-				manager.setLast_name(       dbRs.getString(   6 ) );
-				manager.setAge(             dbRs.getInt(      7 ) );
-				manager.setOffense(         dbRs.getDouble(   8 ) );
-				manager.setDefense(         dbRs.getDouble(   9 ) );
-				manager.setIntangible(      dbRs.getDouble(  10 ) );
-				manager.setPenalties(       dbRs.getDouble(  11 ) );
-				manager.setVitality(        dbRs.getDouble(  12 ) );
-				manager.setStyle(           dbRs.getInt(     13 ) );
-				manager.setNew_hire(        dbRs.getBoolean( 14 ) );
-				manager.setReleased(        dbRs.getBoolean( 15 ) );
-				manager.setRetired(         dbRs.getBoolean( 16 ) );
-				manager.setFormer_team_id(  dbRs.getInt(     17 ) );
-				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setAward(           dbRs.getInt(     19 ) );
-				manager.setSeasons(         dbRs.getInt(     20 ) );
-				manager.setScore(           dbRs.getInt(     21 ) );
-				manager.setTotal_seasons(   dbRs.getInt(     22 ) );
-				manager.setTotal_score(     dbRs.getInt(     23 ) );
-				
+				copyManagerFromResultSet( manager, dbRs );
 			}
 		}
 		finally {
@@ -487,30 +425,7 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				manager = new Manager();
 
-				manager.setManager_id(      dbRs.getInt(      1 ) );
-				manager.setTeam_id(         dbRs.getInt(      2 ) );
-				manager.setPlayer_id(       dbRs.getInt(      3 ) );
-				manager.setYear(            dbRs.getString(   4 ) );
-				manager.setFirst_name(      dbRs.getString(   5 ) );
-				manager.setLast_name(       dbRs.getString(   6 ) );
-				manager.setAge(             dbRs.getInt(      7 ) );
-				manager.setOffense(         dbRs.getDouble(   8 ) );
-				manager.setDefense(         dbRs.getDouble(   9 ) );
-				manager.setIntangible(      dbRs.getDouble(  10 ) );
-				manager.setPenalties(       dbRs.getDouble(  11 ) );
-				manager.setVitality(        dbRs.getDouble(  12 ) );
-				manager.setStyle(           dbRs.getInt(     13 ) );
-				manager.setNew_hire(        dbRs.getBoolean( 14 ) );
-				manager.setReleased(        dbRs.getBoolean( 15 ) );
-				manager.setRetired(         dbRs.getBoolean( 16 ) );
-				manager.setFormer_team_id(  dbRs.getInt(     17 ) );
-				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setAward(           dbRs.getInt(     19 ) );
-				manager.setSeasons(         dbRs.getInt(     20 ) );
-				manager.setScore(           dbRs.getInt(     21 ) );
-				manager.setTotal_seasons(   dbRs.getInt(     22 ) );
-				manager.setTotal_score(     dbRs.getInt(     23 ) );
-				
+				copyManagerFromResultSet( manager, dbRs );
 			}
 		}
 		finally {
@@ -636,7 +551,50 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 	}
 	
-	public List getRetiredManagers() throws SQLException {
+	public List getManagerMovesByTeam() throws SQLException {
+	
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+		
+		List teams = teamService.getTeamList();
+		
+		Iterator i = teams.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			List managersList = new ArrayList();
+			List tempList     = null;
+			
+			if ( (tempList = getRetiredManagersByTeam( team.getTeam_id() )) != null ) managersList.addAll( tempList );
+			if ( (tempList = getFiredManagersByTeam(   team.getTeam_id() )) != null ) managersList.addAll( tempList );
+			if ( (tempList = getHiredManagersByTeam(   team.getTeam_id() )) != null ) managersList.addAll( tempList );
+			
+			if ( managersList.size() == 0 ) {
+			
+				i.remove();
+			}
+			else {
+			
+				team.setPlayers( managersList );
+			}
+		}
+		
+		Team team = new Team();
+		
+		List managersList = getRetiredManagersWithoutTeam();
+		
+		if ( managersList != null ) {
+		
+			team.setPlayers( managersList );
+			
+			teams.add( team );
+		}
+		
+		return teams;
+	}
+	
+	private List getRetiredManagersByTeam( int team_id ) throws SQLException {
 		
 		List managers = null;
 		
@@ -647,16 +605,19 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		try {
 			
-			ps1 = DatabaseImpl.getRetiredManagersSelectPs( dbConn );
+			ps1 = DatabaseImpl.getRetiredManagersByTeamSelectPs( dbConn );
 			
-			ps1.setString(  1, year );
-			ps1.setBoolean( 2, true );
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
 			
 			dbRs1 = ps1.executeQuery();
 
 			while ( dbRs1.next() ) {
 			
 				ManagerView managerView = new ManagerView();
+				
+				managerView.setStatus( ManagerView.STATUS_RETIRED );
 				
 				managerView.setManager_id(  dbRs1.getInt(     1 ) );
 				managerView.setFirst_name(  dbRs1.getString(  2 ) );
@@ -702,7 +663,73 @@ public class ManagerServiceImpl implements ManagerService {
 		return managers;
 	}
 
-	public List getFiredManagers() throws SQLException {
+	private List getRetiredManagersWithoutTeam() throws SQLException {
+		
+		List managers = null;
+		
+		PreparedStatement ps1      = null;
+		PreparedStatement ps2      = null;
+		ResultSet         dbRs1    = null;
+		ResultSet         dbRs2    = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getRetiredManagersWithoutTeamSelectPs( dbConn );
+			
+			ps1.setString(  1, year    );
+			ps1.setBoolean( 2, true    );
+			
+			dbRs1 = ps1.executeQuery();
+
+			while ( dbRs1.next() ) {
+			
+				ManagerView managerView = new ManagerView();
+				
+				managerView.setStatus( ManagerView.STATUS_RETIRED );
+				
+				managerView.setManager_id(  dbRs1.getInt(     1 ) );
+				managerView.setFirst_name(  dbRs1.getString(  2 ) );
+				managerView.setLast_name(   dbRs1.getString(  3 ) );
+				managerView.setSeasons(     dbRs1.getInt(     4 ) );
+				managerView.setOffense(     dbRs1.getDouble(  5 ) );
+				managerView.setDefense(     dbRs1.getDouble(  6 ) );
+				managerView.setIntangible(  dbRs1.getDouble(  7 ) );
+				managerView.setPenalty(     dbRs1.getDouble(  8 ) );
+				managerView.setStyle(       dbRs1.getInt(     9 ) );
+				
+				ps2 = DatabaseImpl.getManagerCareerWinPctSelectPs( dbConn );
+				
+				ps2.setInt( 1, managerView.getManager_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+				
+					managerView.setWin_pct( dbRs2.getDouble( 1 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForManager( managerView );
+				
+				if ( managers == null ) managers = new ArrayList();
+				
+				managers.add( managerView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+		
+		return managers;
+	}
+
+	private List getFiredManagersByTeam( int team_id ) throws SQLException {
 
 		List managers = null;
 
@@ -713,16 +740,19 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		try {
 			
-			ps1 = DatabaseImpl.getFiredManagersSelectPs( dbConn );
+			ps1 = DatabaseImpl.getFiredManagersByTeamSelectPs( dbConn );
 			
-			ps1.setString(  1, year );
-			ps1.setBoolean( 2, true );
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
 			
 			dbRs1 = ps1.executeQuery();
 
 			while ( dbRs1.next() ) {
 			
 				ManagerView managerView = new ManagerView();
+
+				managerView.setStatus( ManagerView.STATUS_FIRED );
 				
 				managerView.setManager_id(  dbRs1.getInt(     1 ) );
 				managerView.setFirst_name(  dbRs1.getString(  2 ) );
@@ -767,7 +797,7 @@ public class ManagerServiceImpl implements ManagerService {
 		return managers;
 	}
 
-	public List getHiredManagers() throws SQLException {
+	private List getHiredManagersByTeam( int team_id ) throws SQLException {
 
 		List managers = null;
 
@@ -778,16 +808,19 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		try {
 			
-			ps1 = DatabaseImpl.getHiredManagersSelectPs( dbConn );
+			ps1 = DatabaseImpl.getHiredManagersByTeamSelectPs( dbConn );
 			
-			ps1.setString(  1, year );
-			ps1.setBoolean( 2, true );
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
 			
 			dbRs1 = ps1.executeQuery();
 
 			while ( dbRs1.next() ) {
 			
 				ManagerView managerView = new ManagerView();
+				
+				managerView.setStatus( ManagerView.STATUS_HIRED );
 				
 				managerView.setManager_id(  dbRs1.getInt(     1 ) );
 				managerView.setFirst_name(  dbRs1.getString(  2 ) );

@@ -15,6 +15,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -76,27 +79,28 @@
 
 <table class="boxscores">
   <tr class="heading">
-    <td><bean:message key="player.label.name"      /></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.name"      /></a></td>
     <td><bean:message key="player.label.poss"      /></td>
-    <td><bean:message key="player.label.time"      /></td>
-    <td><bean:message key="player.label.points"    /></td>
-    <td><bean:message key="player.label.attempts"  /></td>
-    <td><bean:message key="player.label.goals"     /></td>
-    <td><bean:message key="player.label.eff"       /></td>
-    <td><bean:message key="player.label.assists"   /></td>
-    <td><bean:message key="player.label.turnovers" /></td>
-    <td><bean:message key="player.label.stops"     /></td>
-    <td><bean:message key="player.label.steals"    /></td>
-    <td><bean:message key="player.label.penalties" /></td>
-    <td><bean:message key="player.label.off_pen"   /></td>
-    <td><bean:message key="player.label.psa"       /></td>
-    <td><bean:message key="player.label.psm"       /></td>
-    <td><bean:message key="player.label.eff"       /></td>
-    <td><bean:message key="player.label.ot_psa"    /></td>
-    <td><bean:message key="player.label.ot_psm"    /></td>
-    <td><bean:message key="player.label.eff"       /></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'roadPlayers', this )"><bean:message key="player.label.eff"       /></a></td>
   </tr>
   <logic:present name="roadPlayers">
+    <tbody id="roadPlayers">
     <logic:iterate id="player" name="roadPlayers">
       <tr>
         <td>
@@ -130,6 +134,7 @@
         <td><bean:write name="player" property="otPsEfficiencyDsp"    /></td>
       </tr>
     </logic:iterate>
+    </tbody>
   </logic:present>
   <logic:present name="roadGame">
     <tr class="totals">
@@ -160,27 +165,28 @@
   </logic:present>
   <tr class="separator"></tr>
   <tr class="heading">
-    <td><bean:message key="player.label.name"      /></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.name"      /></a></td>
     <td><bean:message key="player.label.poss"      /></td>
-    <td><bean:message key="player.label.time"      /></td>
-    <td><bean:message key="player.label.points"    /></td>
-    <td><bean:message key="player.label.attempts"  /></td>
-    <td><bean:message key="player.label.goals"     /></td>
-    <td><bean:message key="player.label.eff"       /></td>
-    <td><bean:message key="player.label.assists"   /></td>
-    <td><bean:message key="player.label.turnovers" /></td>
-    <td><bean:message key="player.label.stops"     /></td>
-    <td><bean:message key="player.label.steals"    /></td>
-    <td><bean:message key="player.label.penalties" /></td>
-    <td><bean:message key="player.label.off_pen"   /></td>
-    <td><bean:message key="player.label.psa"       /></td>
-    <td><bean:message key="player.label.psm"       /></td>
-    <td><bean:message key="player.label.eff"       /></td>
-    <td><bean:message key="player.label.ot_psa"    /></td>
-    <td><bean:message key="player.label.ot_psm"    /></td>
-    <td><bean:message key="player.label.eff"       /></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.time"      /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.points"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.attempts"  /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.goals"     /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.assists"   /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.turnovers" /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.stops"     /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.steals"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.penalties" /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.off_pen"   /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.psa"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.psm"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.eff"       /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.ot_psa"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.ot_psm"    /></a></td>
+    <td><a href="" onclick="return sortTable( 'homePlayers', this )"><bean:message key="player.label.eff"       /></a></td>
   </tr>
   <logic:present name="homePlayers">
+    <tbody id="homePlayers">
     <logic:iterate id="player" name="homePlayers">
       <tr>
         <td>
@@ -214,6 +220,7 @@
         <td><bean:write name="player" property="otPsEfficiencyDsp"    /></td>
       </tr>
     </logic:iterate>
+    </tbody>
   </logic:present>
   <logic:present name="homeGame">
     <tr class="totals">

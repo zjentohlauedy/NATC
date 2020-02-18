@@ -7,7 +7,6 @@ import natc.data.Manager;
 import natc.data.Player;
 import natc.view.ManagerAllstarView;
 import natc.view.ManagerAwardsView;
-import natc.view.ManagerView;
 
 public interface ManagerService {
 
@@ -21,9 +20,7 @@ public interface ManagerService {
 	public Manager            getManagerByAllstarTeamId( int team_id ) throws SQLException;
 	public ManagerAllstarView getAllstarManagerByTeamId( int team_id ) throws SQLException;
 	public List               getFreeManagers() throws SQLException;
-	public List               getRetiredManagers() throws SQLException;
-	public List               getFiredManagers() throws SQLException;
-	public List               getHiredManagers() throws SQLException;
+	public List               getManagerMovesByTeam() throws SQLException;
 	public void               updateManager( Manager manager ) throws SQLException;
 	public void               updateAllstarTeamId( int manager_id, int allstar_team_id ) throws SQLException;
 	public List               getManagerHistoryByManagerId( int manager_id ) throws SQLException;

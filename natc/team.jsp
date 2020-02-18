@@ -325,21 +325,21 @@
     <td colspan="12"><bean:message key="team.label.players"/></td>
   </tr>
   <tr class="heading">
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.player"        /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.player"        /></a></td>
     <logic:equal name="team" property="name" value="All Stars">
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.team"          /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.team"          /></a></td>
     </logic:equal>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.age"           /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.skill"         /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.games"         /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.starts"        /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.time_per_game" /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.points"        /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.goals"         /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.assists"       /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.stops"         /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.steals"        /></a></td>
-    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.psm"           /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.age"           /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.skill"         /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.games"         /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.starts"        /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.time_per_game" /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.points"        /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.goals"         /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.assists"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.stops"         /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.steals"        /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.psm"           /></a></td>
   </tr>
   <tbody id="playerList">
   <logic:iterate id="teamPlayer" name="teamPlayers">
@@ -435,17 +435,18 @@
     <td><bean:message key="team.label.history"/></td>
   </tr>
   <tr class="heading">
-    <td><bean:message key="team.label.year"       /></td>
-    <td><bean:message key="team.label.preseason"  /></td>
-    <td><bean:message key="team.label.record"     /></td>
-    <td><bean:message key="team.label.division"   /></td>
-    <td><bean:message key="team.label.ooc"        /></td>
-    <td><bean:message key="team.label.home"       /></td>
-    <td><bean:message key="team.label.road"       /></td>
-    <td><bean:message key="team.label.overtime"   /></td>
-    <td><bean:message key="team.label.postseason" /></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.year"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.preseason"  /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.record"     /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.division"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.ooc"        /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.home"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.road"       /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.overtime"   /></a></td>
+    <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.postseason" /></a></td>
     <td><bean:message key="team.label.finish"     /></td>
   </tr>
+  <tbody id="seasonList">
   <logic:iterate id="entry" name="history">
     <logic:equal name="entry" property="year" value="Total">
       <tr class="totals">
@@ -515,6 +516,7 @@
       </td>
     </tr>
   </logic:iterate>
+  </tbody>
   <tr class="separator"></tr>
 </table>
 </logic:present>

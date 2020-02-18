@@ -381,7 +381,7 @@ public class DatabaseImpl {
 		return dbConn.prepareStatement( sql );
 	}
 
-	public static PreparedStatement getRetiredManagersSelectPs( Connection dbConn ) throws SQLException {
+	public static PreparedStatement getRetiredManagersByTeamSelectPs( Connection dbConn ) throws SQLException {
 
 		String sql = "SELECT M.Manager_Id,    "
 			/**/   +        "M.First_Name,    "
@@ -399,8 +399,8 @@ public class DatabaseImpl {
 			/**/
 			/**/   + "WHERE M.Year           =  T.Year    "
 			/**/   + "AND   M.Former_Team_Id =  T.Team_Id "
-			/**/   + "AND   M.Total_Seasons  >  0         "
 			/**/   + "AND   M.Year           =  ?         "
+			/**/   + "AND   M.Former_Team_Id =  ?         "
 			/**/   + "AND   M.Retired        =  ?         "
 			/**/
 			/**/   + "ORDER BY M.Last_Name, M.First_Name";
@@ -408,7 +408,31 @@ public class DatabaseImpl {
 		return dbConn.prepareStatement( sql );
 	}
 
-	public static PreparedStatement getFiredManagersSelectPs( Connection dbConn ) throws SQLException {
+	public static PreparedStatement getRetiredManagersWithoutTeamSelectPs( Connection dbConn ) throws SQLException {
+
+		String sql = "SELECT Manager_Id,    "
+			/**/   +        "First_Name,    "
+			/**/   +        "Last_Name,     "
+			/**/   +        "Total_Seasons, "
+			/**/   +        "Offense,       "
+			/**/   +        "Defense,       "
+			/**/   +        "Intangible,    "
+			/**/   +        "Penalties,     "
+			/**/   +        "Style          "
+			/**/
+			/**/   + "FROM Managers_T "
+			/**/
+			/**/   + "WHERE Total_Seasons  >  0    "
+			/**/   + "AND   Year           =  ?    "
+			/**/   + "AND   Former_Team_Id IS NULL "
+			/**/   + "AND   Retired        =  ?    "
+			/**/
+			/**/   + "ORDER BY Last_Name, First_Name";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getFiredManagersByTeamSelectPs( Connection dbConn ) throws SQLException {
 	
 		String sql = "SELECT M.Manager_Id,    "
 			/**/   +        "M.First_Name,    "
@@ -426,6 +450,7 @@ public class DatabaseImpl {
 			/**/   + "WHERE M.Year           =  T.Year    "
 			/**/   + "AND   M.Former_Team_Id =  T.Team_Id "
 			/**/   + "AND   M.Year           =  ?         "
+			/**/   + "AND   M.Former_Team_Id =  ?         "
 			/**/   + "AND   M.Released       =  ?         "
 			/**/
 			/**/   + "ORDER BY M.Last_Name, M.First_Name";
@@ -433,7 +458,7 @@ public class DatabaseImpl {
 		return dbConn.prepareStatement( sql );
 	}
 
-	public static PreparedStatement getHiredManagersSelectPs( Connection dbConn ) throws SQLException {
+	public static PreparedStatement getHiredManagersByTeamSelectPs( Connection dbConn ) throws SQLException {
 	
 		String sql = "SELECT M.Manager_Id,    "
 			/**/   +        "M.First_Name,    "
@@ -452,6 +477,7 @@ public class DatabaseImpl {
 			/**/   + "WHERE M.Year        =  T.Year    "
 			/**/   + "AND   M.Team_Id     =  T.Team_Id "
 			/**/   + "AND   M.Year        =  ?         "
+			/**/   + "AND   M.Team_Id     =  ?         "
 			/**/   + "AND   M.New_Hire    =  ?         "
 			/**/
 			/**/   + "ORDER BY Last_Name, First_Name";
@@ -995,28 +1021,6 @@ public class DatabaseImpl {
 			/**/   + "       t.Team_Id,        "
 			/**/   + "       t.Abbrev,         "
 			/**/   + "       p.Seasons_Played, "
-			/**/   + "     ( p.Scoring  + p.Passing  + p.Blocking + p.Tackling + p.Stealing + p.Presence + p.Discipline + p.Endurance ) * calcCoef( p.Confidence, p.Vitality, p.Age ) AS Rating "
-			/**/
-			/**/   + "  FROM Players_T p, Teams_T t "
-			/**/
-			/**/   + " WHERE p.Team_Id = t.Team_Id "
-			/**/   + "   AND p.Year    = t.Year    "
-			/**/   + "   AND p.Year    = ?         "
-			/**/   + "   AND p.Team_Id IS NOT NULL "
-			/**/
-			/**/   + "ORDER BY 7 DESC LIMIT 10";
-
-		return dbConn.prepareStatement( sql );
-	}
-
-	public static PreparedStatement getStandoutRookiesSelectPs( Connection dbConn ) throws SQLException {
-
-		String sql = "SELECT p.Player_Id,  "
-			/**/   + "       p.First_Name, "
-			/**/   + "       p.Last_Name,  "
-			/**/   + "       t.Team_Id,    "
-			/**/   + "       t.Abbrev,     "
-			/**/   + "       p.Draft_Pick, "
 			/**/   + "     ( p.Scoring  + p.Passing  + p.Blocking + p.Tackling + p.Stealing + p.Presence + p.Discipline + p.Endurance ) * calcCoef( p.Confidence, p.Vitality, p.Age ) AS Rating "
 			/**/
 			/**/   + "  FROM Players_T p, Teams_T t "
@@ -2035,6 +2039,19 @@ public class DatabaseImpl {
 			/**/   + "   AND tg.Year          = t.Year    "
 			/**/   + "   AND tg.Playoff_Round =   ?       "
 			/**/   + "ORDER BY Game_Id";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getPlayoffGameInfoSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT tg.Playoff_Round, tg.Team_Id, tg.Game_Id, t.Conference, t.Division, t.Division_Rank, tg.Road, tg.Win "
+			/**/   + "  FROM Teamgames_T tg, Teams_T t "
+			/**/   + " WHERE tg.Team_Id       = t.Team_Id "
+			/**/   + "   AND tg.Year          = t.Year    "
+			/**/   + "   AND tg.Year          =   ?       "
+			/**/   + "   AND tg.Playoff_Round >   0       "
+			/**/   + "ORDER BY 1, 2, 3";
 		
 		return dbConn.prepareStatement( sql );
 	}

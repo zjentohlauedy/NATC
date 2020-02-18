@@ -15,6 +15,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -252,29 +255,30 @@
 <logic:present name="preseason">
     <tr class="label"><td colspan="22"><bean:message key="player.label.prehistory" /></td></tr>
     <tr class="heading">
-      <td><bean:message key="player.label.team"          /></td>
-      <td><bean:message key="player.label.year"          /></td>
-      <td><bean:message key="player.label.games"         /></td>
-      <td><bean:message key="player.label.starts"        /></td>
-      <td><bean:message key="player.label.time_per_game" /></td>
-      <td><bean:message key="player.label.points"        /></td>
-      <td><bean:message key="player.label.attempts"      /></td>
-      <td><bean:message key="player.label.goals"         /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.assists"       /></td>
-      <td><bean:message key="player.label.turnovers"     /></td>
-      <td><bean:message key="player.label.stops"         /></td>
-      <td><bean:message key="player.label.steals"        /></td>
-      <td><bean:message key="player.label.penalties"     /></td>
-      <td><bean:message key="player.label.off_pen"       /></td>
-      <td><bean:message key="player.label.psa"           /></td>
-      <td><bean:message key="player.label.psm"           /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.ot_psa"        /></td>
-      <td><bean:message key="player.label.ot_psm"        /></td>
-      <td><bean:message key="player.label.eff"           /></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.team"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.year"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.games"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.starts"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.time_per_game" /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.points"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.attempts"      /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.goals"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.assists"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.turnovers"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.stops"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.steals"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.penalties"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.off_pen"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.psa"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.psm"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.ot_psa"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.ot_psm"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'preHist', this )"><bean:message key="player.label.eff"           /></a></td>
       <td></td>
     </tr>
+    <tbody id="preHist">
     <logic:iterate id="playerStatsView" name="preseason">
       <logic:equal name="playerStatsView" property="year" value="Total">
         <tr class="totals">
@@ -310,33 +314,35 @@
         <td></td>
       </tr>
     </logic:iterate>
+    </tbody>
 </logic:present>
 <logic:present name="regseason">
     <tr class="label"><td colspan="22"><bean:message key="player.label.reghistory" /></td></tr>
     <tr class="heading">
-      <td><bean:message key="player.label.team"          /></td>
-      <td><bean:message key="player.label.year"          /></td>
-      <td><bean:message key="player.label.games"         /></td>
-      <td><bean:message key="player.label.starts"        /></td>
-      <td><bean:message key="player.label.time_per_game" /></td>
-      <td><bean:message key="player.label.points"        /></td>
-      <td><bean:message key="player.label.attempts"      /></td>
-      <td><bean:message key="player.label.goals"         /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.assists"       /></td>
-      <td><bean:message key="player.label.turnovers"     /></td>
-      <td><bean:message key="player.label.stops"         /></td>
-      <td><bean:message key="player.label.steals"        /></td>
-      <td><bean:message key="player.label.penalties"     /></td>
-      <td><bean:message key="player.label.off_pen"       /></td>
-      <td><bean:message key="player.label.psa"           /></td>
-      <td><bean:message key="player.label.psm"           /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.ot_psa"        /></td>
-      <td><bean:message key="player.label.ot_psm"        /></td>
-      <td><bean:message key="player.label.eff"           /></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.team"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.year"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.games"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.starts"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.time_per_game" /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.points"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.attempts"      /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.goals"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.assists"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.turnovers"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.stops"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.steals"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.penalties"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.off_pen"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.psa"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.psm"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.ot_psa"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.ot_psm"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'regHist', this )"><bean:message key="player.label.eff"           /></a></td>
       <td><bean:message key="player.label.awards"        /></td>
     </tr>
+    <tbody id="regHist">
     <logic:iterate id="playerStatsView" name="regseason">
       <logic:equal name="playerStatsView" property="year" value="Total">
         <tr class="totals">
@@ -385,33 +391,35 @@
         </td>
       </tr>
     </logic:iterate>
+    </tbody>
 </logic:present>
 <logic:present name="postseason">
     <tr class="label"><td colspan="22"><bean:message key="player.label.posthistory" /></td></tr>
     <tr class="heading">
-      <td><bean:message key="player.label.team"          /></td>
-      <td><bean:message key="player.label.year"          /></td>
-      <td><bean:message key="player.label.games"         /></td>
-      <td><bean:message key="player.label.starts"        /></td>
-      <td><bean:message key="player.label.time_per_game" /></td>
-      <td><bean:message key="player.label.points"        /></td>
-      <td><bean:message key="player.label.attempts"      /></td>
-      <td><bean:message key="player.label.goals"         /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.assists"       /></td>
-      <td><bean:message key="player.label.turnovers"     /></td>
-      <td><bean:message key="player.label.stops"         /></td>
-      <td><bean:message key="player.label.steals"        /></td>
-      <td><bean:message key="player.label.penalties"     /></td>
-      <td><bean:message key="player.label.off_pen"       /></td>
-      <td><bean:message key="player.label.psa"           /></td>
-      <td><bean:message key="player.label.psm"           /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.ot_psa"        /></td>
-      <td><bean:message key="player.label.ot_psm"        /></td>
-      <td><bean:message key="player.label.eff"           /></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.team"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.year"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.games"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.starts"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.time_per_game" /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.points"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.attempts"      /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.goals"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.assists"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.turnovers"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.stops"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.steals"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.penalties"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.off_pen"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.psa"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.psm"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.ot_psa"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.ot_psm"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'postHist', this )"><bean:message key="player.label.eff"           /></a></td>
       <td></td>
     </tr>
+    <tbody id="postHist">
     <logic:iterate id="playerStatsView" name="postseason">
       <logic:equal name="playerStatsView" property="year" value="Total">
         <tr class="totals">
@@ -447,33 +455,35 @@
         <td></td>
       </tr>
     </logic:iterate>
+    </tbody>
 </logic:present>
 <logic:present name="allstar">
     <tr class="label"><td colspan="22"><bean:message key="player.label.ashistory" /></td></tr>
     <tr class="heading">
-      <td><bean:message key="player.label.team"          /></td>
-      <td><bean:message key="player.label.year"          /></td>
-      <td><bean:message key="player.label.games"         /></td>
-      <td><bean:message key="player.label.starts"        /></td>
-      <td><bean:message key="player.label.time_per_game" /></td>
-      <td><bean:message key="player.label.points"        /></td>
-      <td><bean:message key="player.label.attempts"      /></td>
-      <td><bean:message key="player.label.goals"         /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.assists"       /></td>
-      <td><bean:message key="player.label.turnovers"     /></td>
-      <td><bean:message key="player.label.stops"         /></td>
-      <td><bean:message key="player.label.steals"        /></td>
-      <td><bean:message key="player.label.penalties"     /></td>
-      <td><bean:message key="player.label.off_pen"       /></td>
-      <td><bean:message key="player.label.psa"           /></td>
-      <td><bean:message key="player.label.psm"           /></td>
-      <td><bean:message key="player.label.eff"           /></td>
-      <td><bean:message key="player.label.ot_psa"        /></td>
-      <td><bean:message key="player.label.ot_psm"        /></td>
-      <td><bean:message key="player.label.eff"           /></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.team"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.year"          /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.games"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.starts"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.time_per_game" /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.points"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.attempts"      /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.goals"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.assists"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.turnovers"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.stops"         /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.steals"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.penalties"     /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.off_pen"       /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.psa"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.psm"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.eff"           /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.ot_psa"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.ot_psm"        /></a></td>
+      <td><a href="" onclick="return sortTable( 'asgHist', this )"><bean:message key="player.label.eff"           /></a></td>
       <td></td>
     </tr>
+    <tbody id="asgHist">
     <logic:iterate id="playerStatsView" name="allstar">
       <logic:equal name="playerStatsView" property="year" value="Total">
         <tr class="totals">
@@ -509,6 +519,7 @@
         <td></td>
       </tr>
     </logic:iterate>
+    </tbody>
 </logic:present>
 </table>
 

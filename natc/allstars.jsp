@@ -15,6 +15,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -55,15 +58,16 @@
 	        <td colspan="8"><bean:message key="division.greene"/></td>
 	      </tr>
           <tr class="heading">
-            <td><bean:message key="awards.label.player"  /></td>
-            <td><bean:message key="awards.label.team"    /></td>
-            <td><bean:message key="awards.label.points"  /></td>
-            <td><bean:message key="awards.label.goals"   /></td>
-            <td><bean:message key="awards.label.assists" /></td>
-            <td><bean:message key="awards.label.stops"   /></td>
-            <td><bean:message key="awards.label.steals"  /></td>
-            <td><bean:message key="awards.label.psm"     /></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.player"  /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.team"    /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.points"  /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.goals"   /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.assists" /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.stops"   /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.steals"  /></a></td>
+            <td><a href="" onclick="return sortTable( 'div0List', this )"><bean:message key="awards.label.psm"     /></a></td>
           </tr>
+          <tbody id="div0List">
           <logic:iterate id="star" name="div0stars">
             <tr>
               <td>
@@ -99,6 +103,7 @@
               <td><bean:write name="star" property="psm"     /></td>
             </tr>
           </logic:iterate>
+          </tbody>
           <logic:present name="manager0">
             <tr class="heading">
               <td><bean:message key="awards.label.manager"    /></td>
@@ -138,15 +143,16 @@
 	        <td colspan="8"><bean:message key="division.davis"/></td>
 	      </tr>
           <tr class="heading">
-            <td><bean:message key="awards.label.player"  /></td>
-            <td><bean:message key="awards.label.team"    /></td>
-            <td><bean:message key="awards.label.points"  /></td>
-            <td><bean:message key="awards.label.goals"   /></td>
-            <td><bean:message key="awards.label.assists" /></td>
-            <td><bean:message key="awards.label.stops"   /></td>
-            <td><bean:message key="awards.label.steals"  /></td>
-            <td><bean:message key="awards.label.psm"     /></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.player"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.team"    /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.points"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.goals"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.assists" /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.stops"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.steals"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.psm"     /></a></td>
           </tr>
+          <tbody id="div1List">
           <logic:iterate id="star" name="div1stars">
             <tr>
               <td>
@@ -182,6 +188,7 @@
               <td><bean:write name="star" property="psm"     /></td>
             </tr>
           </logic:iterate>
+          </tbody>
           <logic:present name="manager1">
             <tr class="heading">
               <td><bean:message key="awards.label.manager"    /></td>
@@ -224,15 +231,16 @@
 	        <td colspan="8"><bean:message key="division.smith"/></td>
 	      </tr>
           <tr class="heading">
-            <td><bean:message key="awards.label.player"  /></td>
-            <td><bean:message key="awards.label.team"    /></td>
-            <td><bean:message key="awards.label.points"  /></td>
-            <td><bean:message key="awards.label.goals"   /></td>
-            <td><bean:message key="awards.label.assists" /></td>
-            <td><bean:message key="awards.label.stops"   /></td>
-            <td><bean:message key="awards.label.steals"  /></td>
-            <td><bean:message key="awards.label.psm"     /></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.player"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.team"    /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.points"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.goals"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.assists" /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.stops"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.steals"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.psm"     /></a></td>
           </tr>
+          <tbody id="div2List">
           <logic:iterate id="star" name="div2stars">
             <tr>
               <td>
@@ -268,6 +276,7 @@
               <td><bean:write name="star" property="psm"     /></td>
             </tr>
           </logic:iterate>
+          </tbody>
           <logic:present name="manager2">
             <tr class="heading">
               <td><bean:message key="awards.label.manager"    /></td>
@@ -307,15 +316,16 @@
 	        <td colspan="8"><bean:message key="division.lawrence"/></td>
 	      </tr>
           <tr class="heading">
-            <td><bean:message key="awards.label.player"  /></td>
-            <td><bean:message key="awards.label.team"    /></td>
-            <td><bean:message key="awards.label.points"  /></td>
-            <td><bean:message key="awards.label.goals"   /></td>
-            <td><bean:message key="awards.label.assists" /></td>
-            <td><bean:message key="awards.label.stops"   /></td>
-            <td><bean:message key="awards.label.steals"  /></td>
-            <td><bean:message key="awards.label.psm"     /></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.player"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.team"    /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.points"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.goals"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.assists" /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.stops"   /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.steals"  /></a></td>
+            <td><a href="" onclick="return sortTable( null, this )"><bean:message key="awards.label.psm"     /></a></td>
           </tr>
+          <tbody id="div3List">
           <logic:iterate id="star" name="div3stars">
             <tr>
               <td>
@@ -351,6 +361,7 @@
               <td><bean:write name="star" property="psm"     /></td>
             </tr>
           </logic:iterate>
+          </tbody>
           <logic:present name="manager3">
             <tr class="heading">
               <td><bean:message key="awards.label.manager"    /></td>

@@ -4,6 +4,11 @@ import java.text.DecimalFormat;
 
 public class ManagerView {
 
+	public static final int STATUS_RETIRED = 1;
+	public static final int STATUS_FIRED   = 2;
+	public static final int STATUS_HIRED   = 3;
+	
+	private int    status;
 	private int    manager_id;
 	private String first_name;
 	private String last_name;
@@ -21,6 +26,7 @@ public class ManagerView {
 	
 	public ManagerView() {
 	
+		this.status        = 0;
 		this.manager_id    = 0;
 		this.first_name    = null;
 		this.last_name     = null;
@@ -154,6 +160,14 @@ public class ManagerView {
 
 	public void setAllstar_count(int allstarCount) {
 		allstar_count = allstarCount;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 	
 }

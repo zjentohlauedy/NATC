@@ -49,6 +49,10 @@
       <forward   name="success"    path="/champs.jsp"/>
     </action>
     
+    <action path="/Allstar" type="natc.action.AllstarAction"   >
+      <forward   name="success"    path="/allstars.jsp"/>
+    </action>
+    
     <action path="/Bracket" type="natc.action.BracketAction"   >
       <forward   name="success"    path="/bracket.jsp"/>
     </action>
@@ -85,6 +89,7 @@
       <forward   name="roster_cut"      path="/roster_cut.jsp"      />
       <forward   name="free_agents"     path="/free_agents.jsp"     />
       <forward   name="awards"          path="/awards.jsp"          />
+      <forward   name="bracket"         path="/bracket.jsp"         />
       <forward   name="allstars"        path="/allstars.jsp"        />
       <forward   name="end_of_pre"      path="/end_of_pre.jsp"      />
       <forward   name="end_of_reg"      path="/end_of_reg.jsp"      />

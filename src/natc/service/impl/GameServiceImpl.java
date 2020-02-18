@@ -30,13 +30,12 @@ import natc.service.TeamService;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
-import natc.view.DraftView;
 import natc.view.GameView;
 import natc.view.InjuryView;
+import natc.view.PlayoffGameView;
 import natc.view.ReleaseView;
 import natc.view.FreeAgentView;
 import natc.view.RetiredView;
-import natc.view.TrainingView;
 
 public class GameServiceImpl implements GameService {
 
@@ -427,9 +426,11 @@ public class GameServiceImpl implements GameService {
 				Injury injury = new Injury();
 				
 				injury.setGame_id(       t1.getGame().getGame_id() );
-				injury.setTeam_id(   player.getTeam_id()           );
 				injury.setPlayer_id( player.getPlayer_id()         );
 				injury.setDuration(  player.getDuration()          );
+				
+				if   ( t1.getName().equals( "All Stars" ) ) injury.setTeam_id( player.getAllstar_team_id() );
+				else                                        injury.setTeam_id( player.getTeam_id()         );
 				
 				injuries.add( injury );
 				
@@ -2520,169 +2521,6 @@ public class GameServiceImpl implements GameService {
 		return playersList;
 	}
 
-	public List getDraftPicks( int start_pick ) throws SQLException {
-		
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getDraftPicksSelectPs( dbConn );
-			
-			ps.setString(  1, year       );
-			ps.setBoolean( 2, true       );
-			ps.setInt(     3, start_pick );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				DraftView draftView = new DraftView();
-				
-				draftView.setTeam_id(    dbRs.getInt(    1 ) );
-				draftView.setLocation(   dbRs.getString( 2 ) );
-				draftView.setTeam_name(  dbRs.getString( 3 ) );
-				draftView.setPlayer_id(  dbRs.getInt(    4 ) );
-				draftView.setFirst_name( dbRs.getString( 5 ) );
-				draftView.setLast_name(  dbRs.getString( 6 ) );
-				draftView.setDraft_pick( dbRs.getInt(    7 ) );
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( draftView );
-			}
-		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
-	}
-
-	public List getMostImprovedPlayers() throws SQLException {
-
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		String            lastYear    = String.valueOf(  Integer.parseInt( year ) - 1 );
-		
-		try {
-			
-			ps = DatabaseImpl.getMostImprovedSelectPs( dbConn );
-			
-			ps.setString(  1, year     );
-			ps.setString(  2, lastYear );
-			ps.setString(  3, year     );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				TrainingView trainingView = new TrainingView();
-				
-				trainingView.setPlayer_id(      dbRs.getInt(    1 ) );
-				trainingView.setFirst_name(     dbRs.getString( 2 ) );
-				trainingView.setLast_name(      dbRs.getString( 3 ) );
-				trainingView.setTeam_id(        dbRs.getInt(    4 ) );
-				trainingView.setTeam_abbrev(    dbRs.getString( 5 ) );
-				trainingView.setSeasons_played( dbRs.getInt(    6 ) );
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( trainingView );
-			}
-		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
-	}
-
-	public List getStandoutPlayers() throws SQLException {
-
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getStandoutPlayersSelectPs( dbConn );
-			
-			ps.setString(  1, year     );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				TrainingView trainingView = new TrainingView();
-				
-				trainingView.setPlayer_id(      dbRs.getInt(    1 ) );
-				trainingView.setFirst_name(     dbRs.getString( 2 ) );
-				trainingView.setLast_name(      dbRs.getString( 3 ) );
-				trainingView.setTeam_id(        dbRs.getInt(    4 ) );
-				trainingView.setTeam_abbrev(    dbRs.getString( 5 ) );
-				trainingView.setSeasons_played( dbRs.getInt(    6 ) );
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( trainingView );
-			}
-		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
-	}
-
-	public List getStandoutRookies() throws SQLException {
-
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getStandoutRookiesSelectPs( dbConn );
-			
-			ps.setString(  1, year );
-			ps.setBoolean( 2, true );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				TrainingView trainingView = new TrainingView();
-				
-				trainingView.setPlayer_id(   dbRs.getInt(    1 ) );
-				trainingView.setFirst_name(  dbRs.getString( 2 ) );
-				trainingView.setLast_name(   dbRs.getString( 3 ) );
-				trainingView.setTeam_id(     dbRs.getInt(    4 ) );
-				trainingView.setTeam_abbrev( dbRs.getString( 5 ) );
-				trainingView.setDraft_pick(  dbRs.getInt(    6 ) );
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( trainingView );
-			}
-		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
-	}
-
 	public List getReleasedPlayers() throws SQLException {
 
 		TeamService teamService = new TeamServiceImpl( dbConn, year );
@@ -2998,79 +2836,6 @@ public class GameServiceImpl implements GameService {
 		return teams;
 	}
 	
-	public List getFreeAgentMoves2() throws SQLException {
-
-		TeamService teamService = new TeamServiceImpl( dbConn, year );
-
-		List teams = teamService.getTeamList();
-
-		Iterator i = teams.iterator();
-
-		while ( i.hasNext() ) {
-
-			Team team = (Team)i.next();
-
-			PreparedStatement ps          = null;
-			ResultSet         dbRs        = null;
-			List              playersList = null;
-
-			try {
-
-				ps = DatabaseImpl.getFreeAgentMovesByTeamSelectPs( dbConn );
-
-				ps.setString(  1, year              );
-				ps.setInt(     2, team.getTeam_id() );
-				ps.setBoolean( 3, true              );
-				ps.setString(  4, year              );
-				ps.setInt(     5, team.getTeam_id() );
-				ps.setBoolean( 6, true              );
-				ps.setString(  7, year              );
-				ps.setInt(     8, team.getTeam_id() );
-				ps.setBoolean( 9, true              );
-				
-				dbRs = ps.executeQuery();
-				
-				playersList = null;
-
-				while ( dbRs.next() ) {
-
-					FreeAgentView freeAgentView = new FreeAgentView();
-
-					freeAgentView.setStatus(          dbRs.getInt(     1 ) );
-					freeAgentView.setPlayer_id(       dbRs.getInt(     2 ) );
-					freeAgentView.setFirst_name(      dbRs.getString(  3 ) );
-					freeAgentView.setLast_name(       dbRs.getString(  4 ) );
-					freeAgentView.setOld_team_id(     dbRs.getInt(     5 ) );
-					freeAgentView.setOld_team_abbrev( dbRs.getString(  6 ) );
-					freeAgentView.setNew_team_id(     dbRs.getInt(     7 ) );
-					freeAgentView.setNew_team_abbrev( dbRs.getString(  8 ) );
-					freeAgentView.setAge(             dbRs.getInt(     9 ) );
-					freeAgentView.setSeasons_played(  dbRs.getInt(    10 ) );
-
-					if ( playersList == null ) playersList = new ArrayList();
-
-					playersList.add( freeAgentView );
-				}
-
-				if ( playersList == null ) {
-				
-					i.remove();
-				}
-				else {
-					
-					team.setPlayers( playersList );
-				}
-			}
-			finally {
-
-				DatabaseImpl.closeDbRs( dbRs );
-				DatabaseImpl.closeDbStmt( ps );
-			}
-		}
-
-		return teams;
-	}
-
 	private void getAwardsForPlayer( RetiredView retiredView ) throws SQLException {
 
 		PreparedStatement ps       = null;
@@ -3298,46 +3063,6 @@ public class GameServiceImpl implements GameService {
 		return playersList;
 	}
 
-	public List getAbandonedRookiePlayers() throws SQLException {
-
-		PreparedStatement ps          = null;
-		ResultSet         dbRs        = null;
-		List              playersList = null;
-		
-		try {
-			
-			ps = DatabaseImpl.getAbandonedRookiesSelectPs( dbConn );
-			
-			ps.setString(  1, year );
-			ps.setBoolean( 2, true );
-			
-			dbRs = ps.executeQuery();
-			
-			while ( dbRs.next() ) {
-			
-				ReleaseView releaseView = new ReleaseView();
-				
-				releaseView.setPlayer_id(   dbRs.getInt(    1 ));
-				releaseView.setFirst_name(  dbRs.getString( 2 ));
-				releaseView.setLast_name(   dbRs.getString( 3 ));
-				releaseView.setTeam_id(     dbRs.getInt(    4 ));
-				releaseView.setTeam_abbrev( dbRs.getString( 5 ));
-				releaseView.setDraft_pick(  dbRs.getInt(    6 ));
-				
-				if ( playersList == null ) playersList = new ArrayList();
-				
-				playersList.add( releaseView );
-			}
-		}
-		finally {
-			
-			DatabaseImpl.closeDbRs( dbRs );
-			DatabaseImpl.closeDbStmt( ps );
-		}
-		
-		return playersList;
-	}
-
 	public List getInjuriesByDate(Date datestamp) throws SQLException {
 
 		PreparedStatement ps           = null;
@@ -3450,6 +3175,59 @@ public class GameServiceImpl implements GameService {
 		}
 		
 		return games;
+	}
+
+	public List getPlayoffGameInfo() throws SQLException {
+
+		PreparedStatement ps           = null;
+		ResultSet         dbRs         = null;
+		List              playoffGames = null;
+		int               gameNumber   = 0;
+		int               lastRound    = 0;
+		int               lastTeam     = 0;
+		
+		try {
+			
+			ps = DatabaseImpl.getPlayoffGameInfoSelectPs( dbConn );
+			
+			ps.setString( 1, year );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				PlayoffGameView playoffGameView = new PlayoffGameView();
+				
+				playoffGameView.setPlayoff_round( dbRs.getInt(     1 ) );
+				playoffGameView.setTeam_id(       dbRs.getInt(     2 ) );
+				playoffGameView.setGame_id(       dbRs.getInt(     3 ) );
+				playoffGameView.setConference(    dbRs.getInt(     4 ) );
+				playoffGameView.setDivision(      dbRs.getInt(     5 ) );
+				playoffGameView.setDivision_rank( dbRs.getInt(     6 ) );
+				playoffGameView.setRoad(          dbRs.getBoolean( 7 ) );
+				playoffGameView.setWin(           dbRs.getBoolean( 8 ) );
+				
+				if ( lastRound != playoffGameView.getPlayoff_round()  ||  lastTeam != playoffGameView.getTeam_id() ) {
+				
+					lastRound  = playoffGameView.getPlayoff_round();
+					lastTeam   = playoffGameView.getTeam_id();
+					gameNumber = 1;
+				}
+				
+				playoffGameView.setGame_num( gameNumber++ );
+				
+				if ( playoffGames == null ) playoffGames = new ArrayList();
+				
+				playoffGames.add( playoffGameView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return playoffGames;
 	}
 
 }
