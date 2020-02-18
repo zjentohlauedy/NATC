@@ -1516,28 +1516,29 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getPlayerStatsBySeasonSelectPs( Connection dbConn, int stat, boolean ascending ) throws SQLException {
 	
-		String queryStr    = null;
-		String orderClause = null;
+		String queryStr          = null;
+		String additional_filter = null;
+		String orderClause       = null;
 		
 		switch ( stat ) {
 		
-		case STAT_SCORE:         queryStr = "pg.Goals*3+pg.Psm";        break;
-		case STAT_ATTEMPTS:      queryStr = "pg.Attempts";              break;
-		case STAT_GOALS:         queryStr = "pg.Goals";                 break;
-		case STAT_ASSISTS:       queryStr = "pg.Assists";               break;
-		case STAT_OFFENSE:       queryStr = "pg.Goals+pg.Assists";      break;
-		case STAT_TURNOVERS:     queryStr = "pg.Turnovers";             break;
-		case STAT_STOPS:         queryStr = "pg.Stops";                 break;
-		case STAT_STEALS:        queryStr = "pg.Steals";                break;
-		case STAT_PENALTIES:     queryStr = "pg.Penalties";             break;
-		case STAT_PSA:           queryStr = "pg.Psa";                   break;
-		case STAT_PSM:           queryStr = "pg.Psm";                   break;
-		case STAT_OT_PSA:        queryStr = "pg.Ot_Psa";                break;
-		case STAT_OT_PSM:        queryStr = "pg.Ot_Psm";                break;
-		case STAT_SCORE_PCT:     queryStr = "pg.Goals/pg.Attempts*100"; break;
-		case STAT_PS_PCT:        queryStr = "pg.Psm/pg.Psa*100";        break;
-		case STAT_OT_PS_PCT:     queryStr = "pg.Ot_Psm/pg.Ot_Psa*100";  break;
-		case STAT_TIME_PER_GAME: queryStr = "pg.Playing_Time/pg.Games"; break;
+		case STAT_SCORE:         queryStr = "pg.Goals*3+pg.Psm";        additional_filter = ""; break;
+		case STAT_ATTEMPTS:      queryStr = "pg.Attempts";              additional_filter = ""; break;
+		case STAT_GOALS:         queryStr = "pg.Goals";                 additional_filter = ""; break;
+		case STAT_ASSISTS:       queryStr = "pg.Assists";               additional_filter = ""; break;
+		case STAT_OFFENSE:       queryStr = "pg.Goals+pg.Assists";      additional_filter = ""; break;
+		case STAT_TURNOVERS:     queryStr = "pg.Turnovers";             additional_filter = ""; break;
+		case STAT_STOPS:         queryStr = "pg.Stops";                 additional_filter = ""; break;
+		case STAT_STEALS:        queryStr = "pg.Steals";                additional_filter = ""; break;
+		case STAT_PENALTIES:     queryStr = "pg.Penalties";             additional_filter = ""; break;
+		case STAT_PSA:           queryStr = "pg.Psa";                   additional_filter = ""; break;
+		case STAT_PSM:           queryStr = "pg.Psm";                   additional_filter = ""; break;
+		case STAT_OT_PSA:        queryStr = "pg.Ot_Psa";                additional_filter = ""; break;
+		case STAT_OT_PSM:        queryStr = "pg.Ot_Psm";                additional_filter = ""; break;
+		case STAT_SCORE_PCT:     queryStr = "pg.Goals/pg.Attempts*100"; additional_filter = "AND pg.Attempts > 200 "; break;
+		case STAT_PS_PCT:        queryStr = "pg.Psm/pg.Psa*100";        additional_filter = "AND pg.Psa > 60 "; break;
+		case STAT_OT_PS_PCT:     queryStr = "pg.Ot_Psm/pg.Ot_Psa*100";  additional_filter = ""; break;
+		case STAT_TIME_PER_GAME: queryStr = "pg.Playing_Time/pg.Games"; additional_filter = ""; break;
 			
 		default: return null;
 		}
@@ -1559,6 +1560,8 @@ public class DatabaseImpl {
 		/**/       + "AND   pg.Type      = ?            "
 		/**/       + "AND   pg.Games    >= 75           "
 		/**/
+		/**/       + additional_filter
+		/**/
 		/**/       + orderClause + "LIMIT ?";
 
 		return dbConn.prepareStatement( sql );
@@ -1566,28 +1569,29 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getPlayerStatsByCareerSelectPs( Connection dbConn, int stat, boolean ascending ) throws SQLException {
 	
-		String queryStr    = null;
-		String orderClause = null;
+		String queryStr          = null;
+		String additional_filter = null;
+		String orderClause       = null;
 		
 		switch ( stat ) {
 		
-		case STAT_SCORE:         queryStr = "SUM( pg.Goals*3+pg.Psm )";                 break;
-		case STAT_ATTEMPTS:      queryStr = "SUM( pg.Attempts )";                       break;
-		case STAT_GOALS:         queryStr = "SUM( pg.Goals )";                          break;
-		case STAT_ASSISTS:       queryStr = "SUM( pg.Assists )";                        break;
-		case STAT_OFFENSE:       queryStr = "SUM( pg.Goals+pg.Assists )";               break;
-		case STAT_TURNOVERS:     queryStr = "SUM( pg.Turnovers )";                      break;
-		case STAT_STOPS:         queryStr = "SUM( pg.Stops )";                          break;
-		case STAT_STEALS:        queryStr = "SUM( pg.Steals )";                         break;
-		case STAT_PENALTIES:     queryStr = "SUM( pg.Penalties )";                      break;
-		case STAT_PSA:           queryStr = "SUM( pg.Psa )";                            break;
-		case STAT_PSM:           queryStr = "SUM( pg.Psm )";                            break;
-		case STAT_OT_PSA:        queryStr = "SUM( pg.Ot_Psa )";                         break;
-		case STAT_OT_PSM:        queryStr = "SUM( pg.Ot_Psm )";                         break;
-		case STAT_SCORE_PCT:     queryStr = "SUM( pg.Goals )/SUM( pg.Attempts )*100";   break;
-		case STAT_PS_PCT:        queryStr = "SUM( pg.Psm )/SUM( pg.Psa )*100";          break;
-		case STAT_OT_PS_PCT:     queryStr = "SUM( pg.Ot_Psm )/SUM( pg.Ot_Psa )*100";    break;
-		case STAT_TIME_PER_GAME: queryStr = "SUM( pg.Playing_Time )/SUM( pg.Games )";   break;
+		case STAT_SCORE:         queryStr = "SUM( pg.Goals*3+pg.Psm )";                 additional_filter = ""; break;
+		case STAT_ATTEMPTS:      queryStr = "SUM( pg.Attempts )";                       additional_filter = ""; break;
+		case STAT_GOALS:         queryStr = "SUM( pg.Goals )";                          additional_filter = ""; break;
+		case STAT_ASSISTS:       queryStr = "SUM( pg.Assists )";                        additional_filter = ""; break;
+		case STAT_OFFENSE:       queryStr = "SUM( pg.Goals+pg.Assists )";               additional_filter = ""; break;
+		case STAT_TURNOVERS:     queryStr = "SUM( pg.Turnovers )";                      additional_filter = ""; break;
+		case STAT_STOPS:         queryStr = "SUM( pg.Stops )";                          additional_filter = ""; break;
+		case STAT_STEALS:        queryStr = "SUM( pg.Steals )";                         additional_filter = ""; break;
+		case STAT_PENALTIES:     queryStr = "SUM( pg.Penalties )";                      additional_filter = ""; break;
+		case STAT_PSA:           queryStr = "SUM( pg.Psa )";                            additional_filter = ""; break;
+		case STAT_PSM:           queryStr = "SUM( pg.Psm )";                            additional_filter = ""; break;
+		case STAT_OT_PSA:        queryStr = "SUM( pg.Ot_Psa )";                         additional_filter = ""; break;
+		case STAT_OT_PSM:        queryStr = "SUM( pg.Ot_Psm )";                         additional_filter = ""; break;
+		case STAT_SCORE_PCT:     queryStr = "SUM( pg.Goals )/SUM( pg.Attempts )*100";   additional_filter = "AND xx.Attempts > 200 "; break;
+		case STAT_PS_PCT:        queryStr = "SUM( pg.Psm )/SUM( pg.Psa )*100";          additional_filter = "AND xx.Psa > 60 "; break;
+		case STAT_OT_PS_PCT:     queryStr = "SUM( pg.Ot_Psm )/SUM( pg.Ot_Psa )*100";    additional_filter = ""; break;
+		case STAT_TIME_PER_GAME: queryStr = "SUM( pg.Playing_Time )/SUM( pg.Games )";   additional_filter = ""; break;
 			
 		default: return null;
 		}
@@ -1605,13 +1609,15 @@ public class DatabaseImpl {
 		/**/
 		/**/       + "FROM Player_Stats_Sum_T pg, "
 		/**/       +      "Players_T          p1, "
-		/**/       + "(SELECT Player_Id, SUM( Games ) Games FROM Player_Stats_Sum_T GROUP BY Player_Id) xx "
+		/**/       + "(SELECT Player_Id, SUM( Games ) Games, AVG( Attempts ) Attempts, AVG( Psa ) Psa FROM Player_Stats_Sum_T GROUP BY Player_Id) xx "
 		/**/
 		/**/       + "WHERE pg.Player_Id = p1.Player_Id "
 		/**/       + "AND   pg.Player_Id = xx.Player_Id "
 		/**/       + "AND   pg.Year      = p1.Year      "
 		/**/       + "AND   pg.Type      = ?            "
 		/**/       + "AND   xx.Games    >= 100          "
+		/**/
+		/**/       + additional_filter
 		/**/
 		/**/       + "GROUP BY p1.Player_Id, p1.First_Name, p1.Last_Name "
 		/**/
