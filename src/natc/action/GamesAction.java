@@ -32,6 +32,8 @@ import natc.service.impl.ManagerServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
+import natc.view.GameView;
+import natc.view.ManagerAwardsView;
 import natc.view.ManagerView;
 
 public class GamesAction extends Action {
@@ -205,7 +207,18 @@ public class GamesAction extends Action {
 			default: gameService.processScheduleEvent( scheduleEntry ); break;
 			}
 			
-			Collection data = null;
+			Collection data    = null;
+			List       teams   = null;
+			Comparator precomp = new Comparator() {
+
+				public int compare( Object arg0, Object arg1 ) {
+
+					Team t1 = (Team)arg0;
+					Team t2 = (Team)arg1;
+
+					return t1.getPreseason_losses() - t2.getPreseason_losses();
+				}
+			};
 			
 			// Choose the next page to display
 			switch ( scheduleEntry.getType().getValue() ) {
@@ -271,40 +284,38 @@ public class GamesAction extends Action {
 				nextPage = "training_camp";
 				
 				break;
-				
+
 			case ScheduleType.PRESEASON:
 
-				List       teams   = null;
-				Comparator precomp = new Comparator() {
+				teams = gameService.getRankedTeamsByDivision( 0 ); Collections.sort( teams, precomp ); request.setAttribute( "div0teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 1 ); Collections.sort( teams, precomp ); request.setAttribute( "div1teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 2 ); Collections.sort( teams, precomp ); request.setAttribute( "div2teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 3 ); Collections.sort( teams, precomp ); request.setAttribute( "div3teams", teams );
 
-					public int compare( Object arg0, Object arg1 ) {
-						
-						Team t1 = (Team)arg0;
-						Team t2 = (Team)arg1;
-						
-						return t1.getPreseason_losses() - t2.getPreseason_losses();
-					}};
-				
-					teams = gameService.getRankedTeamsByDivision( 0 ); Collections.sort( teams, precomp ); request.setAttribute( "div0teams", teams );
-					teams = gameService.getRankedTeamsByDivision( 1 ); Collections.sort( teams, precomp ); request.setAttribute( "div1teams", teams );
-					teams = gameService.getRankedTeamsByDivision( 2 ); Collections.sort( teams, precomp ); request.setAttribute( "div2teams", teams );
-					teams = gameService.getRankedTeamsByDivision( 3 ); Collections.sort( teams, precomp ); request.setAttribute( "div3teams", teams );
-				
 				if ( (data = gameService.getGamesByDate( scheduleEntry.getScheduled() )) != null ) {
 
 					request.setAttribute( "games", data );
 				}
 
 				if ( (data = gameService.getInjuriesByDate( scheduleEntry.getScheduled() )) != null ) {
-					
+
 					request.setAttribute( "injuries", data );
 				}
-				
+
 				nextPage = "games";
 
 				break;
 
-			case ScheduleType.END_OF_PRESEASON:     nextPage = "end_of_pre";         break;
+			case ScheduleType.END_OF_PRESEASON:
+				
+				teams = gameService.getRankedTeamsByDivision( 0 ); Collections.sort( teams, precomp ); request.setAttribute( "div0teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 1 ); Collections.sort( teams, precomp ); request.setAttribute( "div1teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 2 ); Collections.sort( teams, precomp ); request.setAttribute( "div2teams", teams );
+				teams = gameService.getRankedTeamsByDivision( 3 ); Collections.sort( teams, precomp ); request.setAttribute( "div3teams", teams );
+
+				nextPage = "end_of_pre";
+				
+				break;
 				
 			case ScheduleType.ROSTER_CUT:
 				
@@ -335,7 +346,16 @@ public class GamesAction extends Action {
 
 				break;
 
-			case ScheduleType.END_OF_REGULAR_SEASON:    nextPage = "end_of_reg";         break;
+			case ScheduleType.END_OF_REGULAR_SEASON:
+
+				data = gameService.getRankedTeamsByDivision( 0 ); request.setAttribute( "div0teams", data );
+				data = gameService.getRankedTeamsByDivision( 1 ); request.setAttribute( "div1teams", data );
+				data = gameService.getRankedTeamsByDivision( 2 ); request.setAttribute( "div2teams", data );
+				data = gameService.getRankedTeamsByDivision( 3 ); request.setAttribute( "div3teams", data );
+				
+				nextPage = "end_of_reg";
+				
+				break;
 				
 			case ScheduleType.AWARDS:
 				
@@ -347,9 +367,9 @@ public class GamesAction extends Action {
 					request.setAttribute( "awards", data );
 				}
 				
-				ManagerView managerView = managerService.getManagerOfTheYear();
+				ManagerAwardsView managerAwardsView = managerService.getManagerOfTheYear();
 				
-				if ( managerView != null ) request.setAttribute( "manager", managerView );
+				if ( managerAwardsView != null ) request.setAttribute( "manager", managerAwardsView );
 				
 				nextPage = "awards";
 				
@@ -505,7 +525,28 @@ public class GamesAction extends Action {
 				
 				break;
 				
-			case ScheduleType.END_OF_POSTSEASON:    nextPage = "end_of_post";         break;
+			case ScheduleType.END_OF_POSTSEASON:
+
+				GameView gameView = null;
+				
+				if ( (gameView = gameService.getChampionshipGame()) != null ) {
+
+					Team champion = null;
+					int  winner   = 0;
+					
+					request.setAttribute( "championship", gameView );
+					
+					if   ( gameView.getRoad_win().booleanValue() ) winner = gameView.getRoad_team_id().intValue();
+					else                                           winner = gameView.getHome_team_id().intValue();
+					
+					teamService = new TeamServiceImpl( dbConn, scheduleEntry.getYear() );
+					
+					if ( (champion = teamService.getTeamById( winner )) != null ) request.setAttribute( "champion", champion );
+				}
+
+				nextPage = "end_of_post";
+				
+				break;
 				
 			case ScheduleType.ALL_STARS:
 				
@@ -520,10 +561,10 @@ public class GamesAction extends Action {
 				data = playerService.getAllstarsByTeamId( allstarTeamIds[2] ); request.setAttribute( "div2stars", data );
 				data = playerService.getAllstarsByTeamId( allstarTeamIds[3] ); request.setAttribute( "div3stars", data );
 				
-				request.setAttribute( "manager0", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[0] ) );
-				request.setAttribute( "manager1", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[1] ) );
-				request.setAttribute( "manager2", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[2] ) );
-				request.setAttribute( "manager3", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[3] ) );
+				request.setAttribute( "manager0", managerService.getAllstarManagerByTeamId( allstarTeamIds[0] ) );
+				request.setAttribute( "manager1", managerService.getAllstarManagerByTeamId( allstarTeamIds[1] ) );
+				request.setAttribute( "manager2", managerService.getAllstarManagerByTeamId( allstarTeamIds[2] ) );
+				request.setAttribute( "manager3", managerService.getAllstarManagerByTeamId( allstarTeamIds[3] ) );
 				
 				nextPage = "allstars";
 				
@@ -548,7 +589,13 @@ public class GamesAction extends Action {
 
 				break;
 
-			case ScheduleType.END_OF_ALLSTAR_GAMES:    nextPage = "end_of_asg";         break;
+			case ScheduleType.END_OF_ALLSTAR_GAMES:
+
+				data = gameService.getRankedAllstarTeams(); request.setAttribute( "allstarTeams", data );
+				
+				nextPage = "end_of_asg";
+				
+				break;
 				
 			case ScheduleType.END_OF_SEASON:           nextPage = "end";                break;
 			}

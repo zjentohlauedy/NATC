@@ -1,6 +1,6 @@
 package natc.view;
 
-public class AwardsView {
+public class PlayerAwardsView {
 
 	private int     player_id;
 	private String  first_name;
@@ -9,10 +9,16 @@ public class AwardsView {
 	private int     team_id;
 	private int     conference;
 	private int     division;
+	private int     points;
+	private int     goals;
+	private int     assists;
+	private int     stops;
+	private int     steals;
+	private int     psm;
 	private int     award;
 	private boolean rookie;
 	
-	public AwardsView() {
+	public PlayerAwardsView() {
 	
 		this.player_id   = 0;
 		this.first_name  = null;
@@ -21,6 +27,12 @@ public class AwardsView {
 		this.team_id     = 0;
 		this.conference  = 0;
 		this.division    = 0;
+		this.points      = 0;
+		this.goals       = 0;
+		this.assists     = 0;
+		this.stops       = 0;
+		this.steals      = 0;
+		this.psm         = 0;
 		this.award       = 0;
 		this.rookie      = false;
 	}
@@ -95,6 +107,54 @@ public class AwardsView {
 
 	public void setRookie(boolean rookie) {
 		this.rookie = rookie;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	public int getGoals() {
+		return goals;
+	}
+
+	public void setGoals(int goals) {
+		this.goals = goals;
+	}
+
+	public int getAssists() {
+		return assists;
+	}
+
+	public void setAssists(int assists) {
+		this.assists = assists;
+	}
+
+	public int getStops() {
+		return stops;
+	}
+
+	public void setStops(int stops) {
+		this.stops = stops;
+	}
+
+	public int getSteals() {
+		return steals;
+	}
+
+	public void setSteals(int steals) {
+		this.steals = steals;
+	}
+
+	public int getPsm() {
+		return psm;
+	}
+
+	public void setPsm(int psm) {
+		this.psm = psm;
 	}
 	
 }

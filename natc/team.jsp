@@ -91,7 +91,7 @@
         <bean:write name="manager" property="age" />
       </td>
       <td>
-        <img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="overallRating"/>'>
+        <img src='barchart.jsp?background=000000&foreground=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalties"/>'>
       </td>
       <td>
         <logic:equal name="manager" property="style" value="1">
@@ -201,6 +201,7 @@
     <td><bean:message key="team.label.games"         /></td>
     <td><bean:message key="team.label.poss"          /></td>
     <td><bean:message key="team.label.avg_top"       /></td>
+    <td><bean:message key="team.label.points"        /></td>
     <td><bean:message key="team.label.attempts"      /></td>
     <td><bean:message key="team.label.goals"         /></td>
     <td><bean:message key="team.label.eff"           /></td>
@@ -214,7 +215,6 @@
     <td><bean:message key="team.label.ot_psa"        /></td>
     <td><bean:message key="team.label.ot_psm"        /></td>
     <td><bean:message key="team.label.eff"           /></td>
-    <td><bean:message key="team.label.score"         /></td>
   </tr>
   
   <logic:iterate id="teamStatsView" name="teamOffense">
@@ -238,6 +238,7 @@
       <td><bean:write name="teamStatsView" property="games"                /></td>
       <td><bean:write name="teamStatsView" property="possessions"          /></td>
       <td><bean:write name="teamStatsView" property="avgPossessionTimeDsp" /></td>
+      <td><bean:write name="teamStatsView" property="score"                /></td>
       <td><bean:write name="teamStatsView" property="attempts"             /></td>
       <td><bean:write name="teamStatsView" property="goals"                /></td>
       <td><bean:write name="teamStatsView" property="scoringEfficiencyDsp" /></td>
@@ -251,7 +252,6 @@
       <td><bean:write name="teamStatsView" property="ot_psa"               /></td>
       <td><bean:write name="teamStatsView" property="ot_psm"               /></td>
       <td><bean:write name="teamStatsView" property="otPsEfficiencyDsp"    /></td>
-      <td><bean:write name="teamStatsView" property="score"                /></td>
     </tr>
   </logic:iterate>
 </logic:present>
@@ -263,6 +263,7 @@
     <td><bean:message key="team.label.games"         /></td>
     <td><bean:message key="team.label.poss"          /></td>
     <td><bean:message key="team.label.avg_top"       /></td>
+    <td><bean:message key="team.label.points"        /></td>
     <td><bean:message key="team.label.attempts"      /></td>
     <td><bean:message key="team.label.goals"         /></td>
     <td><bean:message key="team.label.eff"           /></td>
@@ -276,7 +277,6 @@
     <td><bean:message key="team.label.ot_psa"        /></td>
     <td><bean:message key="team.label.ot_psm"        /></td>
     <td><bean:message key="team.label.eff"           /></td>
-    <td><bean:message key="team.label.score"         /></td>
   </tr>
   <logic:iterate id="teamStatsView" name="teamDefense">
     <tr>
@@ -299,6 +299,7 @@
       <td><bean:write name="teamStatsView" property="games"                /></td>
       <td><bean:write name="teamStatsView" property="possessions"          /></td>
       <td><bean:write name="teamStatsView" property="avgPossessionTimeDsp" /></td>
+      <td><bean:write name="teamStatsView" property="score"                /></td>
       <td><bean:write name="teamStatsView" property="attempts"             /></td>
       <td><bean:write name="teamStatsView" property="goals"                /></td>
       <td><bean:write name="teamStatsView" property="scoringEfficiencyDsp" /></td>
@@ -312,7 +313,6 @@
       <td><bean:write name="teamStatsView" property="ot_psa"               /></td>
       <td><bean:write name="teamStatsView" property="ot_psm"               /></td>
       <td><bean:write name="teamStatsView" property="otPsEfficiencyDsp"    /></td>
-      <td><bean:write name="teamStatsView" property="score"                /></td>
     </tr>
   </logic:iterate>
 </logic:present>
@@ -322,15 +322,19 @@
 <logic:present name="teamPlayers">
 <table class="roster">
   <tr class="label">
-    <td colspan="3"><bean:message key="team.label.players"/></td>
+    <td colspan="12"><bean:message key="team.label.players"/></td>
   </tr>
   <tr class="heading">
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.player"        /></a></td>
+    <logic:equal name="team" property="name" value="All Stars">
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.team"          /></a></td>
+    </logic:equal>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.age"           /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.skill"         /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.games"         /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.starts"        /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.time_per_game" /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.points"        /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.goals"         /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.assists"       /></a></td>
     <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.stops"         /></a></td>
@@ -363,15 +367,21 @@
           <h7><bean:message key="team.label.injured" /></h7>
         </logic:equal>
       </td>
+      <logic:equal name="team" property="name" value="All Stars">
       <td>
-        <bean:write name="teamPlayer" property="age"/>
+        <html:link page="/Team.do" paramId="team_id" paramName="teamPlayer" paramProperty="team_id">
+          <bean:write name="teamPlayer" property="team_abbrev"/>
+        </html:link>
       </td>
+      </logic:equal>
+      <td><bean:write name="teamPlayer" property="age"            /></td>
       <td>
         <img id='<bean:write name="teamPlayer" property="adjustedRating"/>' src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="teamPlayer" property="adjustedRating"/>&value2=<bean:write name="teamPlayer" property="rating"/>'>
       </td>
       <td><bean:write name="teamPlayer" property="games"          /></td>
       <td><bean:write name="teamPlayer" property="games_started"  /></td>
       <td><bean:write name="teamPlayer" property="timePerGameDsp" /></td>
+      <td><bean:write name="teamPlayer" property="points"         /></td>
       <td><bean:write name="teamPlayer" property="goals"          /></td>
       <td><bean:write name="teamPlayer" property="assists"        /></td>
       <td><bean:write name="teamPlayer" property="stops"          /></td>

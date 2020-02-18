@@ -15,6 +15,8 @@ import natc.data.Team;
 import natc.data.TeamGame;
 import natc.service.ManagerService;
 import natc.service.TeamService;
+import natc.view.ManagerAllstarView;
+import natc.view.ManagerAwardsView;
 import natc.view.ManagerStatsView;
 import natc.view.ManagerView;
 
@@ -520,31 +522,40 @@ public class ManagerServiceImpl implements ManagerService {
 		return manager;
 	}
 
-	public ManagerView getManagerViewByAllstarTeamId( int team_id ) throws SQLException {
+	public ManagerAllstarView getAllstarManagerByTeamId( int team_id ) throws SQLException {
 
-		ManagerView managerView = null;
+		ManagerAllstarView managerAllstarView = null;
 
 		PreparedStatement ps       = null;
 		ResultSet         dbRs     = null;
 		
 		try {
 			
-			ps = DatabaseImpl.getManagerViewByAllstarTeamIdSelectPs( dbConn );
+			ps = DatabaseImpl.getAllstarManagerByTeamIdSelectPs( dbConn );
 			
-			ps.setString( 1, year      );
-			ps.setInt(    2, team_id );
+			ps.setString( 1, year                      );
+			ps.setInt(    2, TeamGame.gt_RegularSeason );
+			ps.setInt(    3, team_id                   );
 			
 			dbRs = ps.executeQuery();
 
 			if ( dbRs.next() ) {
 			
-				managerView = new ManagerView();
+				managerAllstarView = new ManagerAllstarView();
 				
-				managerView.setManager_id(  dbRs.getInt(    1 ) );
-				managerView.setFirst_name(  dbRs.getString( 2 ) );
-				managerView.setLast_name(   dbRs.getString( 3 ) );
-				managerView.setTeam_id(     dbRs.getInt(    4 ) );
-				managerView.setTeam_abbrev( dbRs.getString( 5 ) );
+				managerAllstarView.setManager_id(  dbRs.getInt(     1 ) );
+				managerAllstarView.setFirst_name(  dbRs.getString(  2 ) );
+				managerAllstarView.setLast_name(   dbRs.getString(  3 ) );
+				managerAllstarView.setAward(       dbRs.getInt(     4 ) );
+				managerAllstarView.setTeam_id(     dbRs.getInt(     5 ) );
+				managerAllstarView.setTeam_abbrev( dbRs.getString(  6 ) );
+				managerAllstarView.setWins(        dbRs.getInt(     7 ) );
+				managerAllstarView.setLosses(      dbRs.getInt(     8 ) );
+				managerAllstarView.setPoints(      dbRs.getInt(     9 ) );
+				managerAllstarView.setAttempts(    dbRs.getInt(    10 ) );
+				managerAllstarView.setGoals(       dbRs.getInt(    11 ) );
+				managerAllstarView.setPsa(         dbRs.getInt(    12 ) );
+				managerAllstarView.setPsm(         dbRs.getInt(    13 ) );
 			}
 		}
 		finally {
@@ -553,7 +564,7 @@ public class ManagerServiceImpl implements ManagerService {
 			DatabaseImpl.closeDbStmt( ps );
 		}
 		
-		return managerView;
+		return managerAllstarView;
 	}
 
 	public int getManagerCount() throws SQLException {
@@ -585,6 +596,46 @@ public class ManagerServiceImpl implements ManagerService {
 		return count;
 	}
 
+	private void getAwardsForManager( ManagerView managerView ) throws SQLException {
+
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAwardCountByManagerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, managerView.getManager_id() );
+			ps.setInt( 2, Manager.MANAGER_OF_THE_YEAR );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				managerView.setAward_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+			
+			ps = DatabaseImpl.getAllstarCountByManagerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, managerView.getManager_id() );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				managerView.setAllstar_count( dbRs.getInt( 1 ) );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+	
 	public List getRetiredManagers() throws SQLException {
 		
 		List managers = null;
@@ -632,6 +683,8 @@ public class ManagerServiceImpl implements ManagerService {
 				
 				DatabaseImpl.closeDbRs( dbRs2 );
 				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForManager( managerView );
 				
 				if ( managers == null ) managers = new ArrayList();
 				
@@ -697,6 +750,8 @@ public class ManagerServiceImpl implements ManagerService {
 				
 				DatabaseImpl.closeDbRs( dbRs2 );
 				DatabaseImpl.closeDbStmt( ps2 );
+
+				getAwardsForManager( managerView );
 				
 				if ( managers == null ) managers = new ArrayList();
 				
@@ -759,6 +814,8 @@ public class ManagerServiceImpl implements ManagerService {
 				
 				DatabaseImpl.closeDbRs( dbRs2 );
 				DatabaseImpl.closeDbStmt( ps2 );
+
+				getAwardsForManager( managerView );
 				
 				if ( managers == null ) managers = new ArrayList();
 				
@@ -1050,9 +1107,9 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 	}
 
-	public ManagerView getManagerOfTheYear() throws SQLException {
+	public ManagerAwardsView getManagerOfTheYear() throws SQLException {
 
-		ManagerView managerView = null;
+		ManagerAwardsView managerAwardsView = null;
 
 		PreparedStatement ps       = null;
 		ResultSet         dbRs     = null;
@@ -1062,19 +1119,27 @@ public class ManagerServiceImpl implements ManagerService {
 			ps = DatabaseImpl.getManagerByAwardSelectPs( dbConn );
 			
 			ps.setString( 1,    this.year                );
-			ps.setInt(    2, Manager.MANAGER_OF_THE_YEAR );
+			ps.setInt(    2, TeamGame.gt_RegularSeason   );
+			ps.setInt(    3, Manager.MANAGER_OF_THE_YEAR );
 			
 			dbRs = ps.executeQuery();
 
 			if ( dbRs.next() ) {
 			
-				managerView = new ManagerView();
+				managerAwardsView = new ManagerAwardsView();
 				
-				managerView.setManager_id(  dbRs.getInt(    1 ) );
-				managerView.setFirst_name(  dbRs.getString( 2 ) );
-				managerView.setLast_name(   dbRs.getString( 3 ) );
-				managerView.setTeam_id(     dbRs.getInt(    4 ) );
-				managerView.setTeam_abbrev( dbRs.getString( 5 ) );
+				managerAwardsView.setManager_id(  dbRs.getInt(     1 ) );
+				managerAwardsView.setFirst_name(  dbRs.getString(  2 ) );
+				managerAwardsView.setLast_name(   dbRs.getString(  3 ) );
+				managerAwardsView.setTeam_id(     dbRs.getInt(     4 ) );
+				managerAwardsView.setTeam_abbrev( dbRs.getString(  5 ) );
+				managerAwardsView.setWins(        dbRs.getInt(     6 ) );
+				managerAwardsView.setLosses(      dbRs.getInt(     7 ) );  
+				managerAwardsView.setPoints(      dbRs.getInt(     8 ) );
+				managerAwardsView.setAttempts(    dbRs.getInt(     9 ) );
+				managerAwardsView.setGoals(       dbRs.getInt(    10 ) );
+				managerAwardsView.setPsa(         dbRs.getInt(    11 ) );
+				managerAwardsView.setPsm(         dbRs.getInt(    12 ) );
 			}
 		}
 		finally {
@@ -1083,7 +1148,7 @@ public class ManagerServiceImpl implements ManagerService {
 			DatabaseImpl.closeDbStmt( ps );
 		}
 		
-		return managerView;
+		return managerAwardsView;
 	}
 
 	public Manager getBestManagerByDivision( int division ) throws SQLException {

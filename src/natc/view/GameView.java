@@ -1,6 +1,7 @@
 package natc.view;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class GameView {
@@ -11,11 +12,13 @@ public class GameView {
 	
 	private Integer home_team_id;
 	private String  home_team;
+	private String  home_team_name;
 	private Integer home_score;
 	private Boolean home_win;
 	
 	private Integer road_team_id;
 	private String  road_team;
+	private String  road_team_name;
 	private Integer road_score;
 	private Boolean road_win;
 	
@@ -23,17 +26,19 @@ public class GameView {
 	
 	public GameView() {
 	
-		game_id      = null;
-		date         = null;
-		home_team_id = null;
-		home_team    = null;
-		home_score   = null;
-		home_win     = null;
-		road_team_id = null;
-		road_team    = null;
-		road_score   = null;
-		road_win     = null;
-		overtime     = null;
+		game_id        = null;
+		date           = null;
+		home_team_id   = null;
+		home_team      = null;
+		home_team_name = null;
+		home_score     = null;
+		home_win       = null;
+		road_team_id   = null;
+		road_team      = null;
+		road_team_name = null;
+		road_score     = null;
+		road_win       = null;
+		overtime       = null;
 	}
 
 	public String getDateDsp() {
@@ -43,6 +48,15 @@ public class GameView {
 		DateFormat df = DateFormat.getDateInstance( DateFormat.SHORT );
 		
 		return df.format( this.date );
+	}
+	
+	public String getYearDsp() {
+	
+		if ( this.date == null ) return "";
+		
+		SimpleDateFormat  sdfDate = new SimpleDateFormat( "yyyy" );
+		
+		return sdfDate.format( this.date );
 	}
 	
 	public Integer getGame_id() {
@@ -131,6 +145,22 @@ public class GameView {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getHome_team_name() {
+		return home_team_name;
+	}
+
+	public void setHome_team_name(String homeTeamName) {
+		home_team_name = homeTeamName;
+	}
+
+	public String getRoad_team_name() {
+		return road_team_name;
+	}
+
+	public void setRoad_team_name(String roadTeamName) {
+		road_team_name = roadTeamName;
 	}
 
 }

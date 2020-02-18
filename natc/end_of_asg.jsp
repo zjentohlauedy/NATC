@@ -49,5 +49,36 @@
   <h2><bean:write name="schedule" property="scheduled"/></h2>
 </logic:present>
 
+<logic:present name="allstarTeams">
+  <table class="allstar_standings">
+    <tr>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="games.label.allstars"/></td>
+          </tr>
+          <logic:iterate id="team" name="allstarTeams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+    </tr>
+  </table>
+</logic:present>
+
+<logic:iterate id="team" name="allstarTeams">
+  <logic:equal name="team" property="wins" value="2">
+    <h1><bean:write name="schedule" property="year"/> <bean:message key="games.label.asgchamps"/> <bean:write name="team" property="location"/> <bean:write name="team" property="name"/></h1>
+  </logic:equal>
+</logic:iterate>
+
 </body>
 </html:html>

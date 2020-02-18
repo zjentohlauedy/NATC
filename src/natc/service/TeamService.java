@@ -32,4 +32,5 @@ public interface TeamService {
 	public void         getTeamPlayerData( TeamPlayerView teamPlayer, int gameType ) throws SQLException;
 	public void         updateExpectations() throws SQLException;
 	public List         getTeamInjuriesByTeamId( int team_id ) throws SQLException;
+	public String       getAbbrevForTeamId( int team_id ) throws SQLException;
 }

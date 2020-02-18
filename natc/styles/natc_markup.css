@@ -126,6 +126,11 @@ a:hover {
 	font-weight: bold;
 }
 
+.champs {
+	font-size: small;
+	font-weight: bold;
+}
+
 .boxscores {
 	font-size: small;
 	font-weight: bold;
@@ -140,6 +145,12 @@ a:hover {
 	background-color: #222222;
 	font-size: medium;
 	font-weight: normal;
+}
+
+.playoff {
+	background-color: #000044;
+	font-size: 10pt;
+	font-weight: bold;
 }
 
 .menu {

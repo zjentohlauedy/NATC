@@ -53,6 +53,12 @@
       <td><bean:message key="awards.label.team"       /></td>
       <td><bean:message key="awards.label.conference" /></td>
       <td><bean:message key="awards.label.division"   /></td>
+      <td><bean:message key="awards.label.points"     /></td>
+      <td><bean:message key="awards.label.goals"      /></td>
+      <td><bean:message key="awards.label.assists"    /></td>
+      <td><bean:message key="awards.label.stops"      /></td>
+      <td><bean:message key="awards.label.steals"     /></td>
+      <td><bean:message key="awards.label.psm"        /></td>
     </tr>
     <logic:iterate id="awardView" name="awards">
       <tr>
@@ -106,6 +112,12 @@
             </logic:equal>
           </logic:equal>
         </td>
+        <td><bean:write name="awardView" property="points"  /></td>
+        <td><bean:write name="awardView" property="goals"   /></td>
+        <td><bean:write name="awardView" property="assists" /></td>
+        <td><bean:write name="awardView" property="stops"   /></td>
+        <td><bean:write name="awardView" property="steals"  /></td>
+        <td><bean:write name="awardView" property="psm"     /></td>
       </tr>
     </logic:iterate>
   </table>
@@ -116,6 +128,10 @@
     <tr class="heading">
       <td><bean:message key="awards.label.moty"       /></td>
       <td><bean:message key="awards.label.team"       /></td>
+      <td><bean:message key="awards.label.record"     /></td>
+      <td><bean:message key="awards.label.points"     /></td>
+      <td><bean:message key="awards.label.efficiency" /></td>
+      <td><bean:message key="awards.label.ps_eff"     /></td>
     </tr>
     <tr>
       <td>
@@ -128,6 +144,10 @@
           <bean:write name="manager" property="team_abbrev" />
         </html:link>
       </td>
+      <td><bean:write name="manager" property="recordDsp"            /></td>
+      <td><bean:write name="manager" property="points"               /></td>
+      <td><bean:write name="manager" property="scoringEfficiencyDsp" /></td>
+      <td><bean:write name="manager" property="psEfficiencyDsp"      /></td>
     </tr>
   </table>
 </logic:present>

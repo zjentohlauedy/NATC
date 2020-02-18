@@ -79,6 +79,7 @@
     <td><bean:message key="player.label.name"      /></td>
     <td><bean:message key="player.label.poss"      /></td>
     <td><bean:message key="player.label.time"      /></td>
+    <td><bean:message key="player.label.points"    /></td>
     <td><bean:message key="player.label.attempts"  /></td>
     <td><bean:message key="player.label.goals"     /></td>
     <td><bean:message key="player.label.eff"       /></td>
@@ -111,6 +112,7 @@
         </td>
         <td></td>
         <td><bean:write name="player" property="gameTimeDsp"          /></td>
+        <td><bean:write name="player" property="points"               /></td>
         <td><bean:write name="player" property="attempts"             /></td>
         <td><bean:write name="player" property="goals"                /></td>
         <td><bean:write name="player" property="scoringEfficiencyDsp" /></td>
@@ -138,6 +140,7 @@
       </td>
       <td><bean:write name="roadGame" property="possessions"          /></td>
       <td><bean:write name="roadGame" property="gameTimeDsp"          /></td>
+      <td><bean:write name="roadGame" property="score"                /></td>
       <td><bean:write name="roadGame" property="attempts"             /></td>
       <td><bean:write name="roadGame" property="goals"                /></td>
       <td><bean:write name="roadGame" property="scoringEfficiencyDsp" /></td>
@@ -160,6 +163,7 @@
     <td><bean:message key="player.label.name"      /></td>
     <td><bean:message key="player.label.poss"      /></td>
     <td><bean:message key="player.label.time"      /></td>
+    <td><bean:message key="player.label.points"    /></td>
     <td><bean:message key="player.label.attempts"  /></td>
     <td><bean:message key="player.label.goals"     /></td>
     <td><bean:message key="player.label.eff"       /></td>
@@ -192,6 +196,7 @@
         </td>
         <td></td>
         <td><bean:write name="player" property="gameTimeDsp"          /></td>
+        <td><bean:write name="player" property="points"               /></td>
         <td><bean:write name="player" property="attempts"             /></td>
         <td><bean:write name="player" property="goals"                /></td>
         <td><bean:write name="player" property="scoringEfficiencyDsp" /></td>
@@ -219,6 +224,7 @@
       </td>
       <td><bean:write name="homeGame" property="possessions"          /></td>
       <td><bean:write name="homeGame" property="gameTimeDsp"          /></td>
+      <td><bean:write name="homeGame" property="score"                /></td>
       <td><bean:write name="homeGame" property="attempts"             /></td>
       <td><bean:write name="homeGame" property="goals"                /></td>
       <td><bean:write name="homeGame" property="scoringEfficiencyDsp" /></td>

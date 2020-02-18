@@ -57,6 +57,8 @@
         <td><bean:message key="ofs.label.style"   /></td>
         <td><bean:message key="ofs.label.seasons" /></td>
         <td><bean:message key="ofs.label.win_pct" /></td>
+        <td><bean:message key="ofs.label.moty"    /></td>
+        <td><bean:message key="ofs.label.allstar" /></td>
       </tr>
       <logic:iterate id="manager" name="retired_managers">
         <tr>
@@ -76,7 +78,7 @@
             </logic:notEqual>
           </td>
           <td>
-            <img src='drawbar2.jsp?background=000000&color1=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
+            <img src='barchart.jsp?background=000000&foreground=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
           </td>
           <td>
             <logic:equal name="manager" property="style" value="1"><bean:message key="manager.label.offensive"  /></logic:equal>
@@ -85,8 +87,10 @@
             <logic:equal name="manager" property="style" value="4"><bean:message key="manager.label.penalty"    /></logic:equal>
             <logic:equal name="manager" property="style" value="5"><bean:message key="manager.label.balanced"   /></logic:equal>
           </td>
-          <td><bean:write name="manager" property="seasons"    /></td>
-          <td><bean:write name="manager" property="winPctDsp"  /></td>
+          <td><bean:write name="manager" property="seasons"       /></td>
+          <td><bean:write name="manager" property="winPctDsp"     /></td>
+          <td><bean:write name="manager" property="award_count"   /></td>
+          <td><bean:write name="manager" property="allstar_count" /></td>
         </tr>
       </logic:iterate>
       <tr class="separator"></tr>
@@ -100,6 +104,8 @@
         <td><bean:message key="ofs.label.style"   /></td>
         <td><bean:message key="ofs.label.seasons" /></td>
         <td><bean:message key="ofs.label.win_pct" /></td>
+        <td><bean:message key="ofs.label.moty"    /></td>
+        <td><bean:message key="ofs.label.allstar" /></td>
       </tr>
       <logic:iterate id="manager" name="fired_managers">
         <tr>
@@ -114,7 +120,7 @@
             </html:link>
           </td>
           <td>
-            <img src='drawbar2.jsp?background=000000&color1=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
+            <img src='barchart.jsp?background=000000&foreground=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
           </td>
           <td>
             <logic:equal name="manager" property="style" value="1"><bean:message key="manager.label.offensive"  /></logic:equal>
@@ -123,8 +129,10 @@
             <logic:equal name="manager" property="style" value="4"><bean:message key="manager.label.penalty"    /></logic:equal>
             <logic:equal name="manager" property="style" value="5"><bean:message key="manager.label.balanced"   /></logic:equal>
           </td>
-          <td><bean:write name="manager" property="seasons"    /></td>
-          <td><bean:write name="manager" property="winPctDsp"  /></td>
+          <td><bean:write name="manager" property="seasons"       /></td>
+          <td><bean:write name="manager" property="winPctDsp"     /></td>
+          <td><bean:write name="manager" property="award_count"   /></td>
+          <td><bean:write name="manager" property="allstar_count" /></td>
         </tr>
       </logic:iterate>
       <tr class="separator"></tr>
@@ -137,6 +145,8 @@
       <td><bean:message key="ofs.label.style"   /></td>
       <td><bean:message key="ofs.label.seasons" /></td>
       <td><bean:message key="ofs.label.win_pct" /></td>
+      <td><bean:message key="ofs.label.moty"    /></td>
+      <td><bean:message key="ofs.label.allstar" /></td>
     </tr>
     <logic:iterate id="manager" name="hired_managers">
       <tr>
@@ -151,7 +161,7 @@
           </html:link>
         </td>
         <td>
-          <img src='drawbar2.jsp?background=000000&color1=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
+          <img src='barchart.jsp?background=000000&foreground=ff0000&width=50&height=16&value1=<bean:write name="manager" property="offense"/>&value2=<bean:write name="manager" property="defense"/>&value3=<bean:write name="manager" property="intangible"/>&value4=<bean:write name="manager" property="penalty"/>'>
         </td>
         <td>
           <logic:equal name="manager" property="style" value="1"><bean:message key="manager.label.offensive"  /></logic:equal>
@@ -160,8 +170,10 @@
           <logic:equal name="manager" property="style" value="4"><bean:message key="manager.label.penalty"    /></logic:equal>
           <logic:equal name="manager" property="style" value="5"><bean:message key="manager.label.balanced"   /></logic:equal>
         </td>
-        <td><bean:write name="manager" property="seasons"    /></td>
-        <td><bean:write name="manager" property="winPctDsp"  /></td>
+        <td><bean:write name="manager" property="seasons"       /></td>
+        <td><bean:write name="manager" property="winPctDsp"     /></td>
+        <td><bean:write name="manager" property="award_count"   /></td>
+        <td><bean:write name="manager" property="allstar_count" /></td>
       </tr>
     </logic:iterate>
   </table>

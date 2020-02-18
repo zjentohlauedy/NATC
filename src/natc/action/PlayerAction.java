@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import natc.data.Player;
 import natc.data.Schedule;
 import natc.data.Team;
+import natc.data.TeamGame;
 import natc.service.PlayerService;
 import natc.service.ScheduleService;
 import natc.service.TeamService;
@@ -91,17 +92,15 @@ public class PlayerAction extends Action {
 			
 			List injuries;
 			
-			if ( (injuries = playerService.getPlayerInjuriesById( player.getPlayer_id() )) != null ) {
-				
-				request.setAttribute( "injuries", injuries );
-			}
+			if ( (injuries = playerService.getPlayerInjuriesById(      player.getPlayer_id() )) != null ) request.setAttribute( "injuries",       injuries );
+			if ( (injuries = playerService.getPlayerInjuryHistoryById( player.getPlayer_id() )) != null ) request.setAttribute( "injury_history", injuries );
 			
 			List history;
 			
-			if ( (history = playerService.getPlayerHistoryById( player.getPlayer_id() )) != null ) {
-			
-				request.setAttribute( "history", history );
-			}
+			if ( (history = playerService.getPlayerHistoryByIdAndType( player.getPlayer_id(), TeamGame.gt_Preseason     )) != null ) request.setAttribute( "preseason",  history );
+			if ( (history = playerService.getPlayerHistoryByIdAndType( player.getPlayer_id(), TeamGame.gt_RegularSeason )) != null ) request.setAttribute( "regseason",  history );
+			if ( (history = playerService.getPlayerHistoryByIdAndType( player.getPlayer_id(), TeamGame.gt_Postseason    )) != null ) request.setAttribute( "postseason", history );
+			if ( (history = playerService.getPlayerHistoryByIdAndType( player.getPlayer_id(), TeamGame.gt_Allstar       )) != null ) request.setAttribute( "allstar",    history );
 		}
 		finally {
 			

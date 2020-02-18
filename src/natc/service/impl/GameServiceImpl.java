@@ -1208,7 +1208,7 @@ public class GameServiceImpl implements GameService {
 		case ScheduleType.END_OF_PRESEASON:        /* Nothing to do here */        break;
 		case ScheduleType.ROSTER_CUT:              processRosterCut( event );      break;
 		case ScheduleType.REGULAR_SEASON:          processSeasonGame( event );     break;
-		case ScheduleType.END_OF_REGULAR_SEASON:   /* Nothing to do here */        break;
+		case ScheduleType.END_OF_REGULAR_SEASON:   processFinalRankings( event );  break;
 		case ScheduleType.AWARDS:                  processAwards( event );         break;
 		case ScheduleType.POSTSEASON:              setupPlayoffs( event );         break;
 		case ScheduleType.DIVISION_PLAYOFF:        processPostseasonGame( event ); break;
@@ -1742,6 +1742,34 @@ public class GameServiceImpl implements GameService {
 			}
 		}
 	}
+
+	private void processFinalRankings( Schedule event ) throws SQLException {
+	
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+		
+		for ( int division = 0; division < 4; ++division ) {
+		
+			List teamList = teamService.getTeamsByDivision( division );
+			
+			if ( teamList == null ) throw new SQLException( "Missing teams for division " + String.valueOf( division ) );
+			
+			TeamComparator tc = new TeamComparator( dbConn, year );
+			
+			Collections.sort( teamList, tc );
+			Collections.reverse( teamList );
+			
+			for ( int i = 0; i < teamList.size(); ++i ) {
+			
+				Team team = (Team)teamList.get( i );
+				
+				team.setDivision_rank( i + 1 );
+				
+				if ( i < 4 ) team.setPlayoff_rank( 1 );
+				
+				teamService.updateTeam( team );
+			}
+		}
+	}
 	
 	private void processAwards( Schedule event ) throws SQLException {
 		
@@ -1816,22 +1844,16 @@ public class GameServiceImpl implements GameService {
 			
 			if ( teamList == null ) throw new SQLException( "Missing teams for division " + String.valueOf( division ) );
 			
-			TeamComparator tc = new TeamComparator( dbConn, year );
-			
-			Collections.sort( teamList, tc );
-			Collections.reverse( teamList );
-			
-			for ( int i = 0; i < teamList.size(); ++i ) {
-			
-				Team team = (Team)teamList.get( i );
-				
-				team.setDivision_rank( i + 1 );
-				
-				if ( i < 4 ) team.setPlayoff_rank( 1 );
-				
-				teamService.updateTeam( team );
-			}
-			
+			Collections.sort(teamList, new Comparator() {
+
+				public int compare( Object arg0, Object arg1 ) {
+					
+					Team team1 = (Team)arg0;
+					Team team2 = (Team)arg1;
+					
+					return team1.getDivision_rank() - team2.getDivision_rank();
+				} } );
+
 			teams[division] = teamList.subList( 0, 4 );
 		}
 		
@@ -2349,6 +2371,54 @@ public class GameServiceImpl implements GameService {
 		return games;
 	}
 
+	public GameView getChampionshipGame() throws SQLException {
+	
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		GameView          gameView = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getChampionshipGameByYearSelectPs( dbConn );
+			
+			ps.setString( 1, year                   );
+			ps.setInt(    2, TeamGame.gt_Postseason );
+			ps.setInt(    3, 4                      );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+
+				if ( gameView == null ) gameView = new GameView();
+				
+				if ( dbRs.getBoolean( "Road" ) ) {
+					
+					gameView.setRoad_team_id( new Integer( dbRs.getInt(   "Team_Id"  ) ) );
+					gameView.setRoad_team(               dbRs.getString(  "Location" )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score"    ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"      ) ) );
+				}
+				else {
+					
+					gameView.setHome_team_id( new Integer( dbRs.getInt(   "Team_Id"  ) ) );
+					gameView.setHome_team(               dbRs.getString(  "Location" )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Score"    ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"      ) ) );
+				}
+				
+				gameView.setGame_id(  new Integer( dbRs.getInt(     "Game_Id"  ) ) );
+				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime" ) ) );
+			}
+		}
+		finally {
+
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return gameView;
+	}
+	
 	public List getRankedTeamsByDivision( int division ) throws SQLException {
 
 		List              teamsList = null;
@@ -2682,6 +2752,253 @@ public class GameServiceImpl implements GameService {
 	}
 
 	public List getFreeAgentMoves() throws SQLException {
+	
+		TeamService    teamService    = new TeamServiceImpl(    dbConn, year );
+		ManagerService managerService = new ManagerServiceImpl( dbConn, year );
+
+		List teams = teamService.getTeamList();
+		
+		Iterator i = teams.iterator();
+
+		while ( i.hasNext() ) {
+
+			Team team = (Team)i.next();
+
+			if ( team.getManager() == null ) team.setManager( managerService.getManagerByTeamId( team.getTeam_id() ) );
+			
+			PreparedStatement ps          = null;
+			ResultSet         dbRs        = null;
+			List              playersList = null;
+
+			try {
+
+				ps = DatabaseImpl.getReleasedFreeAgentsByTeamSelectPs( dbConn );
+				
+				ps.setString(  1, year              );
+				ps.setInt(     2, team.getTeam_id() );
+				ps.setBoolean( 3, true              );
+				
+				dbRs = ps.executeQuery();
+				
+				playersList = null;
+
+				while ( dbRs.next() ) {
+				
+					Player player = new Player();
+					
+					player.setPlayer_id(       dbRs.getInt(      1 ) );
+					player.setTeam_id(         dbRs.getInt(      2 ) );
+					player.setYear(            dbRs.getString(   3 ) );
+					player.setFirst_name(      dbRs.getString(   4 ) );
+					player.setLast_name(       dbRs.getString(   5 ) );
+					player.setAge(             dbRs.getInt(      6 ) );
+					player.setScoring(         dbRs.getDouble(   7 ) );
+					player.setPassing(         dbRs.getDouble(   8 ) );
+					player.setBlocking(        dbRs.getDouble(   9 ) );
+					player.setTackling(        dbRs.getDouble(  10 ) );
+					player.setStealing(        dbRs.getDouble(  11 ) );
+					player.setPresence(        dbRs.getDouble(  12 ) );
+					player.setDiscipline(      dbRs.getDouble(  13 ) );
+					player.setPenalty_shot(    dbRs.getDouble(  14 ) );
+					player.setPenalty_offense( dbRs.getDouble(  15 ) );
+					player.setPenalty_defense( dbRs.getDouble(  16 ) );
+					player.setEndurance(       dbRs.getDouble(  17 ) );
+					player.setConfidence(      dbRs.getDouble(  18 ) );
+					player.setVitality(        dbRs.getDouble(  19 ) );
+					player.setDurability(      dbRs.getDouble(  20 ) );
+					player.setRookie(          dbRs.getBoolean( 21 ) );
+					player.setInjured(         dbRs.getBoolean( 22 ) );
+					player.setReturn_date(     dbRs.getDate(    23 ) );
+					player.setFree_agent(      dbRs.getBoolean( 24 ) );
+					player.setSigned(          dbRs.getBoolean( 25 ) );
+					player.setReleased(        dbRs.getBoolean( 26 ) );
+					player.setRetired(         dbRs.getBoolean( 27 ) );
+					player.setFormer_team_id(  dbRs.getInt(     28 ) );
+					player.setAllstar_team_id( dbRs.getInt(     29 ) );
+					player.setAward(           dbRs.getInt(     30 ) );
+					player.setDraft_pick(      dbRs.getInt(     31 ) );
+					player.setSeasons_played(  dbRs.getInt(     32 ) );
+					
+					FreeAgentView freeAgentView = new FreeAgentView();
+
+					freeAgentView.setStatus(          0 );
+					freeAgentView.setPlayer_id(       player.getPlayer_id() );
+					freeAgentView.setFirst_name(      player.getFirst_name() );
+					freeAgentView.setLast_name(       player.getLast_name() );
+					freeAgentView.setOld_team_id(     player.getFormer_team_id() );
+					
+					freeAgentView.setOld_team_abbrev( teamService.getAbbrevForTeamId( player.getFormer_team_id() ) );
+					
+					freeAgentView.setNew_team_id(     player.getTeam_id() );
+					freeAgentView.setNew_team_abbrev( team.getAbbrev() );
+					freeAgentView.setAge(             player.getAge() );
+					freeAgentView.setSeasons_played(  player.getSeasons_played() );
+					
+					switch( team.getManager().getStyle() ) {
+					
+					//                                                                        Age    Conf.  Fatigue
+					case Manager.STYLE_OFFENSIVE:
+						
+						freeAgentView.setRating(         player.getAdjustedOffensiveRating(   false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedOffensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_DEFENSIVE:
+						
+						freeAgentView.setRating(         player.getAdjustedDefensiveRating(   false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedDefensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_INTANGIBLE:
+						
+						freeAgentView.setRating(         player.getAdjustedIntangibleRating(  false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedIntangibleRating(  true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_PENALTY:
+						
+						freeAgentView.setRating(         player.getAdjustedPenaltyRating(     false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedPenaltyRating(     true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_BALANCED:
+						
+						freeAgentView.setRating(         player.getAdjustedPerformanceRating( false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedPerformanceRating( true,  true,  false ) );
+						break;
+					}
+					
+					if ( playersList == null ) playersList = new ArrayList();
+					
+					playersList.add( freeAgentView );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+
+				ps = DatabaseImpl.getSignedFreeAgentsByTeamSelectPs( dbConn );
+				
+				ps.setString(  1, year              );
+				ps.setInt(     2, team.getTeam_id() );
+				ps.setBoolean( 3, true              );
+				
+				dbRs = ps.executeQuery();
+				
+				while ( dbRs.next() ) {
+				
+					Player player = new Player();
+					
+					player.setPlayer_id(       dbRs.getInt(      1 ) );
+					player.setTeam_id(         dbRs.getInt(      2 ) );
+					player.setYear(            dbRs.getString(   3 ) );
+					player.setFirst_name(      dbRs.getString(   4 ) );
+					player.setLast_name(       dbRs.getString(   5 ) );
+					player.setAge(             dbRs.getInt(      6 ) );
+					player.setScoring(         dbRs.getDouble(   7 ) );
+					player.setPassing(         dbRs.getDouble(   8 ) );
+					player.setBlocking(        dbRs.getDouble(   9 ) );
+					player.setTackling(        dbRs.getDouble(  10 ) );
+					player.setStealing(        dbRs.getDouble(  11 ) );
+					player.setPresence(        dbRs.getDouble(  12 ) );
+					player.setDiscipline(      dbRs.getDouble(  13 ) );
+					player.setPenalty_shot(    dbRs.getDouble(  14 ) );
+					player.setPenalty_offense( dbRs.getDouble(  15 ) );
+					player.setPenalty_defense( dbRs.getDouble(  16 ) );
+					player.setEndurance(       dbRs.getDouble(  17 ) );
+					player.setConfidence(      dbRs.getDouble(  18 ) );
+					player.setVitality(        dbRs.getDouble(  19 ) );
+					player.setDurability(      dbRs.getDouble(  20 ) );
+					player.setRookie(          dbRs.getBoolean( 21 ) );
+					player.setInjured(         dbRs.getBoolean( 22 ) );
+					player.setReturn_date(     dbRs.getDate(    23 ) );
+					player.setFree_agent(      dbRs.getBoolean( 24 ) );
+					player.setSigned(          dbRs.getBoolean( 25 ) );
+					player.setReleased(        dbRs.getBoolean( 26 ) );
+					player.setRetired(         dbRs.getBoolean( 27 ) );
+					player.setFormer_team_id(  dbRs.getInt(     28 ) );
+					player.setAllstar_team_id( dbRs.getInt(     29 ) );
+					player.setAward(           dbRs.getInt(     30 ) );
+					player.setDraft_pick(      dbRs.getInt(     31 ) );
+					player.setSeasons_played(  dbRs.getInt(     32 ) );
+					
+
+					FreeAgentView freeAgentView = new FreeAgentView();
+
+					freeAgentView.setStatus(          1 );
+					freeAgentView.setPlayer_id(       player.getPlayer_id() );
+					freeAgentView.setFirst_name(      player.getFirst_name() );
+					freeAgentView.setLast_name(       player.getLast_name() );
+					freeAgentView.setOld_team_id(     player.getFormer_team_id() );
+					
+					freeAgentView.setOld_team_abbrev( teamService.getAbbrevForTeamId( player.getFormer_team_id() ) );
+					
+					freeAgentView.setNew_team_id(     player.getTeam_id() );
+					freeAgentView.setNew_team_abbrev( team.getAbbrev() );
+					freeAgentView.setAge(             player.getAge() );
+					freeAgentView.setSeasons_played(  player.getSeasons_played() );
+					
+					switch( team.getManager().getStyle() ) {
+					
+					//                                                                        Age    Conf.  Fatigue
+					case Manager.STYLE_OFFENSIVE:
+						
+						freeAgentView.setRating(         player.getAdjustedOffensiveRating(   false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedOffensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_DEFENSIVE:
+						
+						freeAgentView.setRating(         player.getAdjustedDefensiveRating(   false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedDefensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_INTANGIBLE:
+						
+						freeAgentView.setRating(         player.getAdjustedIntangibleRating(  false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedIntangibleRating(  true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_PENALTY:
+						
+						freeAgentView.setRating(         player.getAdjustedPenaltyRating(     false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedPenaltyRating(     true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_BALANCED:
+						
+						freeAgentView.setRating(         player.getAdjustedPerformanceRating( false, false, false ) );
+						freeAgentView.setAdjustedRating( player.getAdjustedPerformanceRating( true,  true,  false ) );
+						break;
+					}
+					
+					if ( playersList == null ) playersList = new ArrayList();
+					
+					playersList.add( freeAgentView );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			finally {
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			
+			if ( playersList == null ) {
+				
+				i.remove();
+			}
+			else {
+			
+				team.setPlayers( playersList );
+			}
+		}
+		
+		return teams;
+	}
+	
+	public List getFreeAgentMoves2() throws SQLException {
 
 		TeamService teamService = new TeamServiceImpl( dbConn, year );
 
@@ -2754,6 +3071,76 @@ public class GameServiceImpl implements GameService {
 		return teams;
 	}
 
+	private void getAwardsForPlayer( RetiredView retiredView ) throws SQLException {
+
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, retiredView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.PLATINUM_AWARD );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				retiredView.setPlatinum_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, retiredView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.GOLD_AWARD     );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				retiredView.setGold_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, retiredView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.SILVER_AWARD   );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				retiredView.setSilver_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+			
+			ps = DatabaseImpl.getAllstarCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, retiredView.getPlayer_id() );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				retiredView.setAllstar_count( dbRs.getInt( 1 ) );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+	
 	public List getRetiredPlayersByTeam() throws SQLException {
 
 		TeamService teamService = new TeamServiceImpl( dbConn, year );
@@ -2813,6 +3200,8 @@ public class GameServiceImpl implements GameService {
 					
 					DatabaseImpl.closeDbRs( dbRs2 );
 					DatabaseImpl.closeDbStmt( ps2 );
+					
+					getAwardsForPlayer( retiredView );
 					
 					if ( playersList == null ) playersList = new ArrayList();
 					
@@ -2890,6 +3279,8 @@ public class GameServiceImpl implements GameService {
 				
 				DatabaseImpl.closeDbRs( dbRs2 );
 				DatabaseImpl.closeDbStmt( ps2 );
+
+				getAwardsForPlayer( retiredView );
 				
 				if ( playersList == null ) playersList = new ArrayList();
 				
@@ -2986,6 +3377,79 @@ public class GameServiceImpl implements GameService {
 		}
 		
 		return injuriesList;
+	}
+
+	public List getChampionships() throws SQLException {
+
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		GameView          gameView = null;
+		List              games    = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getChampionshipGamesSelectPs( dbConn );
+			
+			ps.setInt( 1, 4 );
+			
+			dbRs = ps.executeQuery();
+			
+			int old_game_id = -1;
+			
+			while ( dbRs.next() ) {
+			
+				int game_id = dbRs.getInt( "Game_Id" );
+				
+				if ( game_id != old_game_id ) {
+				
+					if ( gameView != null ) {
+					
+						if ( games == null ) games = new ArrayList();
+						
+						games.add( gameView );
+					}
+					
+					gameView = new GameView();
+					
+					old_game_id = game_id;
+				}
+				
+				if ( dbRs.getBoolean( "Road" ) ) {
+					
+					gameView.setRoad_team_id( new Integer( dbRs.getInt(     "Team_Id"  ) ) );
+					gameView.setRoad_team(                 dbRs.getString(  "Location" )   );
+					gameView.setRoad_team_name(            dbRs.getString(  "Name"     )   );
+					gameView.setRoad_score( new Integer(   dbRs.getInt(     "Score"    ) ) );
+					gameView.setRoad_win(   new Boolean(   dbRs.getBoolean( "Win"      ) ) );
+				}
+				else {
+					
+					gameView.setHome_team_id( new Integer( dbRs.getInt(     "Team_Id"  ) ) );
+					gameView.setHome_team(                 dbRs.getString(  "Location" )   );
+					gameView.setHome_team_name(            dbRs.getString(  "Name"     )   );
+					gameView.setHome_score( new Integer(   dbRs.getInt(     "Score"    ) ) );
+					gameView.setHome_win(   new Boolean(   dbRs.getBoolean( "Win"      ) ) );
+				}
+				
+				gameView.setGame_id(  new Integer( game_id                       ) );
+				gameView.setDate(                  dbRs.getDate(    "Datestamp"  ) );
+				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime" ) ) );
+			}
+			
+			if ( gameView != null ) {
+				
+				if ( games == null ) games = new ArrayList();
+				
+				games.add( gameView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return games;
 	}
 
 }

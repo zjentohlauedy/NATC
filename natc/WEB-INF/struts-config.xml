@@ -35,34 +35,43 @@
     <forward name="players" path="/players.jsp" />
     <forward name="stats"   path="/stats.jsp"   />
     <forward name="games"   path="/games.jsp"   />
+    <forward name="champs"  path="/champs.jsp"  />
     <forward name="error"   path="/error.jsp"   />
   </global-forwards>
 
   <action-mappings>
     <action path="/Main"    type="natc.action.MainAction"    />
     <action path="/News"    type="natc.action.NewsAction"    />
-    <action path="/Draft"    type="natc.action.DraftAction"     >
+    <action path="/Draft"   type="natc.action.DraftAction"    >
       <forward   name="success"    path="/draft.jsp"/>
     </action>
+    <action path="/Champs"  type="natc.action.ChampsAction"   >
+      <forward   name="success"    path="/champs.jsp"/>
+    </action>
+    
+    <action path="/Bracket" type="natc.action.BracketAction"   >
+      <forward   name="success"    path="/bracket.jsp"/>
+    </action>
+    
     <action path="/Team"    type="natc.action.TeamAction"     >
       <forward   name="success"    path="/team.jsp"/>
     </action>
-    <action path="/Teams"   type="natc.action.TeamsAction"   >
+    <action path="/Teams"   type="natc.action.TeamsAction"    >
       <forward   name="success"    path="/teams.jsp"/>
     </action>
-    <action path="/Manager"  type="natc.action.ManagerAction"  >
+    <action path="/Manager" type="natc.action.ManagerAction"  >
       <forward   name="success"    path="/manager.jsp"/>
     </action>
-    <action path="/Player"  type="natc.action.PlayerAction"  >
+    <action path="/Player"  type="natc.action.PlayerAction"   >
       <forward   name="success"    path="/player.jsp"/>
     </action>
-    <action path="/Players" type="natc.action.PlayersAction" >
+    <action path="/Players" type="natc.action.PlayersAction"  >
       <forward   name="success"    path="/players.jsp"/>
     </action>
     <action path="/Stats"   type="natc.action.StatsAction" name="statsForm" scope="request" input="/stats.jsp">
       <forward   name="success"    path="/stats.jsp"/>
     </action>
-    <action path="/Game"  type="natc.action.GameAction"  >
+    <action path="/Game"    type="natc.action.GameAction"     >
       <forward   name="success"    path="/game.jsp"/>
     </action>
     <action path="/Games"   type="natc.action.GamesAction" name="gamesForm" scope="request" input="/games.jsp">

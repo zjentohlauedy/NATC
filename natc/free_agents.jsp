@@ -64,6 +64,7 @@
       <td><bean:message key="freeagent.label.status"  /></td>
       <td><bean:message key="freeagent.label.player"  /></td>
       <td><bean:message key="freeagent.label.from"    /></td>
+      <td><bean:message key="freeagent.label.rating"  /></td>
       <td><bean:message key="freeagent.label.age"     /></td>
       <td><bean:message key="freeagent.label.seasons" /></td>
     </tr>
@@ -88,6 +89,9 @@
               <bean:write name="freeAgentView" property="old_team_abbrev" />
             </html:link>
           </logic:equal>
+        </td>
+        <td>
+          <img id='<bean:write name="freeAgentView" property="adjustedRating"/>' src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="freeAgentView" property="adjustedRating"/>&value2=<bean:write name="freeAgentView" property="rating"/>'>
         </td>
         <td><bean:write name="freeAgentView" property="age"            /></td>
         <td><bean:write name="freeAgentView" property="seasons_played" /></td>

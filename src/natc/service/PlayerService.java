@@ -23,7 +23,9 @@ public interface PlayerService {
 	public Player         getPlayerById( int player_id ) throws SQLException;
 	public Player         getLatestPlayerById( int player_id ) throws SQLException;
 	public List           getPlayerHistoryById( int player_id ) throws SQLException;
+	public List           getPlayerHistoryByIdAndType( int player_id, int type ) throws SQLException;
 	public List           getPlayerInjuriesById( int player_id ) throws SQLException;
+	public List           getPlayerInjuryHistoryById( int player_id ) throws SQLException;
 	public List           getPlayersByTeamId( int team_id ) throws SQLException;
 	public List           getPlayersByAllstarTeamId( int team_id ) throws SQLException;
 	public List           getPlayersByLetter( String letter ) throws SQLException;

@@ -59,15 +59,19 @@
       </td>
     </tr>
     <tr class="heading">
-      <td><bean:message key="retired.label.player"  /></td>
-      <td><bean:message key="retired.label.age"     /></td>
-      <td><bean:message key="retired.label.seasons" /></td>
-      <td><bean:message key="retired.label.goals"   /></td>
-      <td><bean:message key="retired.label.assists" /></td>
-      <td><bean:message key="retired.label.stops"   /></td>
-      <td><bean:message key="retired.label.steals"  /></td>
-      <td><bean:message key="retired.label.psm"     /></td>
-      <td><bean:message key="retired.label.points"  /></td>
+      <td><bean:message key="retired.label.player"   /></td>
+      <td><bean:message key="retired.label.age"      /></td>
+      <td><bean:message key="retired.label.seasons"  /></td>
+      <td><bean:message key="retired.label.points"   /></td>
+      <td><bean:message key="retired.label.goals"    /></td>
+      <td><bean:message key="retired.label.assists"  /></td>
+      <td><bean:message key="retired.label.stops"    /></td>
+      <td><bean:message key="retired.label.steals"   /></td>
+      <td><bean:message key="retired.label.psm"      /></td>
+      <td><bean:message key="retired.label.platinum" /></td>
+      <td><bean:message key="retired.label.gold"     /></td>
+      <td><bean:message key="retired.label.silver"   /></td>
+      <td><bean:message key="retired.label.allstar"  /></td>
     </tr>
     <logic:iterate id="player" name="team" property="players">
       <tr>
@@ -78,12 +82,16 @@
         </td>
         <td><bean:write name="player" property="age"            /></td>
         <td><bean:write name="player" property="seasons_played" /></td>
+        <td><bean:write name="player" property="points"         /></td>
         <td><bean:write name="player" property="goals"          /></td>
         <td><bean:write name="player" property="assists"        /></td>
         <td><bean:write name="player" property="stops"          /></td>
         <td><bean:write name="player" property="steals"         /></td>
         <td><bean:write name="player" property="psm"            /></td>
-        <td><bean:write name="player" property="points"         /></td>
+        <td><bean:write name="player" property="platinum_count" /></td>
+        <td><bean:write name="player" property="gold_count"     /></td>
+        <td><bean:write name="player" property="silver_count"   /></td>
+        <td><bean:write name="player" property="allstar_count"  /></td>
       </tr>
     </logic:iterate>
     <tr class="separator"></tr>
@@ -95,15 +103,19 @@
       </td>
     </tr>
     <tr class="heading">
-      <td><bean:message key="retired.label.player"  /></td>
-      <td><bean:message key="retired.label.age"     /></td>
-      <td><bean:message key="retired.label.seasons" /></td>
-      <td><bean:message key="retired.label.goals"   /></td>
-      <td><bean:message key="retired.label.assists" /></td>
-      <td><bean:message key="retired.label.stops"   /></td>
-      <td><bean:message key="retired.label.steals"  /></td>
-      <td><bean:message key="retired.label.psm"     /></td>
-      <td><bean:message key="retired.label.points"  /></td>
+      <td><bean:message key="retired.label.player"   /></td>
+      <td><bean:message key="retired.label.age"      /></td>
+      <td><bean:message key="retired.label.seasons"  /></td>
+      <td><bean:message key="retired.label.points"   /></td>
+      <td><bean:message key="retired.label.goals"    /></td>
+      <td><bean:message key="retired.label.assists"  /></td>
+      <td><bean:message key="retired.label.stops"    /></td>
+      <td><bean:message key="retired.label.steals"   /></td>
+      <td><bean:message key="retired.label.psm"      /></td>
+      <td><bean:message key="retired.label.platinum" /></td>
+      <td><bean:message key="retired.label.gold"     /></td>
+      <td><bean:message key="retired.label.silver"   /></td>
+      <td><bean:message key="retired.label.allstar"  /></td>
     </tr>
     <logic:iterate id="player" name="retired_players">
       <tr>
@@ -114,12 +126,16 @@
         </td>
         <td><bean:write name="player" property="age"            /></td>
         <td><bean:write name="player" property="seasons_played" /></td>
+        <td><bean:write name="player" property="points"         /></td>
         <td><bean:write name="player" property="goals"          /></td>
         <td><bean:write name="player" property="assists"        /></td>
         <td><bean:write name="player" property="stops"          /></td>
         <td><bean:write name="player" property="steals"         /></td>
         <td><bean:write name="player" property="psm"            /></td>
-        <td><bean:write name="player" property="points"         /></td>
+        <td><bean:write name="player" property="platinum_count" /></td>
+        <td><bean:write name="player" property="gold_count"     /></td>
+        <td><bean:write name="player" property="silver_count"   /></td>
+        <td><bean:write name="player" property="allstar_count"  /></td>
       </tr>
     </logic:iterate>
   </logic:present>

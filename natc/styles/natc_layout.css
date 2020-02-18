@@ -172,16 +172,30 @@ h2 {
 
 .freeagency {
     margin-top: 20px;
-	width: 50%;
+	width: 60%;
 }
 
 .freeagency td {
     margin: 2px;
 }
 
+.champs td {
+    margin: 2px;
+}
+
+.champs #name {
+    margin: 2px;
+    width:  120px;
+}
+
+.champs #score {
+    margin: 2px;
+    width: 50px;
+}
+
 .allstar_teams {
 	margin-top: 20px;
-	width: 50%;
+	width: 100%;
 }
 
 .allstar_teams td {

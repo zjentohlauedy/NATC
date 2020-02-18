@@ -162,13 +162,14 @@
 
 <table class="boxscores">
 <logic:present name="playerStats">
-  <tr class="label"><td colspan="15"><bean:write name="player" property="year"/> <bean:message key="player.label.stats" /></td></tr>
+  <tr class="label"><td colspan="22"><bean:write name="player" property="year"/> <bean:message key="player.label.stats" /></td></tr>
   <tr class="heading">
     <td><bean:message key="player.label.team"          /></td>
     <td><bean:message key="player.label.type"          /></td>
     <td><bean:message key="player.label.games"         /></td>
     <td><bean:message key="player.label.starts"        /></td>
     <td><bean:message key="player.label.time_per_game" /></td>
+    <td><bean:message key="player.label.points"        /></td>
     <td><bean:message key="player.label.attempts"      /></td>
     <td><bean:message key="player.label.goals"         /></td>
     <td><bean:message key="player.label.eff"           /></td>
@@ -212,6 +213,7 @@
       <td><bean:write name="playerStatsView" property="games"                /></td>
       <td><bean:write name="playerStatsView" property="games_started"        /></td>
       <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
+      <td><bean:write name="playerStatsView" property="points"               /></td>
       <td><bean:write name="playerStatsView" property="attempts"             /></td>
       <td><bean:write name="playerStatsView" property="goals"                /></td>
       <td><bean:write name="playerStatsView" property="scoringEfficiencyDsp" /></td>
@@ -247,14 +249,77 @@
   </logic:iterate>
 </logic:present>
   <tr class="separator"></tr>
-<logic:present name="history">
-    <tr class="label"><td colspan="15"><bean:message key="player.label.history" /></td></tr>
+<logic:present name="preseason">
+    <tr class="label"><td colspan="22"><bean:message key="player.label.prehistory" /></td></tr>
     <tr class="heading">
       <td><bean:message key="player.label.team"          /></td>
       <td><bean:message key="player.label.year"          /></td>
       <td><bean:message key="player.label.games"         /></td>
       <td><bean:message key="player.label.starts"        /></td>
       <td><bean:message key="player.label.time_per_game" /></td>
+      <td><bean:message key="player.label.points"        /></td>
+      <td><bean:message key="player.label.attempts"      /></td>
+      <td><bean:message key="player.label.goals"         /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.assists"       /></td>
+      <td><bean:message key="player.label.turnovers"     /></td>
+      <td><bean:message key="player.label.stops"         /></td>
+      <td><bean:message key="player.label.steals"        /></td>
+      <td><bean:message key="player.label.penalties"     /></td>
+      <td><bean:message key="player.label.off_pen"       /></td>
+      <td><bean:message key="player.label.psa"           /></td>
+      <td><bean:message key="player.label.psm"           /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.ot_psa"        /></td>
+      <td><bean:message key="player.label.ot_psm"        /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td></td>
+    </tr>
+    <logic:iterate id="playerStatsView" name="preseason">
+      <logic:equal name="playerStatsView" property="year" value="Total">
+        <tr class="totals">
+      </logic:equal>
+      <logic:notEqual name="playerStatsView" property="year" value="Total">
+        <tr>
+      </logic:notEqual>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+            <bean:write name="playerStatsView" property="team_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td><bean:write name="playerStatsView" property="games"                /></td>
+        <td><bean:write name="playerStatsView" property="games_started"        /></td>
+        <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
+        <td><bean:write name="playerStatsView" property="points"               /></td>
+        <td><bean:write name="playerStatsView" property="attempts"             /></td>
+        <td><bean:write name="playerStatsView" property="goals"                /></td>
+        <td><bean:write name="playerStatsView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerStatsView" property="assists"              /></td>
+        <td><bean:write name="playerStatsView" property="turnovers"            /></td>
+        <td><bean:write name="playerStatsView" property="stops"                /></td>
+        <td><bean:write name="playerStatsView" property="steals"               /></td>
+        <td><bean:write name="playerStatsView" property="penalties"            /></td>
+        <td><bean:write name="playerStatsView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerStatsView" property="psa"                  /></td>
+        <td><bean:write name="playerStatsView" property="psm"                  /></td>
+        <td><bean:write name="playerStatsView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerStatsView" property="ot_psa"               /></td>
+        <td><bean:write name="playerStatsView" property="ot_psm"               /></td>
+        <td><bean:write name="playerStatsView" property="otPsEfficiencyDsp"    /></td>
+        <td></td>
+      </tr>
+    </logic:iterate>
+</logic:present>
+<logic:present name="regseason">
+    <tr class="label"><td colspan="22"><bean:message key="player.label.reghistory" /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.team"          /></td>
+      <td><bean:message key="player.label.year"          /></td>
+      <td><bean:message key="player.label.games"         /></td>
+      <td><bean:message key="player.label.starts"        /></td>
+      <td><bean:message key="player.label.time_per_game" /></td>
+      <td><bean:message key="player.label.points"        /></td>
       <td><bean:message key="player.label.attempts"      /></td>
       <td><bean:message key="player.label.goals"         /></td>
       <td><bean:message key="player.label.eff"           /></td>
@@ -272,7 +337,7 @@
       <td><bean:message key="player.label.eff"           /></td>
       <td><bean:message key="player.label.awards"        /></td>
     </tr>
-    <logic:iterate id="playerStatsView" name="history">
+    <logic:iterate id="playerStatsView" name="regseason">
       <logic:equal name="playerStatsView" property="year" value="Total">
         <tr class="totals">
       </logic:equal>
@@ -288,6 +353,7 @@
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
+        <td><bean:write name="playerStatsView" property="points"               /></td>
         <td><bean:write name="playerStatsView" property="attempts"             /></td>
         <td><bean:write name="playerStatsView" property="goals"                /></td>
         <td><bean:write name="playerStatsView" property="scoringEfficiencyDsp" /></td>
@@ -320,7 +386,160 @@
       </tr>
     </logic:iterate>
 </logic:present>
+<logic:present name="postseason">
+    <tr class="label"><td colspan="22"><bean:message key="player.label.posthistory" /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.team"          /></td>
+      <td><bean:message key="player.label.year"          /></td>
+      <td><bean:message key="player.label.games"         /></td>
+      <td><bean:message key="player.label.starts"        /></td>
+      <td><bean:message key="player.label.time_per_game" /></td>
+      <td><bean:message key="player.label.points"        /></td>
+      <td><bean:message key="player.label.attempts"      /></td>
+      <td><bean:message key="player.label.goals"         /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.assists"       /></td>
+      <td><bean:message key="player.label.turnovers"     /></td>
+      <td><bean:message key="player.label.stops"         /></td>
+      <td><bean:message key="player.label.steals"        /></td>
+      <td><bean:message key="player.label.penalties"     /></td>
+      <td><bean:message key="player.label.off_pen"       /></td>
+      <td><bean:message key="player.label.psa"           /></td>
+      <td><bean:message key="player.label.psm"           /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.ot_psa"        /></td>
+      <td><bean:message key="player.label.ot_psm"        /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td></td>
+    </tr>
+    <logic:iterate id="playerStatsView" name="postseason">
+      <logic:equal name="playerStatsView" property="year" value="Total">
+        <tr class="totals">
+      </logic:equal>
+      <logic:notEqual name="playerStatsView" property="year" value="Total">
+        <tr>
+      </logic:notEqual>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+            <bean:write name="playerStatsView" property="team_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td><bean:write name="playerStatsView" property="games"                /></td>
+        <td><bean:write name="playerStatsView" property="games_started"        /></td>
+        <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
+        <td><bean:write name="playerStatsView" property="points"               /></td>
+        <td><bean:write name="playerStatsView" property="attempts"             /></td>
+        <td><bean:write name="playerStatsView" property="goals"                /></td>
+        <td><bean:write name="playerStatsView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerStatsView" property="assists"              /></td>
+        <td><bean:write name="playerStatsView" property="turnovers"            /></td>
+        <td><bean:write name="playerStatsView" property="stops"                /></td>
+        <td><bean:write name="playerStatsView" property="steals"               /></td>
+        <td><bean:write name="playerStatsView" property="penalties"            /></td>
+        <td><bean:write name="playerStatsView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerStatsView" property="psa"                  /></td>
+        <td><bean:write name="playerStatsView" property="psm"                  /></td>
+        <td><bean:write name="playerStatsView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerStatsView" property="ot_psa"               /></td>
+        <td><bean:write name="playerStatsView" property="ot_psm"               /></td>
+        <td><bean:write name="playerStatsView" property="otPsEfficiencyDsp"    /></td>
+        <td></td>
+      </tr>
+    </logic:iterate>
+</logic:present>
+<logic:present name="allstar">
+    <tr class="label"><td colspan="22"><bean:message key="player.label.ashistory" /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.team"          /></td>
+      <td><bean:message key="player.label.year"          /></td>
+      <td><bean:message key="player.label.games"         /></td>
+      <td><bean:message key="player.label.starts"        /></td>
+      <td><bean:message key="player.label.time_per_game" /></td>
+      <td><bean:message key="player.label.points"        /></td>
+      <td><bean:message key="player.label.attempts"      /></td>
+      <td><bean:message key="player.label.goals"         /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.assists"       /></td>
+      <td><bean:message key="player.label.turnovers"     /></td>
+      <td><bean:message key="player.label.stops"         /></td>
+      <td><bean:message key="player.label.steals"        /></td>
+      <td><bean:message key="player.label.penalties"     /></td>
+      <td><bean:message key="player.label.off_pen"       /></td>
+      <td><bean:message key="player.label.psa"           /></td>
+      <td><bean:message key="player.label.psm"           /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td><bean:message key="player.label.ot_psa"        /></td>
+      <td><bean:message key="player.label.ot_psm"        /></td>
+      <td><bean:message key="player.label.eff"           /></td>
+      <td></td>
+    </tr>
+    <logic:iterate id="playerStatsView" name="allstar">
+      <logic:equal name="playerStatsView" property="year" value="Total">
+        <tr class="totals">
+      </logic:equal>
+      <logic:notEqual name="playerStatsView" property="year" value="Total">
+        <tr>
+      </logic:notEqual>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+            <bean:write name="playerStatsView" property="team_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="playerStatsView" property="year"                 /></td>
+        <td><bean:write name="playerStatsView" property="games"                /></td>
+        <td><bean:write name="playerStatsView" property="games_started"        /></td>
+        <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
+        <td><bean:write name="playerStatsView" property="points"               /></td>
+        <td><bean:write name="playerStatsView" property="attempts"             /></td>
+        <td><bean:write name="playerStatsView" property="goals"                /></td>
+        <td><bean:write name="playerStatsView" property="scoringEfficiencyDsp" /></td>
+        <td><bean:write name="playerStatsView" property="assists"              /></td>
+        <td><bean:write name="playerStatsView" property="turnovers"            /></td>
+        <td><bean:write name="playerStatsView" property="stops"                /></td>
+        <td><bean:write name="playerStatsView" property="steals"               /></td>
+        <td><bean:write name="playerStatsView" property="penalties"            /></td>
+        <td><bean:write name="playerStatsView" property="offensive_penalties"  /></td>
+        <td><bean:write name="playerStatsView" property="psa"                  /></td>
+        <td><bean:write name="playerStatsView" property="psm"                  /></td>
+        <td><bean:write name="playerStatsView" property="psEfficiencyDsp"      /></td>
+        <td><bean:write name="playerStatsView" property="ot_psa"               /></td>
+        <td><bean:write name="playerStatsView" property="ot_psm"               /></td>
+        <td><bean:write name="playerStatsView" property="otPsEfficiencyDsp"    /></td>
+        <td></td>
+      </tr>
+    </logic:iterate>
+</logic:present>
 </table>
+
+<logic:present name="injury_history">
+  <table class="injuries">
+    <tr class="label"><td colspan="3"><bean:message key="player.label.injury_history" /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.date"     /></td>
+      <td><bean:message key="player.label.opponent" /></td>
+      <td><bean:message key="player.label.duration" /></td>
+    </tr>
+    <logic:iterate id="playerInjuryView" name="injury_history">
+      <tr>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
+            <bean:write name="playerInjuryView" property="datestamp"/>
+          </html:link>
+        </td>
+        <td>
+          <logic:equal name="playerInjuryView" property="road_game" value="true">
+              <bean:message key="player.label.at" />
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerInjuryView" paramProperty="opponent">
+            <bean:write name="playerInjuryView" property="opponent_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="playerInjuryView" property="durationDsp"/></td>
+      </tr>
+    </logic:iterate>
+  </table>
+</logic:present>
 
 </body>
 </html:html>

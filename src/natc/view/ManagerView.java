@@ -16,21 +16,25 @@ public class ManagerView {
 	private int    style;
 	private int    seasons;
 	private double win_pct;
+	private int    award_count;
+	private int    allstar_count;
 	
 	public ManagerView() {
 	
-		this.manager_id  = 0;
-		this.first_name  = null;
-		this.last_name   = null;
-		this.team_id     = 0;
-		this.team_abbrev = null;
-		this.offense     = 0.0;
-		this.defense     = 0.0;
-		this.intangible  = 0.0;
-		this.penalty     = 0.0;
-		this.style       = 0;
-		this.seasons     = 0;
-		this.win_pct     = 0.0;
+		this.manager_id    = 0;
+		this.first_name    = null;
+		this.last_name     = null;
+		this.team_id       = 0;
+		this.team_abbrev   = null;
+		this.offense       = 0.0;
+		this.defense       = 0.0;
+		this.intangible    = 0.0;
+		this.penalty       = 0.0;
+		this.style         = 0;
+		this.seasons       = 0;
+		this.win_pct       = 0.0;
+		this.award_count   = 0;
+		this.allstar_count = 0;
 	}
 
 	public String getWinPctDsp() {
@@ -134,6 +138,22 @@ public class ManagerView {
 
 	public void setStyle(int style) {
 		this.style = style;
+	}
+
+	public int getAward_count() {
+		return award_count;
+	}
+
+	public void setAward_count(int awardCount) {
+		award_count = awardCount;
+	}
+
+	public int getAllstar_count() {
+		return allstar_count;
+	}
+
+	public void setAllstar_count(int allstarCount) {
+		allstar_count = allstarCount;
 	}
 	
 }

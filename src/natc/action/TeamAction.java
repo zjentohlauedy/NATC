@@ -105,6 +105,12 @@ public class TeamAction extends Action {
 				teamPlayerView.setAward(           player.getAward()           );
 				teamPlayerView.setAllstar_team_id( player.getAllstar_team_id() );
 				
+				if ( team.getName().equals( "All Stars" ) ) {
+				
+					teamPlayerView.setTeam_id(                                     player.getTeam_id()   );
+					teamPlayerView.setTeam_abbrev( teamService.getAbbrevForTeamId( player.getTeam_id() ) );
+				}
+				
 				if ( manager == null ) {
 				
 					teamPlayerView.setRating( player.getAdjustedPerformanceRating( true, false, false ) ); // 10 is theoretical max - convert to 0-1 ratio
@@ -165,9 +171,14 @@ public class TeamAction extends Action {
 						return (tp1.getRating() > tp2.getRating()) ? 1 : -1;
 					}
 					
+					if ( tp1.getPoints() == tp2.getPoints() ) {
+					
 					if ( tp1.getTime_per_game() == tp2.getTime_per_game() ) return (tp1.getGames() > tp2.getGames()) ? 1 : -1;
 					
 					return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
+					}
+					
+					return (tp1.getPoints() > tp2.getPoints()) ? 1 : -1;
 				}
 			});
 			Collections.reverse( teamPlayers );

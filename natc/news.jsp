@@ -27,6 +27,7 @@
         <li><a href="/natc/Players.do"           ><bean:message key="title.players" /></a></li>
         <li><a href="/natc/Main.do?page=stats"   ><bean:message key="title.stats"   /></a></li>
         <li><a href="/natc/Teams.do"             ><bean:message key="title.teams"   /></a></li>
+        <li><a href="/natc/Champs.do"            ><bean:message key="title.champs"  /></a></li>
       </ul>
     </td>
   </tr>

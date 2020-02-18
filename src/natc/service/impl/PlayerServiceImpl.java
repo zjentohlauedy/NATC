@@ -18,8 +18,8 @@ import natc.data.PlayerScore;
 import natc.data.PlayerStats;
 import natc.data.TeamGame;
 import natc.service.PlayerService;
-import natc.view.AllstarView;
-import natc.view.AwardsView;
+import natc.view.PlayerAllstarView;
+import natc.view.PlayerAwardsView;
 import natc.view.PlayerGameView;
 import natc.view.PlayerInjuryView;
 import natc.view.PlayerStatsView;
@@ -433,10 +433,11 @@ public class PlayerServiceImpl implements PlayerService {
 				playerStatsView.setPsm(                 dbRs.getInt(    14 ) );
 				playerStatsView.setOt_psa(              dbRs.getInt(    15 ) );
 				playerStatsView.setOt_psm(              dbRs.getInt(    16 ) );
-				playerStatsView.setAward(               dbRs.getInt(    17 ) );
-				playerStatsView.setAllstar_team_id(     dbRs.getInt(    18 ) );
-				playerStatsView.setTeam_id(             dbRs.getInt(    19 ) );
-				playerStatsView.setTeam_abbrev(         dbRs.getString( 20 ) );
+				playerStatsView.setPoints(              dbRs.getInt(    17 ) );
+				playerStatsView.setAward(               dbRs.getInt(    18 ) );
+				playerStatsView.setAllstar_team_id(     dbRs.getInt(    19 ) );
+				playerStatsView.setTeam_id(             dbRs.getInt(    20 ) );
+				playerStatsView.setTeam_abbrev(         dbRs.getString( 21 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -456,7 +457,97 @@ public class PlayerServiceImpl implements PlayerService {
 					PlayerStatsView playerStatsView = (PlayerStatsView)i.next();
 					
 					totals.setGames(               totals.getGames()               +  playerStatsView.getGames()               );
+					totals.setGames_started(       totals.getGames_started()       +  playerStatsView.getGames_started()       );
 					totals.setPlaying_time(        totals.getPlaying_time()        +  playerStatsView.getPlaying_time()        );
+					totals.setPoints(              totals.getPoints()              +  playerStatsView.getPoints()              );
+					totals.setAttempts(            totals.getAttempts()            +  playerStatsView.getAttempts()            );
+					totals.setGoals(               totals.getGoals()               +  playerStatsView.getGoals()               );
+					totals.setAssists(             totals.getAssists()             +  playerStatsView.getAssists()             );
+					totals.setTurnovers(           totals.getTurnovers()           +  playerStatsView.getTurnovers()           );
+					totals.setStops(               totals.getStops()               +  playerStatsView.getStops()               );
+					totals.setSteals(              totals.getSteals()              +  playerStatsView.getSteals()              );
+					totals.setPenalties(           totals.getPenalties()           +  playerStatsView.getPenalties()           );
+					totals.setOffensive_penalties( totals.getOffensive_penalties() +  playerStatsView.getOffensive_penalties() );
+					totals.setPsa(                 totals.getPsa()                 +  playerStatsView.getPsa()                 );
+					totals.setPsm(                 totals.getPsm()                 +  playerStatsView.getPsm()                 );
+					totals.setOt_psa(              totals.getOt_psa()              +  playerStatsView.getOt_psa()              );
+					totals.setOt_psm(              totals.getOt_psm()              +  playerStatsView.getOt_psm()              );
+				}
+				
+				playerGames.add( totals );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return playerGames;
+	}
+
+	public List getPlayerHistoryByIdAndType( int player_id, int type ) throws SQLException {
+	
+		PreparedStatement ps          = null;
+		ResultSet         dbRs        = null;
+		List              playerGames = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getPlayerHistoryByIdSelectPs( dbConn );
+			
+			ps.setInt( 1, player_id );
+			ps.setInt( 2, type      );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				PlayerStatsView playerStatsView = new PlayerStatsView();
+				
+				playerStatsView.setYear(                dbRs.getString(  1 ) );
+				playerStatsView.setGames(               dbRs.getInt(     2 ) );
+				playerStatsView.setGames_started(       dbRs.getInt(     3 ) );
+				playerStatsView.setPlaying_time(        dbRs.getInt(     4 ) );
+				playerStatsView.setAttempts(            dbRs.getInt(     5 ) );
+				playerStatsView.setGoals(               dbRs.getInt(     6 ) );
+				playerStatsView.setAssists(             dbRs.getInt(     7 ) );
+				playerStatsView.setTurnovers(           dbRs.getInt(     8 ) );
+				playerStatsView.setStops(               dbRs.getInt(     9 ) );
+				playerStatsView.setSteals(              dbRs.getInt(    10 ) );
+				playerStatsView.setPenalties(           dbRs.getInt(    11 ) );
+				playerStatsView.setOffensive_penalties( dbRs.getInt(    12 ) );
+				playerStatsView.setPsa(                 dbRs.getInt(    13 ) );
+				playerStatsView.setPsm(                 dbRs.getInt(    14 ) );
+				playerStatsView.setOt_psa(              dbRs.getInt(    15 ) );
+				playerStatsView.setOt_psm(              dbRs.getInt(    16 ) );
+				playerStatsView.setPoints(              dbRs.getInt(    17 ) );
+				playerStatsView.setAward(               dbRs.getInt(    18 ) );
+				playerStatsView.setAllstar_team_id(     dbRs.getInt(    19 ) );
+				playerStatsView.setTeam_id(             dbRs.getInt(    20 ) );
+				playerStatsView.setTeam_abbrev(         dbRs.getString( 21 ) );
+				
+				if ( playerGames == null ) playerGames = new ArrayList();
+				
+				playerGames.add( playerStatsView );
+			}
+			
+			if ( playerGames != null ) {
+			
+				PlayerStatsView totals = new PlayerStatsView();
+				
+				totals.setYear( "Total" );
+				
+				Iterator i = playerGames.iterator();
+				
+				while ( i.hasNext() ) {
+				
+					PlayerStatsView playerStatsView = (PlayerStatsView)i.next();
+					
+					totals.setGames(               totals.getGames()               +  playerStatsView.getGames()               );
+					totals.setGames_started(       totals.getGames_started()       +  playerStatsView.getGames_started()       );
+					totals.setPlaying_time(        totals.getPlaying_time()        +  playerStatsView.getPlaying_time()        );
+					totals.setPoints(              totals.getPoints()              +  playerStatsView.getPoints()              );
 					totals.setAttempts(            totals.getAttempts()            +  playerStatsView.getAttempts()            );
 					totals.setGoals(               totals.getGoals()               +  playerStatsView.getGoals()               );
 					totals.setAssists(             totals.getAssists()             +  playerStatsView.getAssists()             );
@@ -1100,6 +1191,7 @@ public class PlayerServiceImpl implements PlayerService {
 				playerStatsView.setPsm(                 dbRs.getInt( 14 ) );
 				playerStatsView.setOt_psa(              dbRs.getInt( 15 ) );
 				playerStatsView.setOt_psm(              dbRs.getInt( 16 ) );
+				playerStatsView.setPoints(              dbRs.getInt( 17 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -1164,23 +1256,30 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps = DatabaseImpl.getPlayerAwardsSelectPs( dbConn );
 			
-			ps.setString( 1, year );
+			ps.setString( 1,          year             );
+			ps.setInt(    2, TeamGame.gt_RegularSeason );
 			
 			dbRs = ps.executeQuery();
 			
 			while ( dbRs.next() ) {
 			
-				AwardsView awardsView = new AwardsView();
+				PlayerAwardsView awardsView = new PlayerAwardsView();
 				
-				awardsView.setPlayer_id(   dbRs.getInt(     1 ) );
-				awardsView.setFirst_name(  dbRs.getString(  2 ) );
-				awardsView.setLast_name(   dbRs.getString(  3 ) );
-				awardsView.setTeam_id(     dbRs.getInt(     4 ) );
-				awardsView.setTeam_abbrev( dbRs.getString(  5 ) );
-				awardsView.setConference(  dbRs.getInt(     6 ) );
-				awardsView.setDivision(    dbRs.getInt(     7 ) );
-				awardsView.setAward(       dbRs.getInt(     8 ) );
-				awardsView.setRookie(      dbRs.getBoolean( 9 ) );
+				awardsView.setPlayer_id(   dbRs.getInt(      1 ) );
+				awardsView.setFirst_name(  dbRs.getString(   2 ) );
+				awardsView.setLast_name(   dbRs.getString(   3 ) );
+				awardsView.setTeam_id(     dbRs.getInt(      4 ) );
+				awardsView.setTeam_abbrev( dbRs.getString(   5 ) );
+				awardsView.setConference(  dbRs.getInt(      6 ) );
+				awardsView.setDivision(    dbRs.getInt(      7 ) );
+				awardsView.setAward(       dbRs.getInt(      8 ) );
+				awardsView.setRookie(      dbRs.getBoolean(  9 ) );
+				awardsView.setPoints(      dbRs.getInt(     10 ) );
+				awardsView.setGoals(       dbRs.getInt(     11 ) );
+				awardsView.setAssists(     dbRs.getInt(     12 ) );
+				awardsView.setStops(       dbRs.getInt(     13 ) );
+				awardsView.setSteals(      dbRs.getInt(     14 ) );
+				awardsView.setPsm(         dbRs.getInt(     15 ) );
 				
 				if ( awards == null ) awards = new ArrayList();
 				
@@ -1299,6 +1398,7 @@ public class PlayerServiceImpl implements PlayerService {
 				playerGameView.setPsm(                 dbRs.getInt(     16 ) );
 				playerGameView.setOt_psa(              dbRs.getInt(     17 ) );
 				playerGameView.setOt_psm(              dbRs.getInt(     18 ) );
+				playerGameView.setPoints(              dbRs.getInt(     19 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -1344,25 +1444,34 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps = DatabaseImpl.getAllstarsByTeamIdSelectPs( dbConn );
 			
-			ps.setString( 1, year    );
-			ps.setInt(    2, team_id );
+			ps.setString( 1, year                      );
+			ps.setInt(    2, TeamGame.gt_RegularSeason );
+			ps.setInt(    3, team_id                   );
 			
 			dbRs = ps.executeQuery();
 			
 			while ( dbRs.next() ) {
 			
-				AllstarView allstarView = new AllstarView();
+				PlayerAllstarView playerAllstarView = new PlayerAllstarView();
 				
-				allstarView.setPlayer_id(   dbRs.getInt(     1 ) );
-				allstarView.setFirst_name(  dbRs.getString(  2 ) );
-				allstarView.setLast_name(   dbRs.getString(  3 ) );
-				allstarView.setRookie(      dbRs.getBoolean( 4 ) );
-				allstarView.setTeam_id(     dbRs.getInt(     5 ) );
-				allstarView.setTeam_abbrev( dbRs.getString(  6 ) );
+				playerAllstarView.setPlayer_id(   dbRs.getInt(      1 ) );
+				playerAllstarView.setFirst_name(  dbRs.getString(   2 ) );
+				playerAllstarView.setLast_name(   dbRs.getString(   3 ) );
+				playerAllstarView.setRookie(      dbRs.getBoolean(  4 ) );
+				playerAllstarView.setInjured(     dbRs.getBoolean(  5 ) );
+				playerAllstarView.setAward(       dbRs.getInt(      6 ) );
+				playerAllstarView.setTeam_id(     dbRs.getInt(      7 ) );
+				playerAllstarView.setTeam_abbrev( dbRs.getString(   8 ) );
+				playerAllstarView.setPoints(      dbRs.getInt(      9 ) );
+				playerAllstarView.setGoals(       dbRs.getInt(     10 ) );
+				playerAllstarView.setAssists(     dbRs.getInt(     11 ) );
+				playerAllstarView.setStops(       dbRs.getInt(     12 ) );
+				playerAllstarView.setSteals(      dbRs.getInt(     13 ) );
+				playerAllstarView.setPsm(         dbRs.getInt(     14 ) );
 				
 				if ( allstars == null ) allstars = new ArrayList();
 				
-				allstars.add( allstarView );
+				allstars.add( playerAllstarView );
 			}
 		}
 		finally {
@@ -1595,6 +1704,46 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps.setInt(    1, player_id );
 			ps.setString( 2, year      );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+				
+				PlayerInjuryView playerInjuryView = new PlayerInjuryView();
+				
+				playerInjuryView.setDatestamp(       dbRs.getDate(    1 ) );
+				playerInjuryView.setOpponent(        dbRs.getInt(     2 ) );
+				playerInjuryView.setOpponent_abbrev( dbRs.getString(  3 ) );
+				playerInjuryView.setRoad_game(       dbRs.getBoolean( 4 ) );
+				playerInjuryView.setGame_id(         dbRs.getInt(     5 ) );
+				playerInjuryView.setDuration(        dbRs.getInt(     6 ) );
+				
+				if ( injuries == null ) injuries = new ArrayList();
+				
+				injuries.add( playerInjuryView );
+			}
+		}
+		finally {
+		
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}
+		
+		return injuries;
+	}
+
+	public List getPlayerInjuryHistoryById( int player_id ) throws SQLException {
+		
+		List injuries = null;
+		
+		PreparedStatement ps   = null;
+		ResultSet         dbRs = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getInjuryHistoryByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, player_id );
 			
 			dbRs = ps.executeQuery();
 			

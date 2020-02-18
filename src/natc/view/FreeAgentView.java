@@ -13,6 +13,8 @@ public class FreeAgentView {
 	private String old_team_abbrev;
 	private int    new_team_id;
 	private String new_team_abbrev;
+	private double rating;
+	private double adjustedRating;
 	private int    age;
 	private int    seasons_played;
 	
@@ -26,6 +28,8 @@ public class FreeAgentView {
 		this.old_team_abbrev = null;
 		this.new_team_id     = 0;
 		this.new_team_abbrev = null;
+		this.rating          = 0.0;
+		this.adjustedRating  = 0.0;
 		this.age             = 0;
 		this.seasons_played  = 0;
 	}
@@ -108,6 +112,22 @@ public class FreeAgentView {
 
 	public void setSeasons_played(int seasonsPlayed) {
 		seasons_played = seasonsPlayed;
+	}
+
+	public double getRating() {
+		return rating;
+	}
+
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+
+	public double getAdjustedRating() {
+		return adjustedRating;
+	}
+
+	public void setAdjustedRating(double adjustedRating) {
+		this.adjustedRating = adjustedRating;
 	}
 	
 }

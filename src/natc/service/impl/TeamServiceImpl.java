@@ -1338,6 +1338,7 @@ public class TeamServiceImpl implements TeamService {
 				teamPlayer.setStops(         dbRs.getInt( 6 ) );
 				teamPlayer.setSteals(        dbRs.getInt( 7 ) );
 				teamPlayer.setPsm(           dbRs.getInt( 8 ) );
+				teamPlayer.setPoints(        dbRs.getInt( 9 ) );
 			}
 		}
 		finally {
@@ -1428,6 +1429,36 @@ public class TeamServiceImpl implements TeamService {
 		}
 		
 		return injuries;
+	}
+
+	public String getAbbrevForTeamId( int team_id ) throws SQLException {
+
+		PreparedStatement ps     = null;
+		ResultSet         dbRs   = null;
+		String            abbrev = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAbbrevForTeamIdSelectPs( dbConn );
+			
+			ps.setString( 1, year    );
+			ps.setInt(    2, team_id );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+				
+				abbrev = dbRs.getString( 1 );
+			}
+			
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}	
+		
+		return abbrev;
 	}
 	
 }

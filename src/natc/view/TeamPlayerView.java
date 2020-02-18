@@ -16,12 +16,17 @@ public class TeamPlayerView {
 	private int     award;
 	private int     allstar_team_id;
 	
+	// Allstar team members
+	private int     team_id;
+	private String  team_abbrev;
+	
 	private double  rating;
 	private double  adjustedRating;
 	
 	private int     games;
 	private int     games_started;
 	private int     time_per_game;
+	private int     points;
 	private int     goals;
 	private int     assists;
 	private int     stops;
@@ -38,11 +43,14 @@ public class TeamPlayerView {
 		this.injured         = false;
 		this.award           = 0;
 		this.allstar_team_id = 0;
+		this.team_id         = 0;
+		this.team_abbrev     = null;
 		this.rating          = 0.0;
 		this.adjustedRating  = 0.0;
 		this.games           = 0;
 		this.games_started   = 0;
 		this.time_per_game   = 0;
+		this.points          = 0;
 		this.goals           = 0;
 		this.assists         = 0;
 		this.stops           = 0;
@@ -199,6 +207,30 @@ public class TeamPlayerView {
 
 	public void setGames_started(int gamesStarted) {
 		games_started = gamesStarted;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	public int getTeam_id() {
+		return team_id;
+	}
+
+	public void setTeam_id(int teamId) {
+		team_id = teamId;
+	}
+
+	public String getTeam_abbrev() {
+		return team_abbrev;
+	}
+
+	public void setTeam_abbrev(String teamAbbrev) {
+		team_abbrev = teamAbbrev;
 	}
 	
 }

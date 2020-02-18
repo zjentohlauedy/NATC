@@ -14,6 +14,7 @@ public class PlayerGameView {
 	private boolean started;
 	
 	private int     playing_time;
+	private int     points;
 	private int     attempts;
 	private int     goals;
 	private int     assists;
@@ -35,6 +36,7 @@ public class PlayerGameView {
 		this.injured             = false;
 		this.started             = false;
 		this.playing_time        = 0;
+		this.points              = 0;
 		this.attempts            = 0;
 		this.goals               = 0;
 		this.assists             = 0;
@@ -264,6 +266,14 @@ public class PlayerGameView {
 
 	public void setStarted(boolean started) {
 		this.started = started;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 	
 }

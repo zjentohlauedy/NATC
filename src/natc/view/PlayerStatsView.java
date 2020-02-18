@@ -12,6 +12,7 @@ public class PlayerStatsView {
 	private int     games;
 	private int     games_started;
 	private int     playing_time;
+	private int     points;
 	private int     attempts;
 	private int     goals;
 	private int     assists;
@@ -37,6 +38,7 @@ public class PlayerStatsView {
 		this.games               = 0;
 		this.games_started       = 0;
 		this.playing_time        = 0;
+		this.points              = 0;
 		this.attempts            = 0;
 		this.goals               = 0;
 		this.assists             = 0;
@@ -299,6 +301,14 @@ public class PlayerStatsView {
 
 	public void setGames_started(int gamesStarted) {
 		games_started = gamesStarted;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 
 }

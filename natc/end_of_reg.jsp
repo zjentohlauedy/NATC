@@ -49,5 +49,107 @@
   <h2><bean:write name="schedule" property="scheduled"/></h2>
 </logic:present>
 
+<logic:present name="div0teams">
+  <table class="standings">
+    <tr>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.greene"/></td>
+          </tr>
+          <logic:iterate id="team" name="div0teams">
+            <logic:greaterThan name="team" property="playoff_rank" value="0" >
+              <tr class="playoff">
+            </logic:greaterThan>
+            <logic:equal name="team" property="playoff_rank" value="0">
+              <tr>
+            </logic:equal>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.davis"/></td>
+          </tr>
+          <logic:iterate id="team" name="div1teams">
+            <logic:greaterThan name="team" property="playoff_rank" value="0" >
+              <tr class="playoff">
+            </logic:greaterThan>
+            <logic:equal name="team" property="playoff_rank" value="0">
+              <tr>
+            </logic:equal>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.smith"/></td>
+          </tr>
+          <logic:iterate id="team" name="div2teams">
+            <logic:greaterThan name="team" property="playoff_rank" value="0" >
+              <tr class="playoff">
+            </logic:greaterThan>
+            <logic:equal name="team" property="playoff_rank" value="0">
+              <tr>
+            </logic:equal>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.lawrence"/></td>
+          </tr>
+          <logic:iterate id="team" name="div3teams">
+            <logic:greaterThan name="team" property="playoff_rank" value="0" >
+              <tr class="playoff">
+            </logic:greaterThan>
+            <logic:equal name="team" property="playoff_rank" value="0">
+              <tr>
+            </logic:equal>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+    </tr>
+  </table>
+</logic:present>
+
 </body>
 </html:html>

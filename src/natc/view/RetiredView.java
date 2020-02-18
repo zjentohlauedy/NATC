@@ -13,6 +13,10 @@ public class RetiredView {
 	private double steals;
 	private double psm;
 	private double points;
+	private int    platinum_count;
+	private int    gold_count;
+	private int    silver_count;
+	private int    allstar_count;
 	
 	public RetiredView() {
 	
@@ -27,6 +31,10 @@ public class RetiredView {
 		this.steals         = 0.0;
 		this.psm            = 0.0;
 		this.points         = 0.0;
+		this.platinum_count = 0;
+		this.gold_count     = 0;
+		this.silver_count   = 0;
+		this.allstar_count  = 0;
 	}
 
 	public int getAge() {
@@ -115,6 +123,38 @@ public class RetiredView {
 
 	public void setPoints(double points) {
 		this.points = points;
+	}
+
+	public int getPlatinum_count() {
+		return platinum_count;
+	}
+
+	public void setPlatinum_count(int platinumCount) {
+		platinum_count = platinumCount;
+	}
+
+	public int getGold_count() {
+		return gold_count;
+	}
+
+	public void setGold_count(int goldCount) {
+		gold_count = goldCount;
+	}
+
+	public int getSilver_count() {
+		return silver_count;
+	}
+
+	public void setSilver_count(int silverCount) {
+		silver_count = silverCount;
+	}
+
+	public int getAllstar_count() {
+		return allstar_count;
+	}
+
+	public void setAllstar_count(int allstarCount) {
+		allstar_count = allstarCount;
 	}
 	
 }

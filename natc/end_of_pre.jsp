@@ -49,5 +49,87 @@
   <h2><bean:write name="schedule" property="scheduled"/></h2>
 </logic:present>
 
+<logic:present name="div0teams">
+  <table class="standings">
+    <tr>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.greene"/></td>
+          </tr>
+          <logic:iterate id="team" name="div0teams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="preseason_wins"     /></td>
+              <td><bean:write name="team" property="preseason_losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.davis"/></td>
+          </tr>
+          <logic:iterate id="team" name="div1teams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="preseason_wins"     /></td>
+              <td><bean:write name="team" property="preseason_losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.smith"/></td>
+          </tr>
+          <logic:iterate id="team" name="div2teams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="preseason_wins"     /></td>
+              <td><bean:write name="team" property="preseason_losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="3"><bean:message key="division.lawrence"/></td>
+          </tr>
+          <logic:iterate id="team" name="div3teams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="preseason_wins"     /></td>
+              <td><bean:write name="team" property="preseason_losses"   /></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+    </tr>
+  </table>
+</logic:present>
+
 </body>
 </html:html>
