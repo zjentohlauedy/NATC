@@ -1,0 +1,167 @@
+/*-General-----------------------------------------------*/
+
+body {
+	background-color:#000000;
+	color:#cccccc;
+	font-family:sans-serif;
+	font-weight:normal;
+	text-decoration:none;
+	font-size:small;
+}
+
+h1 {
+	font-size: small;
+	font-weight: bold;
+}
+
+h7 {
+	font-size: 6pt;
+	font-weight: normal;
+}
+
+a {
+	text-decoration: none;
+	color: #ffffff;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/*-Main Markup-------------------------------------------*/
+
+.letters {
+    font-size: medium;
+    font-weight: bold;
+}
+
+.letters td {
+    background-color: #222222;
+}
+
+.playerlist {
+    font-size: 10pt;
+	font-weight: bold;
+}
+
+.standing {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.round {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.teams {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.game {
+	font-size: small;
+	font-weight: bold;
+}
+
+.game em {
+	font-style: normal;
+	color: #ffff00;
+}
+
+.game_long {
+	font-size: medium;
+	font-weight: bold;
+}
+
+.game_long em {
+	font-style: normal;
+	color: #ffff00;
+}
+
+.awards {
+	font-size: small;
+	font-weight: bold;
+}
+
+.draft {
+	font-size: small;
+	font-weight: bold;
+}
+
+.ratings {
+	font-size: small;
+	font-weight: bold;
+}
+
+.roster {
+	font-size: small;
+	font-weight: bold;
+}
+
+.training {
+	font-size: small;
+	font-weight: bold;
+}
+
+.releases {
+	font-size: small;
+	font-weight: bold;
+}
+
+.freeagency {
+	font-size: small;
+	font-weight: bold;
+}
+
+.boxscores {
+	font-size: small;
+	font-weight: bold;
+}
+
+.allstars {
+	font-size: small;
+	font-weight: bold;
+}
+
+.heading {
+	background-color: #222222;
+	font-size: medium;
+	font-weight: normal;
+}
+
+.menu {
+    font-size: medium;
+    font-weight: normal;
+    list-style: none;
+}
+
+.menu li {
+    background-color: #222222;
+}
+
+.label {
+	font-size: large;
+	font-weight: bold;
+	color: #ffff00;
+}
+
+.totals {
+	color: #cccc00;
+	font-size: small;
+	font-weight: bold;
+}
+
+.totals a {
+	text-decoration: none;
+	color: #ffff00;
+}
+
+.totals a:hover {
+	text-decoration: underline;
+}
+
+.stats {
+	font-size: small;
+	font-weight: bold;
+}

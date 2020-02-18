@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+  <!-- configuration for GenericDataSource wrapper -->
+  <data-sources>
+    <data-source key="NATC_DB" type="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+  	  <set-property property="autoCommit"  value="true"                        />
+  	  <set-property property="description" value="NATC Data Source"            />
+  	  <set-property property="driverClass" value="com.mysql.jdbc.Driver"       />
+  	  <set-property property="maxCount"    value="10"                          />
+  	  <set-property property="minCount"    value="2"                           />
+  	  <set-property property="user"        value="natc"                        />
+  	  <set-property property="password"    value="xtal23"                      />
+      <set-property property="url"         value="jdbc:mysql://localhost/natc" />
+    </data-source>
+  </data-sources>
+
+  <form-beans>
+    <form-bean name="gamesForm" type="natc.form.GamesForm"/>
+    <form-bean name="statsForm" type="natc.form.StatsForm"/>
+  </form-beans>
+
+  <!-- ========== Global Forward Definitions ============================== -->
+  <global-forwards>
+    <forward name="login"   path="/news.jsp"    />
+    <forward name="home"    path="/news.jsp"    />
+    <forward name="main"    path="/news.jsp"    />
+    <forward name="news"    path="/news.jsp"    />
+    <forward name="teams"   path="/teams.jsp"   />
+    <forward name="players" path="/players.jsp" />
+    <forward name="stats"   path="/stats.jsp"   />
+    <forward name="games"   path="/games.jsp"   />
+    <forward name="error"   path="/error.jsp"   />
+  </global-forwards>
+
+  <action-mappings>
+    <action path="/Main"    type="natc.action.MainAction"    />
+    <action path="/News"    type="natc.action.NewsAction"    />
+    <action path="/Draft"    type="natc.action.DraftAction"     >
+      <forward   name="success"    path="/draft.jsp"/>
+    </action>
+    <action path="/Team"    type="natc.action.TeamAction"     >
+      <forward   name="success"    path="/team.jsp"/>
+    </action>
+    <action path="/Teams"   type="natc.action.TeamsAction"   >
+      <forward   name="success"    path="/teams.jsp"/>
+    </action>
+    <action path="/Player"  type="natc.action.PlayerAction"  >
+      <forward   name="success"    path="/player.jsp"/>
+    </action>
+    <action path="/Players" type="natc.action.PlayersAction" >
+      <forward   name="success"    path="/players.jsp"/>
+    </action>
+    <action path="/Stats"   type="natc.action.StatsAction" name="statsForm" scope="request" input="/stats.jsp">
+      <forward   name="success"    path="/stats.jsp"/>
+    </action>
+    <action path="/Game"  type="natc.action.GameAction"  >
+      <forward   name="success"    path="/game.jsp"/>
+    </action>
+    <action path="/Games"   type="natc.action.GamesAction" name="gamesForm" scope="request" input="/games.jsp">
+      <forward   name="errors"        path="/games.jsp"         />
+      <forward   name="games"         path="/games.jsp"         />
+      <forward   name="rookie_draft"  path="/rookie_draft.jsp"  />
+      <forward   name="training_camp" path="/training_camp.jsp" />
+      <forward   name="roster_cut"    path="/roster_cut.jsp"    />
+      <forward   name="free_agents"   path="/free_agents.jsp"   />
+      <forward   name="awards"        path="/awards.jsp"        />
+      <forward   name="allstars"      path="/allstars.jsp"      />
+    </action>
+  </action-mappings>
+
+  <message-resources parameter="natc.resource.natc"/>
+
+</struts-config>
