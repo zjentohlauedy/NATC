@@ -753,11 +753,26 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getGamesByTeamIdSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t"
 			/**/   + " WHERE   tg.Team_Id   = t.Team_Id "
 			/**/   + "   AND   tg.Year      = t.Year "
 			/**/   + "   AND   tg.Year      = ? "
+			/**/   + "   AND ( tg.Team_Id   = ? OR   "
+			/**/   + "         tg.Opponent  = ?    ) "
+			/**/   + "ORDER BY tg.Game_Id";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getGamesByTeamIdAndTypeSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
+			/**/   + "  FROM Teamgames_T tg, Teams_T t"
+			/**/   + " WHERE   tg.Team_Id   = t.Team_Id "
+			/**/   + "   AND   tg.Year      = t.Year "
+			/**/   + "   AND   tg.Year      = ? "
+			/**/   + "   AND   tg.Type      = ? "
 			/**/   + "   AND ( tg.Team_Id   = ? OR   "
 			/**/   + "         tg.Opponent  = ?    ) "
 			/**/   + "ORDER BY tg.Game_Id";

@@ -165,3 +165,18 @@ a:hover {
 	font-size: small;
 	font-weight: bold;
 }
+
+.gameday {
+	font-size: small;
+	font-weight: bold;
+}
+
+.teamgame {
+	font-size: small;
+	font-weight: bold;
+}
+
+.teamgame em {
+	font-style: normal;
+	color: #ffff00;
+}

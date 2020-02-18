@@ -219,8 +219,14 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setInt(     22, player.getSeasons_played()  );
 			ps.setBoolean( 23, player.isReleased()         );
 			
-			if   ( is_released ) ps.setInt( 24, player.getTeam_id()     );
-			else                 ps.setInt( 24, player.getReleased_by() );
+			if   ( is_released  &&  player.getReleased_by() == 0 ) {
+				
+				ps.setInt( 24, player.getTeam_id()     );
+			}
+			else {
+				
+				ps.setInt( 24, player.getReleased_by() );
+			}
 			
 			ps.setString(  25, year                        );
 			ps.setInt(     26, player.getPlayer_id()       );

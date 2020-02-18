@@ -22,6 +22,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	private Connection dbConn = null;
 	private String     year   = null;
 	private boolean    flip   = false;
+	private boolean    invert = false;
 	
 	public ScheduleServiceImpl( Connection dbConn, String year ) {
 		
@@ -162,17 +163,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 			array[n] = array[m];
 			array[m] = x;
 		}
-		/*
-		for( int i = (offset + length); i > offset + 1; --i ) {
-
-			int n = (int)Math.floor( Math.random() * (float)(i - 1) );
-			int x;
-
-			x            = array[n    ];
-			array[n    ] = array[i - 1];
-			array[i - 1] = x;
-		}
-		*/
 	}
 
 	private void scheduleConferenceGames( ScheduleData data, int[] teams ) {
@@ -195,26 +185,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 					home = temp;
 				}
 				
-				data.road_teams[match] = teams[road];
-				data.home_teams[match] = teams[home];
-			}
-		}
-
-		this.flip = ! this.flip;
-	}
-	
-	private void scheduleDivisionGames( ScheduleData data, int[] teams ) {
-
-		for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; i += Constants.TEAMS_PER_DIVISION )
-		{
-			for ( int j = 0; j < 5; ++j )
-			{
-				int match = (i / 2) + j;
-				int road  = i + j;
-				int home  = i + 9 - j;
-
-				// Swap road and home for first team (since it doesn't rotate)
-				if ( j == 0 && this.flip ) {
+				// Every other pass swap home and road teams (so some teams don't play every game at home)
+				if ( j != 0 && this.invert ) {
 				
 					int temp;
 					
@@ -230,6 +202,56 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		this.flip = ! this.flip;
 	}
+	
+	private void scheduleDivisionGames( ScheduleData[] data, int day, int[] teams ) {
+
+		for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; i += Constants.TEAMS_PER_DIVISION )
+		{
+			for ( int j = 0; j < 5; ++j )
+			{
+				int match = (i / 2) + j;
+				int road  = i + j;
+				int home  = i + 9 - j;
+				
+				boolean done = false;
+
+				for ( int previous_day = day - 1; previous_day > 0; --previous_day ) {
+				
+					for ( int game = 0; game < data[previous_day].games; ++game ) {
+					
+						if (    data[previous_day].road_teams[game] == teams[home] &&
+								data[previous_day].home_teams[game] == teams[road]    ) {
+						
+							done = true;
+							
+							break;
+						}
+
+						if (    data[previous_day].road_teams[game] == teams[road] &&
+								data[previous_day].home_teams[game] == teams[home]    ) {
+						
+							int temp;
+
+							temp = road;
+							road = home;
+							home = temp;
+							
+							done = true;
+							
+							break;
+						}
+					}
+					
+					if ( done ) break;
+				}
+				
+				data[day].road_teams[match] = teams[road];
+				data[day].home_teams[match] = teams[home];
+			}
+		}
+
+		this.flip = ! this.flip;
+	}
 
 	private List generateSeasonSchedule() {
 	
@@ -240,12 +262,82 @@ public class ScheduleServiceImpl implements ScheduleService {
 		
 		for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; ++i ) teams[i] = i + 1;
 		
+		int day = 0;
+
+		// Conference Series
+		shuffle( teams,  0, Constants.TEAMS_PER_CONFERENCE );
+		shuffle( teams, 20, Constants.TEAMS_PER_CONFERENCE );
+		
+		this.flip = false;
+		
+		for ( int series = 0; series < Constants.TEAMS_PER_CONFERENCE - 1; ++series ) {
+		
+			this.invert = false;
+			
+			for ( int round = 0; round < 3; ++round ) {
+			
+				data[day] = new ScheduleData();
+				
+				data[day].games = Constants.GAMES_PER_DAY;
+				
+				scheduleConferenceGames( data[day], teams );
+				
+				day++;
+				
+				this.invert = ! this.invert;
+			}
+			
+			rotate( teams,  1, Constants.TEAMS_PER_CONFERENCE - 1 );
+			rotate( teams, 21, Constants.TEAMS_PER_CONFERENCE - 1 );
+		}
+
+		
+		// After conference schedule team list has the form with road/home bias:
+		//  Div: 1111111111 2222222222 3333333333 4444444444
+		// Conf: 1111111111 1111111111 2222222222 2222222222
+		// Bias: rhrhrhrhrh rhrhrhrhrh rhrhrhrhrh rhrhrhrhrh
+		
+		// Out of Conference Series
+		for ( int round = 0; round < Constants.OUT_OF_CONFERENCE_GAMES; ++round ) {
+			
+			data[day] = new ScheduleData();
+			
+			data[day].games = Constants.GAMES_PER_DAY;
+			
+			for ( int match = 0; match < Constants.GAMES_PER_DAY; ++match ) {
+			
+				if ( (round % 2) != 0 ) {
+					
+					data[day].road_teams[match] = teams[match];
+					data[day].home_teams[match] = teams[39 - match];
+				}
+				else {
+				
+					if ( round == 0  &&  (match % 2) != 0 ) {
+						
+						data[day].road_teams[match] = teams[match];
+						data[day].home_teams[match] = teams[39 - match];
+					}
+					else {
+						
+						data[day].road_teams[match] = teams[39 - match];
+						data[day].home_teams[match] = teams[match];
+					}
+				}
+			}
+			
+			day ++;
+			
+			rotate( teams,  20, Constants.TEAMS_PER_CONFERENCE );
+		}
+		
+		// Division Series
+		for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; ++i ) teams[i] = i + 1;
+		
 		shuffle( teams,  0, Constants.TEAMS_PER_DIVISION );
 		shuffle( teams, 10, Constants.TEAMS_PER_DIVISION );
 		shuffle( teams, 20, Constants.TEAMS_PER_DIVISION );
 		shuffle( teams, 30, Constants.TEAMS_PER_DIVISION );
-		
-		int day = 0;
 		
 		this.flip = false;
 		
@@ -257,7 +349,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				
 				data[day].games = Constants.GAMES_PER_DAY;
 				
-				scheduleDivisionGames( data[day], teams );
+				scheduleDivisionGames( data, day, teams );
 				
 				day++;
 			}
@@ -268,74 +360,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			rotate( teams, 31, Constants.TEAMS_PER_DIVISION - 1 );
 		}
 		
-		shuffle( teams,  0, Constants.TEAMS_PER_CONFERENCE );
-		shuffle( teams, 20, Constants.TEAMS_PER_CONFERENCE );
 		
-		this.flip = false;
-		
-		for ( int series = 0; series < Constants.TEAMS_PER_CONFERENCE - 1; ++series ) {
-		
-			for ( int round = 0; round < 3; ++round ) {
-			
-				data[day] = new ScheduleData();
-				
-				data[day].games = Constants.GAMES_PER_DAY;
-				
-				scheduleConferenceGames( data[day], teams );
-				
-				day++;
-			}
-			
-			rotate( teams,  1, Constants.TEAMS_PER_CONFERENCE - 1 );
-			rotate( teams, 21, Constants.TEAMS_PER_CONFERENCE - 1 );
-		}
-		
-		shuffle( teams,  0, Constants.TEAMS_PER_CONFERENCE );
-		shuffle( teams, 20, Constants.TEAMS_PER_CONFERENCE );
-		
-		for ( int round = 0; round < Constants.OUT_OF_CONFERENCE_GAMES - 1; ++round ) {
-			
-			data[day] = new ScheduleData();
-			
-			data[day].games = Constants.GAMES_PER_DAY;
-			
-			for ( int match = 0; match < Constants.GAMES_PER_DAY; ++match ) {
-			
-				if ( (round % 2) == 0 ) {
-					
-					data[day].road_teams[match] = teams[match + 20];
-					data[day].home_teams[match] = teams[match];
-				}
-				else {
-				
-					data[day].road_teams[match] = teams[match];
-					data[day].home_teams[match] = teams[match + 20];
-				}
-			}
-			
-			day ++;
-			
-			rotate( teams,  20, Constants.TEAMS_PER_CONFERENCE );
-		}
-		
-		data[day] = new ScheduleData();
-		
-		data[day].games = Constants.GAMES_PER_DAY;
-
-		for ( int match = 0; match < Constants.GAMES_PER_DAY; ++match ) {
-
-			if ( (match % 2) == 0 ) {
-
-				data[day].road_teams[match] = teams[match + 20];
-				data[day].home_teams[match] = teams[match];
-			}
-			else {
-
-				data[day].road_teams[match] = teams[match];
-				data[day].home_teams[match] = teams[match + 20];
-			}
-		}
-
 		for ( int i = 0; i < Constants.DAYS_IN_SEASON; ++i ) {
 			
 			String s = data[i].toString();

@@ -28,6 +28,13 @@ public class StatsServiceImpl implements StatsService {
 		private String  headingKey;
 		private boolean ascending;
 		
+		public Parameters() {
+		
+			this.stat       = 0;
+			this.headingKey = null;
+			this.ascending  = false;
+		}
+		
 		public Parameters( int stat, String headingKey, boolean ascending ) {
 		
 			this.stat       = stat;
@@ -852,4 +859,12 @@ public class StatsServiceImpl implements StatsService {
 		return lists;
 	}
 
+	public void ParameterStub() {
+	
+		Parameters parameter = new Parameters();
+		
+		parameter.setStat( DatabaseImpl.STAT_ASSISTS );
+		parameter.setHeadingKey( StatsView.KEY_ASSISTS );
+		parameter.setAscending( true );
+	}
 }

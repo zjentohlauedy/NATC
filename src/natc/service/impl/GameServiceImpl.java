@@ -1708,8 +1708,84 @@ public class GameServiceImpl implements GameService {
 					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
 				}
 				
-				gameView.setGame_id(  new Integer( game_id                       ) );
-				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime" ) ) );
+				gameView.setGame_id(  new Integer( game_id                        ) );
+				gameView.setDate(                  dbRs.getDate(    "Datestamp"   ) );
+				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime"  ) ) );
+			}
+			
+			if ( gameView != null ) {
+				
+				if ( games == null ) games = new ArrayList();
+				
+				games.add( gameView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return games;
+	}
+
+	public List getGamesByTeamIdAndType( int team_id, int type ) throws SQLException {
+		
+		List games = null;
+		
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		GameView          gameView = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGamesByTeamIdAndTypeSelectPs( dbConn );
+			
+			ps.setString( 1, year    );
+			ps.setInt(    2, type    );
+			ps.setInt(    3, team_id );
+			ps.setInt(    4, team_id );
+			
+			dbRs = ps.executeQuery();
+			
+			int old_game_id = -1;
+			
+			while ( dbRs.next() ) {
+			
+				int game_id = dbRs.getInt( "Game_Id" );
+				
+				if ( game_id != old_game_id ) {
+				
+					if ( gameView != null ) {
+					
+						if ( games == null ) games = new ArrayList();
+						
+						games.add( gameView );
+					}
+					
+					gameView = new GameView();
+					
+					old_game_id = game_id;
+				}
+				
+				if ( dbRs.getBoolean( "Road" ) ) {
+					
+					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
+					gameView.setRoad_team(               dbRs.getString( "Abbrev" )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score" ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+				}
+				else {
+					
+					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
+					gameView.setHome_team(               dbRs.getString( "Abbrev" )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Score" ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+				}
+				
+				gameView.setGame_id(  new Integer( game_id                        ) );
+				gameView.setDate(                  dbRs.getDate(    "Datestamp"   ) );
+				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime"  ) ) );
 			}
 			
 			if ( gameView != null ) {

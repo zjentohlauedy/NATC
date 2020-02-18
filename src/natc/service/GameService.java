@@ -13,6 +13,7 @@ public interface GameService {
 	public void processScheduleEvent( Schedule event ) throws SQLException;
 	public List getGamesByDate( Date datestamp ) throws SQLException;
 	public List getGamesByTeamId( int team_id ) throws SQLException;
+	public List getGamesByTeamIdAndType( int team_id, int type ) throws SQLException;
 	public List getRankedTeamsByDivision( int division ) throws SQLException;
 	public List getRankedTeamList() throws SQLException;
 	public List getRankedRookieList() throws SQLException;

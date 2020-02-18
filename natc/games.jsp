@@ -317,5 +317,167 @@
   </logic:iterate>
 </logic:present>
 
+<logic:present name="preseasonTeamGames">
+  <h1><bean:message key="games.label.preseason"/></h1>
+  <logic:iterate id="game" name="preseasonTeamGames">
+    <table class="gameday">
+      <tr class="gamedate"><td><bean:write name="game" property="dateDsp"/></td></tr>
+      <tr>
+        <td>
+    <table class="teamgame">
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="road_team_id">
+            <bean:write name="game" property="road_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="road_win" value="true">
+              <em><bean:write name="game" property="road_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="road_win" value="false">
+              <bean:write name="game" property="road_score"/>
+            </logic:equal>
+          </html:link>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="home_team_id">
+            <bean:write name="game" property="home_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="home_win" value="true">
+              <em><bean:write name="game" property="home_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="home_win" value="false">
+              <bean:write name="game" property="home_score"/>
+            </logic:equal>
+          </html:link>
+          <logic:equal name="game" property="overtime" value="true">
+            <h7><bean:message key="games.label.ot_indicator"/></h7>
+          </logic:equal>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+        </td>
+      </tr>
+    </table>
+  </logic:iterate>
+</logic:present>
+
+<logic:present name="seasonTeamGames">
+  <h1><bean:message key="games.label.regseason"/></h1>
+  <logic:iterate id="game" name="seasonTeamGames">
+    <table class="gameday">
+      <tr class="gamedate"><td><bean:write name="game" property="dateDsp"/></td></tr>
+      <tr>
+        <td>
+    <table class="teamgame">
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="road_team_id">
+            <bean:write name="game" property="road_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="road_win" value="true">
+              <em><bean:write name="game" property="road_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="road_win" value="false">
+              <bean:write name="game" property="road_score"/>
+            </logic:equal>
+          </html:link>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="home_team_id">
+            <bean:write name="game" property="home_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="home_win" value="true">
+              <em><bean:write name="game" property="home_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="home_win" value="false">
+              <bean:write name="game" property="home_score"/>
+            </logic:equal>
+          </html:link>
+          <logic:equal name="game" property="overtime" value="true">
+            <h7><bean:message key="games.label.ot_indicator"/></h7>
+          </logic:equal>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+        </td>
+      </tr>
+    </table>
+  </logic:iterate>
+</logic:present>
+
+<logic:present name="postseasonTeamGames">
+  <h1><bean:message key="games.label.postseason"/></h1>
+  <logic:iterate id="game" name="postseasonTeamGames">
+    <table class="gameday">
+      <tr class="gamedate"><td><bean:write name="game" property="dateDsp"/></td></tr>
+      <tr>
+        <td>
+    <table class="teamgame">
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="road_team_id">
+            <bean:write name="game" property="road_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="road_win" value="true">
+              <em><bean:write name="game" property="road_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="road_win" value="false">
+              <bean:write name="game" property="road_score"/>
+            </logic:equal>
+          </html:link>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="home_team_id">
+            <bean:write name="game" property="home_team"/>
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+            <logic:equal name="game" property="home_win" value="true">
+              <em><bean:write name="game" property="home_score"/></em>
+            </logic:equal>
+            <logic:equal name="game" property="home_win" value="false">
+              <bean:write name="game" property="home_score"/>
+            </logic:equal>
+          </html:link>
+          <logic:equal name="game" property="overtime" value="true">
+            <h7><bean:message key="games.label.ot_indicator"/></h7>
+          </logic:equal>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+        </td>
+      </tr>
+    </table>
+  </logic:iterate>
+</logic:present>
+
 </body>
 </html:html>

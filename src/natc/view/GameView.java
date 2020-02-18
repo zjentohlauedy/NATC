@@ -1,8 +1,13 @@
 package natc.view;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 public class GameView {
 
 	private Integer game_id;
+	
+	private Date    date;
 	
 	private Integer home_team_id;
 	private String  home_team;
@@ -19,6 +24,7 @@ public class GameView {
 	public GameView() {
 	
 		game_id      = null;
+		date         = null;
 		home_team_id = null;
 		home_team    = null;
 		home_score   = null;
@@ -30,6 +36,15 @@ public class GameView {
 		overtime     = null;
 	}
 
+	public String getDateDsp() {
+	
+		if ( this.date == null ) return "";
+		
+		DateFormat df = DateFormat.getDateInstance( DateFormat.SHORT );
+		
+		return df.format( this.date );
+	}
+	
 	public Integer getGame_id() {
 		return game_id;
 	}
@@ -108,6 +123,14 @@ public class GameView {
 
 	public void setRoad_win(Boolean road_win) {
 		this.road_win = road_win;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

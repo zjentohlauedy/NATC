@@ -86,6 +86,29 @@ h2 {
 	vertical-align: bottom;
 }
 
+.gameday {
+	float: left;
+	width: 10%;
+	padding-left: 1em;
+	padding-right: 1em;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.teamgame {
+	float: left;
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.teamgame td {
+	margin: 0px;
+	padding: 0px;
+	text-align: left;
+	vertical-align: bottom;
+	width: 50%;
+}
+
 .ratings {
 	width: 25%;
 	margin: 0;

@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionMapping;
 import natc.data.Schedule;
 import natc.data.ScheduleType;
 import natc.data.Team;
+import natc.data.TeamGame;
 import natc.form.GamesForm;
 import natc.service.GameService;
 import natc.service.PlayerService;
@@ -63,19 +64,32 @@ public class GamesAction extends Action {
 			
 			scheduleService = new ScheduleServiceImpl( dbConn, null );
 
+			// If a team ID was specified only get game results for that team and exit
 			if ( (team_id_str = request.getParameter( "team_id" )) != null ) {
 				
 				int team_id = Integer.parseInt( team_id_str );
 				
 				if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) != null ) {
 					
-					Collection games = null;
+					Collection preseasonTeamGames  = null;
+					Collection seasonTeamGames     = null;
+					Collection postseasonTeamGames = null;
 					
 					gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
 					
-					if ( (games = gameService.getGamesByTeamId( team_id )) != null ) {
+					if ( (preseasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Preseason )) != null ) {
 
-						request.setAttribute( "games", games );
+						request.setAttribute( "preseasonTeamGames", preseasonTeamGames );
+					}
+
+					if ( (seasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_RegularSeason )) != null ) {
+
+						request.setAttribute( "seasonTeamGames", seasonTeamGames );
+					}
+
+					if ( (postseasonTeamGames = gameService.getGamesByTeamIdAndType( team_id, TeamGame.gt_Postseason )) != null ) {
+
+						request.setAttribute( "postseasonTeamGames", postseasonTeamGames );
 					}
 				}
 				
