@@ -1467,6 +1467,163 @@ public class DatabaseImpl {
 	public static final int STAT_AVG_TOP       =  17;
 	public static final int STAT_TIME_PER_GAME =  18;
 
+	public static PreparedStatement getGamesPlayedByYearSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT MIN(Count) FROM ( SELECT Team_Id, COUNT(1) Count FROM Teamgames_T WHERE Year = ? AND Type = ? GROUP BY Team_Id ) x";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getPlayerStatsForSeasonSelectPs( Connection dbConn, int stat, int games_played, boolean ascending ) throws SQLException {
+	
+		String queryStr          = null;
+		String additional_filter = null;
+		String orderClause       = null;
+		float  min_attempts      = 0;
+		float  min_psa           = 0;
+		
+		min_attempts = (float)games_played * (float)2.0;
+		min_psa      = (float)games_played * (float)0.6;
+		
+		switch ( stat ) {
+		
+		case STAT_SCORE:         queryStr = "pg.Goals*3+pg.Psm";        additional_filter = ""; break;
+		case STAT_ATTEMPTS:      queryStr = "pg.Attempts";              additional_filter = ""; break;
+		case STAT_GOALS:         queryStr = "pg.Goals";                 additional_filter = ""; break;
+		case STAT_ASSISTS:       queryStr = "pg.Assists";               additional_filter = ""; break;
+		case STAT_OFFENSE:       queryStr = "pg.Goals+pg.Assists";      additional_filter = ""; break;
+		case STAT_TURNOVERS:     queryStr = "pg.Turnovers";             additional_filter = ""; break;
+		case STAT_STOPS:         queryStr = "pg.Stops";                 additional_filter = ""; break;
+		case STAT_STEALS:        queryStr = "pg.Steals";                additional_filter = ""; break;
+		case STAT_PENALTIES:     queryStr = "pg.Penalties";             additional_filter = ""; break;
+		case STAT_PSA:           queryStr = "pg.Psa";                   additional_filter = ""; break;
+		case STAT_PSM:           queryStr = "pg.Psm";                   additional_filter = ""; break;
+		case STAT_OT_PSA:        queryStr = "pg.Ot_Psa";                additional_filter = ""; break;
+		case STAT_OT_PSM:        queryStr = "pg.Ot_Psm";                additional_filter = ""; break;
+		case STAT_SCORE_PCT:     queryStr = "pg.Goals/pg.Attempts*100"; additional_filter = "AND pg.Attempts > " + String.valueOf( min_attempts ) + " "; break;
+		case STAT_PS_PCT:        queryStr = "pg.Psm/pg.Psa*100";        additional_filter = "AND pg.Psa > " + String.valueOf( min_psa ) + " "; break;
+		case STAT_OT_PS_PCT:     queryStr = "pg.Ot_Psm/pg.Ot_Psa*100";  additional_filter = ""; break;
+		case STAT_TIME_PER_GAME: queryStr = "pg.Playing_Time/pg.Games"; additional_filter = ""; break;
+			
+		default: return null;
+		}
+
+		if   ( ascending ) orderClause = "ORDER BY 1 ASC,  YEAR ASC ";
+		else               orderClause = "ORDER BY 1 DESC, YEAR ASC ";
+
+		String sql = "SELECT " +  queryStr + ",  "
+		/**/                   + "p1.Player_Id,  "
+		/**/                   + "p1.First_Name, "
+		/**/                   + "p1.Last_Name,  "
+		/**/                   + "pg.Year        "
+		/**/
+		/**/       + "FROM Player_Stats_Sum_T pg, "
+		/**/       +      "Players_T          p1  "
+		/**/
+		/**/       + "WHERE pg.Player_Id = p1.Player_Id "
+		/**/       + "AND   pg.Year      = p1.Year      "
+		/**/       + "AND   pg.Type      = ?            "
+		/**/       + "AND   pg.Year      = ?            "
+		/**/
+		/**/       + additional_filter
+		/**/
+		/**/       + orderClause + "LIMIT ?";
+
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getTeamOffStatsForSeasonSelectPs( Connection dbConn, int stat, boolean ascending ) throws SQLException {
+	
+		String queryStr    = null;
+		String orderClause = null;
+		
+		switch ( stat ) {
+		
+		case STAT_SCORE:       queryStr = "tg.Score";                    break;
+		case STAT_ATTEMPTS:    queryStr = "tg.Attempts";                 break;
+		case STAT_GOALS:       queryStr = "tg.Goals";                    break;
+		case STAT_TURNOVERS:   queryStr = "tg.Turnovers";                break;
+		case STAT_STEALS:      queryStr = "tg.Steals";                   break;
+		case STAT_PENALTIES:   queryStr = "tg.Penalties";                break;
+		case STAT_PSA:         queryStr = "tg.Psa";                      break;
+		case STAT_PSM:         queryStr = "tg.Psm";                      break;
+		case STAT_OT_PSA:      queryStr = "tg.Ot_Psa";                   break;
+		case STAT_OT_PSM:      queryStr = "tg.Ot_Psm";                   break;
+		case STAT_SCORE_PCT:   queryStr = "tg.Goals/tg.Attempts*100";    break;
+		case STAT_PS_PCT:      queryStr = "tg.Psm/tg.Psa*100";           break;
+		case STAT_OT_PS_PCT:   queryStr = "tg.Ot_Psm/tg.Ot_Psa*100";     break;
+		case STAT_POSSESSIONS: queryStr = "tg.Possessions";              break;
+		case STAT_AVG_TOP:     queryStr = "tg.Possession_Time/tg.Games"; break;
+			
+		default: return null;
+		}
+
+		if   ( ascending ) orderClause = "ORDER BY 1 ASC,  YEAR ASC ";
+		else               orderClause = "ORDER BY 1 DESC, YEAR ASC ";
+		
+		String sql = "SELECT " +  queryStr + ", "
+		/**/                   + "t1.Team_Id,   "
+		/**/                   + "t1.Abbrev,    "
+		/**/                   + "tg.Year       "
+		/**/
+		/**/       + "FROM Team_Offense_Sum_T tg, "
+		/**/       +      "Teams_T            t1  "
+		/**/
+		/**/       + "WHERE tg.Team_Id  = t1.Team_Id "
+		/**/       + "AND   tg.Year     = t1.Year    "
+		/**/       + "AND   tg.Type     = ?          "
+		/**/       + "AND   tg.Year     = ?          "
+		/**/
+		/**/       + orderClause + "LIMIT ?";
+
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getTeamDefStatsForSeasonSelectPs( Connection dbConn, int stat, boolean ascending ) throws SQLException {
+	
+		String queryStr    = null;
+		String orderClause = null;
+		
+		switch ( stat ) {
+		
+		case STAT_SCORE:       queryStr = "tg.Score";                    break;
+		case STAT_ATTEMPTS:    queryStr = "tg.Attempts";                 break;
+		case STAT_GOALS:       queryStr = "tg.Goals";                    break;
+		case STAT_STOPS:       queryStr = "tg.Attempts-tg.Goals";        break;
+		case STAT_TURNOVERS:   queryStr = "tg.Turnovers";                break;
+		case STAT_PENALTIES:   queryStr = "tg.Penalties";                break;
+		case STAT_PSA:         queryStr = "tg.Psa";                      break;
+		case STAT_PSM:         queryStr = "tg.Psm";                      break;
+		case STAT_SCORE_PCT:   queryStr = "tg.Goals/tg.Attempts*100";    break;
+		case STAT_PS_PCT:      queryStr = "tg.Psm/tg.Psa*100";           break;
+		case STAT_OT_PS_PCT:   queryStr = "tg.Ot_Psm/tg.Ot_Psa*100";     break;
+		case STAT_POSSESSIONS: queryStr = "tg.Possessions";              break;
+		case STAT_AVG_TOP:     queryStr = "tg.Possession_Time/tg.Games"; break;
+			
+		default: return null;
+		}
+
+		if   ( ascending ) orderClause = "ORDER BY 1 ASC,  YEAR ASC ";
+		else               orderClause = "ORDER BY 1 DESC, YEAR ASC ";
+		
+		String sql = "SELECT " +  queryStr + ", "
+		/**/                   + "t1.Team_Id,   "
+		/**/                   + "t1.Abbrev,    "
+		/**/                   + "tg.Year       "
+		/**/
+		/**/       + "FROM Team_Defense_Sum_T tg, "
+		/**/       +      "Teams_T            t1  "
+		/**/
+		/**/       + "WHERE tg.Team_Id  = t1.Team_Id "
+		/**/       + "AND   tg.Year     = t1.Year    "
+		/**/       + "AND   tg.Type     = ?          "
+		/**/       + "AND   tg.Year     = ?          "
+		/**/
+		/**/       + orderClause + "LIMIT ?";
+
+		return dbConn.prepareStatement( sql );
+	}
+
 	public static PreparedStatement getPlayerStatsByGameSelectPs( Connection dbConn, int stat, boolean ascending ) throws SQLException {
 	
 		String queryStr    = null;

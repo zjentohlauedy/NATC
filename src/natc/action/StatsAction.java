@@ -49,14 +49,17 @@ public class StatsAction extends Action {
 			
 			switch ( statsForm.getOperation().intValue() ) {
 			
-			case 0: c = statsService.getTopPlayersByGame();         break;
-			case 1: c = statsService.getTopPlayersBySeason();       break;
-			case 2: c = statsService.getTopPlayersByCareer();       break;
-			case 3: c = statsService.getTopTeamsByGame();           break;
-			case 4: c = statsService.getTopTeamsOffenseBySeason();  break;
-			case 5: c = statsService.getTopTeamsDefenseBySeason();  break;
-			case 6: c = statsService.getTopTeamsOffenseByHistory(); break;
-			case 7: c = statsService.getTopTeamsDefenseByHistory(); break;
+			case  0: c = statsService.getTopPlayersThisSeason();       break;
+			case  1: c = statsService.getTopTeamsOffenseThisSeason();  break;
+			case  2: c = statsService.getTopTeamsDefenseThisSeason();  break;
+			case  3: c = statsService.getTopPlayersByGame();           break;
+			case  4: c = statsService.getTopPlayersBySeason();         break;
+			case  5: c = statsService.getTopPlayersByCareer();         break;
+			case  6: c = statsService.getTopTeamsByGame();             break;
+			case  7: c = statsService.getTopTeamsOffenseBySeason();    break;
+			case  8: c = statsService.getTopTeamsDefenseBySeason();    break;
+			case  9: c = statsService.getTopTeamsOffenseByHistory();   break;
+			case 10: c = statsService.getTopTeamsDefenseByHistory();   break;
 			}
 			
 			if ( c != null ) request.setAttribute( "stats" , c );

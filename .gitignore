@@ -1,3 +1,4 @@
 natc/WEB-INF/classes
 natc/WEB-INF/lib
 *.war
+*.jar

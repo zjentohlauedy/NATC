@@ -196,6 +196,7 @@ public class GamesAction extends Action {
 			// Find out what the program did last
 			if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
 			
+				/*
 				// Get the current year as the base year for the first season
 				String year = Schedule.FIRST_YEAR;
 				
@@ -204,9 +205,12 @@ public class GamesAction extends Action {
 				
 				// No schedule entries exist - initialize natc data
 				gameService.initializeDatabase();
+				*/
+				return mapping.findForward( "games" );
 			}
 			else if ( scheduleEntry.getType().getValue() == ScheduleType.END_OF_SEASON ) {
 			
+				/*
 				// If the last entry is end of season, generate a new schedule
 				
 				// Get a new game service with the next year
@@ -214,13 +218,16 @@ public class GamesAction extends Action {
 				
 				// Start a new season
 				gameService.startNewSeason( scheduleEntry.getYear() );
+				*/
+				return mapping.findForward( "games" );
 			}
-			
+			/*
 			// Get the next scheduled event
 			scheduleEntry = scheduleService.getNextScheduleEntry( scheduleEntry );
+			*/
 			
 			gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
-			
+			/*
 			// Run the next season event(s) based on the submitted form value
 			GamesForm gamesForm = (GamesForm)form;
 			
@@ -297,7 +304,7 @@ public class GamesAction extends Action {
 				
 			default: gameService.processScheduleEvent( scheduleEntry ); break;
 			}
-			
+			*/
 			Collection data    = null;
 			List       teams   = null;
 			Comparator precomp = new Comparator() {

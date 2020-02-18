@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="natc/WEB-INF/lib/struts.jar"/>
 	<classpathentry kind="lib" path="natc/WEB-INF/lib/struts-legacy.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Apache Software Foundation/Tomcat 5.0/common/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Apache Software Foundation/Tomcat 5.0/common/lib/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="output" path="natc/WEB-INF/classes"/>
 </classpath>

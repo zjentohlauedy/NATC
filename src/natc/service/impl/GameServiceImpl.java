@@ -1512,7 +1512,7 @@ public class GameServiceImpl implements GameService {
 		// Finally retire those players that are ready and no longer on a team
 		playerService.retireFreePlayers();
 	}
-	
+
 	private void processRookieDraft( Schedule event ) throws SQLException {
 		
 		// Get list of teams from previous season
@@ -1582,7 +1582,7 @@ public class GameServiceImpl implements GameService {
 			
 				nextTeam.setManager( managerService.getManagerByTeamId( nextTeam.getTeam_id() ) );
 			}
-			
+
 			// Sort list based on managerial style
 			switch ( nextTeam.getManager().getStyle() ) {
 			

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import natc.data.Schedule;
 import natc.data.TeamGame;
 import natc.service.ScheduleService;
 import natc.service.StatsService;
@@ -69,6 +70,370 @@ public class StatsServiceImpl implements StatsService {
 
 	}
 	
+	private int getGamesPlayedForSeason( int type, String year ) throws SQLException {
+
+		int games = 0;
+		
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGamesPlayedByYearSelectPs( dbConn );
+			
+			ps.setString( 1, year );
+			ps.setInt(    2, type );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				games = dbRs.getInt( 1 );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return games;
+	}
+
+	public Collection getTopPlayersThisSeason() throws SQLException {
+
+		ArrayList categories = new ArrayList();
+		
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE,         StatsView.KEY_SCORE,         false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_ATTEMPTS,      StatsView.KEY_ATTEMPTS,      false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_GOALS,         StatsView.KEY_GOALS,         false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_ASSISTS,       StatsView.KEY_ASSISTS,       false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OFFENSE,       StatsView.KEY_OFFENSE,       false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_TURNOVERS,     StatsView.KEY_TURNOVERS,     false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_STOPS,         StatsView.KEY_STOPS,         false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_STEALS,        StatsView.KEY_STEALS,        false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PENALTIES,     StatsView.KEY_PENALTIES,     false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSA,           StatsView.KEY_PSA,           false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSM,           StatsView.KEY_PSM,           false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PSA,        StatsView.KEY_OT_PSA,        false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PSM,        StatsView.KEY_OT_PSM,        false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE_PCT,     StatsView.KEY_SCORE_PCT,     false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PS_PCT,        StatsView.KEY_PS_PCT,        false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PS_PCT,     StatsView.KEY_OT_PS_PCT,     false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_TIME_PER_GAME, StatsView.KEY_TIME_PER_GAME, false ) );
+		
+		ScheduleService   scheduleService = null;
+		Schedule          scheduleEntry   = null;
+		PreparedStatement ps              = null;
+		ResultSet         dbRs            = null;
+		Collection        lists           = null;
+		String            year            = null;
+		int               games           = 0;
+		
+		scheduleService = new ScheduleServiceImpl( dbConn, null );
+		
+		if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+		
+			return null;
+		}
+		
+		year = scheduleEntry.getYear();
+		
+		games = getGamesPlayedForSeason( TeamGame.gt_RegularSeason, year );
+		
+		Iterator i = categories.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Parameters param = (Parameters)i.next();
+			
+			Collection list = null;
+			
+			try {
+				
+				ps = DatabaseImpl.getPlayerStatsForSeasonSelectPs( dbConn, param.getStat(), games, param.isAscending() );
+				
+				ps.setInt(    1, TeamGame.gt_RegularSeason );
+				ps.setString( 2, year                      );
+				ps.setInt(    3, 15                        );
+				
+				dbRs = ps.executeQuery();
+				
+				while ( dbRs.next() ) {
+				
+					StatsView statsView = new StatsView( StatsView.PLAYERBYSEASON );
+
+					if ( param.getHeadingKey().equals( StatsView.KEY_TIME_PER_GAME ) ) {
+						
+						int t = dbRs.getInt( 1 );
+						
+						DecimalFormat df = new DecimalFormat( "00" );
+						
+						statsView.setStat( df.format( t / 60 ) + ":" + df.format( t % 60 ) );
+					}
+					else {
+					
+						statsView.setStat(       dbRs.getString( 1 ) );
+					}
+					
+					statsView.setPlayer_id(  dbRs.getInt(    2 ) );
+					statsView.setFirst_name( dbRs.getString( 3 ) );
+					statsView.setLast_name(  dbRs.getString( 4 ) );
+					statsView.setYear(       dbRs.getString( 5 ) );
+					
+					if ( list == null ) {
+						
+						list = new ArrayList();
+						
+						StatsView header = new StatsView( StatsView.HEADER );
+						
+						header.setHeadingKey1( param.getHeadingKey() );
+						header.setHeadingKey2( StatsView.KEY_PLAYER  );
+						header.setHeadingKey3( StatsView.KEY_YEAR    );
+						header.setHeadingKey4( StatsView.KEY_UNUSED  );
+						
+						list.add( header );
+					}
+					
+					list.add( statsView );
+				}
+			}
+			catch ( SQLException sqle ) {
+			
+				throw sqle;
+			}
+			finally {
+				
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			
+			if ( lists == null  &&  list != null ) lists = new ArrayList();
+			
+			lists.add( list );
+		}
+		
+		return lists;
+	}
+
+	public Collection getTopTeamsOffenseThisSeason() throws SQLException {
+
+		ArrayList categories = new ArrayList();
+		
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE,       StatsView.KEY_SCORE,       false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_ATTEMPTS,    StatsView.KEY_ATTEMPTS,    false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_GOALS,       StatsView.KEY_GOALS,       false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_TURNOVERS,   StatsView.KEY_TURNOVERS,   true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_STEALS,      StatsView.KEY_STEALS,      false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PENALTIES,   StatsView.KEY_PENALTIES,   true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSA,         StatsView.KEY_PSA,         false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSM,         StatsView.KEY_PSM,         false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PSA,      StatsView.KEY_OT_PSA,      false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PSM,      StatsView.KEY_OT_PSM,      false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE_PCT,   StatsView.KEY_SCORE_PCT,   false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PS_PCT,      StatsView.KEY_PS_PCT,      false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PS_PCT,   StatsView.KEY_OT_PS_PCT,   false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_POSSESSIONS, StatsView.KEY_POSSESSIONS, false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_AVG_TOP,     StatsView.KEY_AVG_TOP,     false ) );
+
+		ScheduleService   scheduleService = null;
+		Schedule          scheduleEntry   = null;
+		PreparedStatement ps              = null;
+		ResultSet         dbRs            = null;
+		Collection        lists           = null;
+		String            year            = null;
+		
+		scheduleService = new ScheduleServiceImpl( dbConn, null );
+		
+		if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+		
+			return null;
+		}
+		
+		year = scheduleEntry.getYear();
+		
+		Iterator i = categories.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Parameters param = (Parameters)i.next();
+			
+			Collection list = null;
+			
+			try {
+				
+				ps = DatabaseImpl.getTeamOffStatsForSeasonSelectPs( dbConn, param.getStat(), param.isAscending() );
+				
+				ps.setInt(    1, TeamGame.gt_RegularSeason );
+				ps.setString( 2, year                      );
+				ps.setInt(    3, 10                        );
+				
+				dbRs = ps.executeQuery();
+				
+				while ( dbRs.next() ) {
+				
+					StatsView statsView = new StatsView( StatsView.TEAMBYSEASON );
+
+					if ( param.getHeadingKey().equals( StatsView.KEY_AVG_TOP ) ) {
+						
+						int t = dbRs.getInt( 1 );
+						
+						DecimalFormat df = new DecimalFormat( "00" );
+						
+						statsView.setStat( df.format( t / 60 ) + ":" + df.format( t % 60 ) );
+					}
+					else {
+					
+						statsView.setStat(       dbRs.getString( 1 ) );
+					}
+					
+					statsView.setTeam_id(         dbRs.getInt(     2 ) );
+					statsView.setTeam_abbrev(     dbRs.getString(  3 ) );
+					statsView.setYear(            dbRs.getString(  4 ) );
+					
+					if ( list == null ) {
+						
+						list = new ArrayList();
+						
+						StatsView header = new StatsView( StatsView.HEADER );
+						
+						header.setHeadingKey1( param.getHeadingKey()  );
+						header.setHeadingKey2( StatsView.KEY_TEAM     );
+						header.setHeadingKey3( StatsView.KEY_YEAR     );
+						header.setHeadingKey4( StatsView.KEY_UNUSED   );
+						
+						list.add( header );
+					}
+					
+					list.add( statsView );
+				}
+			}
+			catch ( SQLException sqle ) {
+			
+				throw sqle;
+			}
+			finally {
+				
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			
+			if ( lists == null ) lists = new ArrayList();
+			
+			lists.add( list );
+		}
+		
+		return lists;
+	}
+
+	public Collection getTopTeamsDefenseThisSeason() throws SQLException {
+
+		ArrayList categories = new ArrayList();
+		
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE,       StatsView.KEY_SCORE,       true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_ATTEMPTS,    StatsView.KEY_ATTEMPTS,    true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_GOALS,       StatsView.KEY_GOALS,       true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_STOPS,       StatsView.KEY_STOPS,       false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_TURNOVERS,   StatsView.KEY_TURNOVERS,   false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PENALTIES,   StatsView.KEY_PENALTIES,   false ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSA,         StatsView.KEY_PSA,         true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PSM,         StatsView.KEY_PSM,         true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_SCORE_PCT,   StatsView.KEY_SCORE_PCT,   true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PS_PCT,      StatsView.KEY_PS_PCT,      true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_OT_PS_PCT,   StatsView.KEY_OT_PS_PCT,   true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_POSSESSIONS, StatsView.KEY_POSSESSIONS, true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_AVG_TOP,     StatsView.KEY_AVG_TOP,     true  ) );
+
+		ScheduleService   scheduleService = null;
+		Schedule          scheduleEntry   = null;
+		PreparedStatement ps              = null;
+		ResultSet         dbRs            = null;
+		Collection        lists           = null;
+		String            year            = null;
+		
+		scheduleService = new ScheduleServiceImpl( dbConn, null );
+		
+		if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+		
+			return null;
+		}
+		
+		year = scheduleEntry.getYear();
+		
+		Iterator i = categories.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Parameters param = (Parameters)i.next();
+			
+			Collection list = null;
+			
+			try {
+				
+				ps = DatabaseImpl.getTeamDefStatsForSeasonSelectPs( dbConn, param.getStat(), param.isAscending() );
+
+				ps.setInt(    1, TeamGame.gt_RegularSeason );
+				ps.setString( 2, year                      );
+				ps.setInt(    3, 10                        );
+				
+				dbRs = ps.executeQuery();
+				
+				while ( dbRs.next() ) {
+				
+					StatsView statsView = new StatsView( StatsView.TEAMBYSEASON );
+
+					if ( param.getHeadingKey().equals( StatsView.KEY_AVG_TOP ) ) {
+						
+						int t = dbRs.getInt( 1 );
+						
+						DecimalFormat df = new DecimalFormat( "00" );
+						
+						statsView.setStat( df.format( t / 60 ) + ":" + df.format( t % 60 ) );
+					}
+					else {
+					
+						statsView.setStat(       dbRs.getString( 1 ) );
+					}
+					
+					statsView.setTeam_id(         dbRs.getInt(     2 ) );
+					statsView.setTeam_abbrev(     dbRs.getString(  3 ) );
+					statsView.setYear(            dbRs.getString(  4 ) );
+					
+					if ( list == null ) {
+						
+						list = new ArrayList();
+						
+						StatsView header = new StatsView( StatsView.HEADER );
+						
+						header.setHeadingKey1( param.getHeadingKey()  );
+						header.setHeadingKey2( StatsView.KEY_TEAM     );
+						header.setHeadingKey3( StatsView.KEY_YEAR     );
+						header.setHeadingKey4( StatsView.KEY_UNUSED   );
+						
+						list.add( header );
+					}
+					
+					list.add( statsView );
+				}
+			}
+			catch ( SQLException sqle ) {
+			
+				throw sqle;
+			}
+			finally {
+				
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			
+			if ( lists == null ) lists = new ArrayList();
+			
+			lists.add( list );
+		}
+		
+		return lists;
+	}
+
 	public Collection getTopPlayersByGame() throws SQLException {
 
 		ArrayList categories = new ArrayList();
@@ -208,7 +573,7 @@ public class StatsServiceImpl implements StatsService {
 				ps = DatabaseImpl.getPlayerStatsBySeasonSelectPs( dbConn, param.getStat(), param.isAscending() );
 				
 				ps.setInt( 1, TeamGame.gt_RegularSeason );
-				ps.setInt( 2, 10                        );
+				ps.setInt( 2, 15                        );
 				
 				dbRs = ps.executeQuery();
 				
@@ -313,7 +678,7 @@ public class StatsServiceImpl implements StatsService {
 				ps = DatabaseImpl.getPlayerStatsByCareerSelectPs( dbConn, param.getStat(), param.isAscending() );
 				
 				ps.setInt( 1, TeamGame.gt_RegularSeason );
-				ps.setInt( 2, 10                        );
+				ps.setInt( 2, 25                        );
 				
 				dbRs = ps.executeQuery();
 				

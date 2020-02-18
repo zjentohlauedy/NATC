@@ -38,14 +38,17 @@
 <html:form method="POST" action="/Stats">
 
 <html:select property="operation">
-  <html:option key = "stats.option.playbygame"       value="0" />
-  <html:option key = "stats.option.playbyseason"     value="1" />
-  <html:option key = "stats.option.playbycareer"     value="2" />
-  <html:option key = "stats.option.teambygame"       value="3" />
-  <html:option key = "stats.option.teamoffbyseason"  value="4" />
-  <html:option key = "stats.option.teamdefbyseason"  value="5" />
-  <html:option key = "stats.option.teamoffbyhistory" value="6" />
-  <html:option key = "stats.option.teamdefbyhistory" value="7" />
+  <html:option key = "stats.option.playthisseason"    value="0"  />
+  <html:option key = "stats.option.teamoffthisseason" value="1"  />
+  <html:option key = "stats.option.teamdefthisseason" value="2"  />
+  <html:option key = "stats.option.playbygame"        value="3"  />
+  <html:option key = "stats.option.playbyseason"      value="4"  />
+  <html:option key = "stats.option.playbycareer"      value="5"  />
+  <html:option key = "stats.option.teambygame"        value="6"  />
+  <html:option key = "stats.option.teamoffbyseason"   value="7"  />
+  <html:option key = "stats.option.teamdefbyseason"   value="8"  />
+  <html:option key = "stats.option.teamoffbyhistory"  value="9"  />
+  <html:option key = "stats.option.teamdefbyhistory"  value="10" />
 </html:select>
 <html:submit><bean:message key="stats.label.submit"/></html:submit>
 </html:form>

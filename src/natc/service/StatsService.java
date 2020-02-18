@@ -5,6 +5,9 @@ import java.util.Collection;
 
 public interface StatsService {
 
+	public Collection getTopPlayersThisSeason() throws SQLException;
+	public Collection getTopTeamsOffenseThisSeason()  throws SQLException;
+	public Collection getTopTeamsDefenseThisSeason()  throws SQLException;
 	public Collection getTopPlayersByGame() throws SQLException;
 	public Collection getTopPlayersBySeason() throws SQLException;
 	public Collection getTopPlayersByCareer() throws SQLException;
