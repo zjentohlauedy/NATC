@@ -50,6 +50,9 @@
     <action path="/Teams"   type="natc.action.TeamsAction"   >
       <forward   name="success"    path="/teams.jsp"/>
     </action>
+    <action path="/Manager"  type="natc.action.ManagerAction"  >
+      <forward   name="success"    path="/manager.jsp"/>
+    </action>
     <action path="/Player"  type="natc.action.PlayerAction"  >
       <forward   name="success"    path="/player.jsp"/>
     </action>
@@ -65,6 +68,7 @@
     <action path="/Games"   type="natc.action.GamesAction" name="gamesForm" scope="request" input="/games.jsp">
       <forward   name="errors"        path="/games.jsp"         />
       <forward   name="games"         path="/games.jsp"         />
+      <forward   name="off_season"    path="/off_season.jsp"    />
       <forward   name="rookie_draft"  path="/rookie_draft.jsp"  />
       <forward   name="training_camp" path="/training_camp.jsp" />
       <forward   name="roster_cut"    path="/roster_cut.jsp"    />

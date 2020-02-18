@@ -7,22 +7,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import natc.data.Manager;
+import natc.data.Schedule;
+import natc.data.Team;
+import natc.service.ManagerService;
+import natc.service.ScheduleService;
+import natc.service.TeamService;
+import natc.service.impl.ManagerServiceImpl;
+import natc.service.impl.ScheduleServiceImpl;
+import natc.service.impl.TeamServiceImpl;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import natc.data.Player;
-import natc.data.Schedule;
-import natc.data.Team;
-import natc.service.PlayerService;
-import natc.service.ScheduleService;
-import natc.service.TeamService;
-import natc.service.impl.PlayerServiceImpl;
-import natc.service.impl.ScheduleServiceImpl;
-import natc.service.impl.TeamServiceImpl;
-
-public class PlayerAction extends Action {
+public class ManagerAction extends Action {
 
 	public ActionForward execute(
 			ActionMapping       mapping,
@@ -30,19 +30,19 @@ public class PlayerAction extends Action {
 			HttpServletRequest  request,
 			HttpServletResponse response
 	) throws Exception {
-		
+
 		DataSource      dataSource      = null;
 		Connection      dbConn          = null;
-		TeamService     teamService     = null;
-		PlayerService   playerService   = null;
 		ScheduleService scheduleService = null;
-		String          player_id       = null;
+		ManagerService  managerService  = null;
+		TeamService     teamService     = null;
+		String          manager_id      = null;
 		
-		if ( (player_id = (String)request.getParameter( "player_id" )) == null ) {
+		if ( (manager_id = (String)request.getParameter( "manager_id" )) == null ) {
 			
 			return mapping.findForward( "success" );
 		}
-		
+
 		try {
 			
 			if ( (dataSource = getDataSource( request, "NATC_DB" )) == null ) {
@@ -59,34 +59,36 @@ public class PlayerAction extends Action {
 			
 			Schedule schedule = scheduleService.getLastScheduleEntry();
 			
-			playerService = new PlayerServiceImpl( dbConn, schedule.getYear() );
+			managerService = new ManagerServiceImpl( dbConn, schedule.getYear() );
 			
-			Player player = playerService.getLatestPlayerById( Integer.parseInt( player_id ) );
+			Manager manager = managerService.getLatestManagerById( Integer.parseInt( manager_id ) );
 			
-			// For this action we want to see what the player's in-game ratings are as well as potential ratings
-			player.setIn_game( true );
+			request.setAttribute( "manager", manager );
 			
-			request.setAttribute( "player", player );
-			
-			if ( player.getTeam_id() != 0 ) {
+			if ( manager.getTeam_id() != 0 ) {
 			
 				teamService = new TeamServiceImpl( dbConn, schedule.getYear() );
 				
-				Team team = teamService.getTeamById( player.getTeam_id() );
+				Team team        = teamService.getTeamById( manager.getTeam_id() );
+				List teamOffense = null;
+				List teamDefense = null;
 				
 				request.setAttribute( "team", team );
+
+				if ( (teamOffense = teamService.getTeamOffenseByTeamId( team.getTeam_id() )) != null ) {
+				
+					request.setAttribute( "teamOffense", teamOffense );
+				}
+				
+				if ( (teamDefense = teamService.getTeamDefenseByTeamId( team.getTeam_id() )) != null ) {
+				
+					request.setAttribute( "teamDefense", teamDefense );
+				}
 			}
-			
-			List playerStats;
-			
-			if ( (playerStats = playerService.getPlayerStatsSumByPlayerId( player.getPlayer_id() )) != null ) {
-			
-				request.setAttribute( "playerStats", playerStats );
-			}
-			
+
 			List history;
 			
-			if ( (history = playerService.getPlayerHistoryById( player.getPlayer_id() )) != null ) {
+			if ( (history = managerService.getManagerHistoryByManagerId( manager.getManager_id() )) != null ) {
 			
 				request.setAttribute( "history", history );
 			}

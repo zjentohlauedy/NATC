@@ -5,12 +5,10 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld"  prefix="logic"  %>
 <%@ taglib uri="/WEB-INF/struts-nested.tld" prefix="nested" %>
 
-<%@ page import="natc.data.TeamGame" %>
-
 <html:html locale="true">
 <head>
   <html:base/>
-  <title><bean:message key="title.team"/></title>
+  <title><bean:message key="title.manager"/></title>
   
   <link rel="stylesheet" type="text/css" href="styles/natc_layout.css" media='screen' />
   
@@ -34,82 +32,66 @@
   </tr>
 </table>
 
-<h1>TEAM</h1>
+<h1>MANAGER</h1>
 
 <table class="ratings">
   <tr class="label">
-    <td colspan="2"><bean:write name="team" property="location"/> <bean:write name="team" property="name"/></td>
+    <td colspan="2">
+      <bean:write name="manager" property="first_name"/> <bean:write name="manager" property="last_name"/>
+    </td>
   </tr>
+  <logic:present name="team">
+  <tr class="sublabel">
+    <td colspan="2">
+      <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+        <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
+      </html:link>
+    </td>
+  </tr>
+  </logic:present>
   <tr class="heading">
-    <td><bean:message key="team.label.area"   /></td>
-    <td><bean:message key="team.label.rating" /></td>
+    <td><bean:message key="manager.label.area"   /></td>
+    <td><bean:message key="manager.label.rating" /></td>
   </tr>
   <tr>
-    <td><bean:message key="team.label.offense"    /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="team" property="offense"    />'></td>
+    <td><bean:message key="manager.label.offense"    /></td>
+    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="offense"    />'></td>
   </tr>
   <tr>
-    <td><bean:message key="team.label.defense"    /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="team" property="defense"    />'></td>
+    <td><bean:message key="manager.label.defense"    /></td>
+    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="defense"    />'></td>
   </tr>
   <tr>
-    <td><bean:message key="team.label.discipline" /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="team" property="discipline" />'></td>
+    <td><bean:message key="manager.label.intangible" /></td>
+    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="intangible" />'></td>
   </tr>
   <tr>
-    <td><bean:message key="team.label.ps_offense" /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="team" property="ps_offense" />'></td>
+    <td><bean:message key="manager.label.penalties" /></td>
+    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="penalties" />'></td>
   </tr>
   <tr>
-    <td><bean:message key="team.label.ps_defense" /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="team" property="ps_defense" />'></td>
+    <td><bean:message key="manager.label.style" /></td>
+    <td>
+      <logic:equal name="manager" property="style" value="1">
+        <bean:message key="manager.label.offensive" />
+      </logic:equal>
+      <logic:equal name="manager" property="style" value="2">
+        <bean:message key="manager.label.defensive" />
+      </logic:equal>
+      <logic:equal name="manager" property="style" value="3">
+        <bean:message key="manager.label.intangible" />
+      </logic:equal>
+      <logic:equal name="manager" property="style" value="4">
+        <bean:message key="manager.label.penalty" />
+      </logic:equal>
+      <logic:equal name="manager" property="style" value="5">
+        <bean:message key="manager.label.balanced" />
+      </logic:equal>
+    </td>
   </tr>
-  <tr class="separator"></tr>
 </table>
 
-<logic:present name="manager">
-  <table class="roster">
-    <tr class="label">
-      <td colspan="3"><bean:message key="team.label.manager"/></td>
-    </tr>
-    <tr class="heading">
-      <td><bean:message key="team.label.manager" /></td>
-      <td><bean:message key="team.label.age"     /></td>
-      <td><bean:message key="team.label.skill"   /></td>
-      <td><bean:message key="team.label.style"   /></td>
-    </tr>
-    <tr>
-      <td>
-        <html:link page="/Manager.do" paramId="manager_id" paramName="manager" paramProperty="manager_id">
-          <bean:write name="manager" property="first_name" /> <bean:write name="manager" property="last_name"  />
-        </html:link>
-      </td>
-      <td>
-        <bean:write name="manager" property="age" />
-      </td>
-      <td>
-        <img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="manager" property="overallRating"/>'>
-      </td>
-      <td>
-        <logic:equal name="manager" property="style" value="1">
-          <bean:message key="manager.label.offensive" />
-        </logic:equal>
-        <logic:equal name="manager" property="style" value="2">
-          <bean:message key="manager.label.defensive" />
-        </logic:equal>
-        <logic:equal name="manager" property="style" value="3">
-          <bean:message key="manager.label.intangible" />
-        </logic:equal>
-        <logic:equal name="manager" property="style" value="4">
-          <bean:message key="manager.label.penalty" />
-        </logic:equal>
-        <logic:equal name="manager" property="style" value="5">
-          <bean:message key="manager.label.balanced" />
-        </logic:equal>
-      </td>
-    </tr>
-  </table>
-</logic:present>
+<logic:present name="team">
 
 <table class="boxscores">
   <tr class="label">
@@ -315,153 +297,107 @@
 </logic:present>
 </table>
 
-
-<logic:present name="teamPlayers">
-<table class="roster">
-  <tr class="label">
-    <td colspan="3"><bean:message key="team.label.players"/></td>
-  </tr>
-  <tr class="heading">
-    <td><bean:message key="team.label.player"        /></td>
-    <td><bean:message key="team.label.age"           /></td>
-    <td><bean:message key="team.label.skill"         /></td>
-    <td><bean:message key="team.label.games"         /></td>
-    <td><bean:message key="team.label.time_per_game" /></td>
-    <td><bean:message key="team.label.goals"         /></td>
-    <td><bean:message key="team.label.assists"       /></td>
-    <td><bean:message key="team.label.stops"         /></td>
-    <td><bean:message key="team.label.steals"        /></td>
-    <td><bean:message key="team.label.psm"           /></td>
-  </tr>
-  <logic:iterate id="teamPlayer" name="teamPlayers">
-    <tr>
-      <td>
-        <html:link page="/Player.do" paramId="player_id" paramName="teamPlayer" paramProperty="player_id">
-          <bean:write name="teamPlayer" property="last_name"/>, <bean:write name="teamPlayer" property="first_name"/>
-        </html:link>
-        <logic:equal name="teamPlayer" property="rookie" value="true">
-          <h7><bean:message key="team.label.rookie" /></h7>
-        </logic:equal>
-        <logic:equal name="teamPlayer" property="award" value="1">
-          <h7><bean:message key="team.label.silver" /></h7>
-        </logic:equal>
-        <logic:equal name="teamPlayer" property="award" value="2">
-          <h7><bean:message key="team.label.gold" /></h7>
-        </logic:equal>
-        <logic:equal name="teamPlayer" property="award" value="3">
-          <h7><bean:message key="team.label.platinum" /></h7>
-        </logic:equal>
-        <logic:notEqual name="teamPlayer" property="allstar_team_id" value="0">
-          <h7><bean:message key="team.label.allstar" /></h7>
-        </logic:notEqual>
-      </td>
-      <td>
-        <bean:write name="teamPlayer" property="age"/>
-      </td>
-      <td>
-        <img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="teamPlayer" property="rating"/>'>
-      </td>
-      <td><bean:write name="teamPlayer" property="games"          /></td>
-      <td><bean:write name="teamPlayer" property="timePerGameDsp" /></td>
-      <td><bean:write name="teamPlayer" property="goals"          /></td>
-      <td><bean:write name="teamPlayer" property="assists"        /></td>
-      <td><bean:write name="teamPlayer" property="stops"          /></td>
-      <td><bean:write name="teamPlayer" property="steals"         /></td>
-      <td><bean:write name="teamPlayer" property="psm"            /></td>
-    </tr>
-  </logic:iterate>
-  <tr class="separator"></tr>
-</table>
 </logic:present>
 
 <logic:present name="history">
-<table class="boxscores">
-  <tr class="label">
-    <td><bean:message key="team.label.history"/></td>
-  </tr>
-  <tr class="heading">
-    <td><bean:message key="team.label.year"       /></td>
-    <td><bean:message key="team.label.preseason"  /></td>
-    <td><bean:message key="team.label.record"     /></td>
-    <td><bean:message key="team.label.division"   /></td>
-    <td><bean:message key="team.label.ooc"        /></td>
-    <td><bean:message key="team.label.home"       /></td>
-    <td><bean:message key="team.label.road"       /></td>
-    <td><bean:message key="team.label.overtime"   /></td>
-    <td><bean:message key="team.label.postseason" /></td>
-    <td><bean:message key="team.label.finish"     /></td>
-  </tr>
-  <logic:iterate id="entry" name="history">
-    <logic:equal name="entry" property="year" value="Total">
-      <tr class="totals">
-    </logic:equal>
-    <logic:notEqual name="entry" property="year" value="Total">
-      <tr>
-    </logic:notEqual>
-      <td><bean:write name="entry" property="year"            /></td>
-      <td><bean:write name="entry" property="preseason_wins"  />-<bean:write name="entry" property="preseason_losses"  /></td>
-      <td><bean:write name="entry" property="wins"            />-<bean:write name="entry" property="losses"            /></td>
-      <td><bean:write name="entry" property="division_wins"   />-<bean:write name="entry" property="division_losses"   /></td>
-      <td><bean:write name="entry" property="ooc_wins"        />-<bean:write name="entry" property="ooc_losses"        /></td>
-      <td><bean:write name="entry" property="home_wins"       />-<bean:write name="entry" property="home_losses"       /></td>
-      <td><bean:write name="entry" property="road_wins"       />-<bean:write name="entry" property="road_losses"       /></td>
-      <td><bean:write name="entry" property="ot_wins"         />-<bean:write name="entry" property="ot_losses"         /></td>
-      <td><bean:write name="entry" property="postseason_wins" />-<bean:write name="entry" property="postseason_losses" /></td>
+  <table class="boxscores">
+    <tr class="label">
+      <td><bean:message key="manager.label.history"/></td>
+    </tr>
+    <tr class="heading">
+      <td colspan="4"></td>
+      <td colspan="4"><bean:message key="manager.label.offense" /></td>
+      <td colspan="4"><bean:message key="manager.label.defense" /></td>
+    </tr>
+    <tr class="heading">
+      <td><bean:message key="manager.label.team"    /></td>
+      <td><bean:message key="manager.label.year"    /></td>
+      <td><bean:message key="manager.label.record"  /></td>
+      <td><bean:message key="manager.label.finish"  /></td>
+      <td><bean:message key="manager.label.avg_top" /></td>
+      <td><bean:message key="manager.label.score"   /></td>
+      <td><bean:message key="manager.label.eff"     /></td>
+      <td><bean:message key="manager.label.ps_eff"  /></td>
+      <td><bean:message key="manager.label.avg_top" /></td>
+      <td><bean:message key="manager.label.score"   /></td>
+      <td><bean:message key="manager.label.eff"     /></td>
+      <td><bean:message key="manager.label.ps_eff"  /></td>
+    </tr>
+    <logic:iterate id="managerStatsView" name="history">
+      <logic:equal name="managerStatsView" property="year" value="Total">
+        <tr class="totals">
+      </logic:equal>
+      <logic:notEqual name="managerStatsView" property="year" value="Total">
+        <tr>
+      </logic:notEqual>
       <td>
-        <logic:equal name="entry" property="playoff_rank" value="0">
-          <logic:equal name="entry" property="division_rank" value="0">
+        <html:link page="/Team.do" paramId="team_id" paramName="managerStatsView" paramProperty="team_id">
+          <bean:write name="managerStatsView" property="team_abbrev"/>
+        </html:link>
+      </td>
+      <td><bean:write name="managerStatsView" property="year" /></td>
+      <td><bean:write name="managerStatsView" property="wins" />-<bean:write name="managerStatsView" property="losses" /></td>
+      <td>
+        <logic:equal name="managerStatsView" property="playoff_rank" value="0">
+          <logic:equal name="managerStatsView" property="division_rank" value="0">
             <bean:message key="team.label.na" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="5">
+          <logic:equal name="managerStatsView" property="division_rank" value="5">
             <bean:message key="team.label.fifth" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="6">
+          <logic:equal name="managerStatsView" property="division_rank" value="6">
             <bean:message key="team.label.sixth" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="7">
+          <logic:equal name="managerStatsView" property="division_rank" value="7">
             <bean:message key="team.label.seventh" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="8">
+          <logic:equal name="managerStatsView" property="division_rank" value="8">
             <bean:message key="team.label.eighth" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="9">
+          <logic:equal name="managerStatsView" property="division_rank" value="9">
             <bean:message key="team.label.ninth" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="10">
+          <logic:equal name="managerStatsView" property="division_rank" value="10">
             <bean:message key="team.label.last" />
           </logic:equal>
         </logic:equal>
-        <logic:equal name="entry" property="playoff_rank" value="1">
-          <logic:equal name="entry" property="division_rank" value="1">
+        <logic:equal name="managerStatsView" property="playoff_rank" value="1">
+          <logic:equal name="managerStatsView" property="division_rank" value="1">
             <bean:message key="team.label.first" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="2">
+          <logic:equal name="managerStatsView" property="division_rank" value="2">
             <bean:message key="team.label.second" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="3">
+          <logic:equal name="managerStatsView" property="division_rank" value="3">
             <bean:message key="team.label.third" />
           </logic:equal>
-          <logic:equal name="entry" property="division_rank" value="4">
+          <logic:equal name="managerStatsView" property="division_rank" value="4">
             <bean:message key="team.label.fourth" />
           </logic:equal>
         </logic:equal>
-        <logic:equal name="entry" property="playoff_rank" value="2">
+        <logic:equal name="managerStatsView" property="playoff_rank" value="2">
           <bean:message key="team.label.div_runner_up" />
         </logic:equal>
-        <logic:equal name="entry" property="playoff_rank" value="3">
+        <logic:equal name="managerStatsView" property="playoff_rank" value="3">
           <bean:message key="team.label.division_champ" />
         </logic:equal>
-        <logic:equal name="entry" property="playoff_rank" value="4">
+        <logic:equal name="managerStatsView" property="playoff_rank" value="4">
           <bean:message key="team.label.conference_champ" />
         </logic:equal>
-        <logic:equal name="entry" property="playoff_rank" value="5">
+        <logic:equal name="managerStatsView" property="playoff_rank" value="5">
           <bean:message key="team.label.natc_champ" />
         </logic:equal>
       </td>
-    </tr>
-  </logic:iterate>
-  <tr class="separator"></tr>
-</table>
+      <td><bean:write name="managerStatsView" property="offAvgPossessionTimeDsp" /></td>
+      <td><bean:write name="managerStatsView" property="off_points"              /></td>
+      <td><bean:write name="managerStatsView" property="offScoringEfficiencyDsp" /></td>
+      <td><bean:write name="managerStatsView" property="offPsEfficiencyDsp"      /></td>
+      <td><bean:write name="managerStatsView" property="defAvgPossessionTimeDsp" /></td>
+      <td><bean:write name="managerStatsView" property="def_points"              /></td>
+      <td><bean:write name="managerStatsView" property="defScoringEfficiencyDsp" /></td>
+      <td><bean:write name="managerStatsView" property="defPsEfficiencyDsp"      /></td>
+    </logic:iterate>
+  </table>
 </logic:present>
 
 </body>

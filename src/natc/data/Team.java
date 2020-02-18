@@ -10,57 +10,59 @@ public class Team {
 
 	public static final int AVG_TIME_PER_STOPPAGE = 67;
 	
-	private String year;
+	private String   year;
 	
-	private int    team_id;
+	private int      team_id;
 	
-	private String location;
-	private String name;
-	private String abbrev;
+	private String   location;
+	private String   name;
+	private String   abbrev;
 	
-	private int    conference;
-	private int    division;
+	private int      conference;
+	private int      division;
 	
-	private int    games;
-	private int    wins;
-	private int    losses;
-	private int    division_wins;
-	private int    division_losses;
-	private int    ooc_wins;
-	private int    ooc_losses;
-	private int    ot_wins;
-	private int    ot_losses;
-	private int    road_wins;
-	private int    road_losses;
-	private int    home_wins;
-	private int    home_losses;
+	private int      games;
+	private int      wins;
+	private int      losses;
+	private int      division_wins;
+	private int      division_losses;
+	private int      ooc_wins;
+	private int      ooc_losses;
+	private int      ot_wins;
+	private int      ot_losses;
+	private int      road_wins;
+	private int      road_losses;
+	private int      home_wins;
+	private int      home_losses;
 	
-	private int    division_rank; // 1-10 position in div at end of season
+	private int      division_rank; // 1-10 position in div at end of season
 	
 	// null or 0, 1 for round 1, 2 for round 2, 3 for div champ, 4 for conf champ, 5 for natc champ
-	private int    playoff_rank;
-	private int    playoff_games;
-	private int    round1_wins;
-	private int    round2_wins;
-	private int    round3_wins;
+	private int      playoff_rank;
+	private int      playoff_games;
+	private int      round1_wins;
+	private int      round2_wins;
+	private int      round3_wins;
 	
-	private int    preseason_games;
-	private int    preseason_wins;
-	private int    preseason_losses;
+	private int      preseason_games;
+	private int      preseason_wins;
+	private int      preseason_losses;
 	
-	private int    streak_wins;
-	private int    streak_losses;
+	private int      streak_wins;
+	private int      streak_losses;
 	
 	// Team Ratings
-	private double offense;
-	private double defense;
-	private double discipline;
-	private double ps_offense;
-	private double ps_defense;
+	private double   offense;
+	private double   defense;
+	private double   discipline;
+	private double   ps_offense;
+	private double   ps_defense;
 	
-	private List   players;
+	private Manager  manager;
 	
-	private boolean in_game;
+	private List     players;
+	
+	private boolean  in_game;
 	
 	private TeamGame game;
 	
@@ -102,6 +104,7 @@ public class Team {
 		this.discipline       = 0.0;
 		this.ps_offense       = 0.0;
 		this.ps_defense       = 0.0;
+		this.manager          = null;
 		this.players          = null;
 		this.in_game          = false;
 		this.game             = null;
@@ -323,9 +326,18 @@ public class Team {
 			}
 		}
 		/*
-		if ( this.team_id == 1 ) {
+		if ( this.team_id == 34 ) {
 		
 			System.out.println( "Active Players for " + this.abbrev + " with time remaining: " + String.valueOf( time_remaining / 60 ) + ":" + String.valueOf( time_remaining % 60 ) + "." );
+			
+			switch ( this.manager.getStyle() ) {
+			
+			case Manager.STYLE_OFFENSIVE:  System.out.println( "Manager Style: Offensive"  );  break;
+			case Manager.STYLE_DEFENSIVE:  System.out.println( "Manager Style: Defensive"  );  break;
+			case Manager.STYLE_INTANGIBLE: System.out.println( "Manager Style: Intangible" );  break;
+			case Manager.STYLE_PENALTY:    System.out.println( "Manager Style: Penalty"    );  break;
+			case Manager.STYLE_BALANCED:   System.out.println( "Manager Style: Balanced"   );  break;
+			}
 			
 			i = this.players.iterator();
 			
@@ -335,7 +347,18 @@ public class Team {
 				
 				if ( p.isPlaying() ) {
 				
-					System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Age: " + String.valueOf( p.getAge() ) + ", Rating: " + String.valueOf( p.getAdjustedPerformanceRating() ) + ", Fatigue: " + String.valueOf( p.getFatigue() ) );
+					System.out.print( p.getFirst_name() + " " + p.getLast_name() + ", Age: " + String.valueOf( p.getAge() ) );
+					
+					switch ( this.manager.getStyle() ) {
+					
+					case Manager.STYLE_OFFENSIVE:  System.out.print( ", Rating: " + String.valueOf( p.getAdjustedOffensiveRating()   ) );  break;
+					case Manager.STYLE_DEFENSIVE:  System.out.print( ", Rating: " + String.valueOf( p.getAdjustedDefensiveRating()   ) );  break;
+					case Manager.STYLE_INTANGIBLE: System.out.print( ", Rating: " + String.valueOf( p.getAdjustedIntangibleRating()  ) );  break;
+					case Manager.STYLE_PENALTY:    System.out.print( ", Rating: " + String.valueOf( p.getAdjustedPenaltyRating()     ) );  break;
+					case Manager.STYLE_BALANCED:   System.out.print( ", Rating: " + String.valueOf( p.getAdjustedPerformanceRating() ) );  break;
+					}
+					
+					System.out.println( ", Fatigue: " + String.valueOf( p.getFatigue() ) );
 				}
 			}
 		}
@@ -347,11 +370,24 @@ public class Team {
 	
 		if ( this.players == null ) return;
 		
+		int rating_count = 0;
+		
 		this.offense    = 0;
 		this.defense    = 0;
 		this.discipline = 0;
 		this.ps_offense = 0;
 		this.ps_defense = 0;
+		
+		if ( this.manager != null ) {
+		
+			this.offense    += manager.getOffense();
+			this.defense    += manager.getDefense();
+			this.discipline += manager.getIntangible();
+			this.ps_offense += manager.getPenalties();
+			this.ps_defense += manager.getPenalties();
+			
+			rating_count++;
+		}
 		
 		Iterator i = this.players.iterator();
 
@@ -368,6 +404,8 @@ public class Team {
 				this.discipline += player.getAdjustedDiscipline();
 				this.ps_offense += player.getAdjustedPenalty_offense();
 				this.ps_defense += player.getAdjustedPenalty_defense();
+				
+				rating_count++;
 			}
 			else {
 				
@@ -376,27 +414,18 @@ public class Team {
 				this.discipline += player.getAdjustedDiscipline( true, false, false );
 				this.ps_offense += player.getAdjustedPenalty_offense( true, false, false );
 				this.ps_defense += player.getAdjustedPenalty_defense( true, false, false );
+
+				rating_count++;
 			}
 		}
 
-		if ( this.isIn_game() ) {
-
-			this.offense    /= 5;
-			this.defense    /= 5;
-			this.discipline /= 5;
-			this.ps_offense /= 5;
-			this.ps_defense /= 5;
-		}
-		else {
-
-			this.offense    /= this.players.size();
-			this.defense    /= this.players.size();
-			this.discipline /= this.players.size();
-			this.ps_offense /= this.players.size();
-			this.ps_defense /= this.players.size();
-		}
+		this.offense    /= rating_count;
+		this.defense    /= rating_count;
+		this.discipline /= rating_count;
+		this.ps_offense /= rating_count;
+		this.ps_defense /= rating_count;
 	}
-	
+
 	public void calcProbabilities( Team opponent, int game_type, boolean isRoad ) {
 	
 		/*
@@ -1135,6 +1164,14 @@ public class Team {
 
 	public void setStreak_losses(int streakLosses) {
 		streak_losses = streakLosses;
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public void setManager(Manager manager) {
+		this.manager = manager;
 	}
 
 }

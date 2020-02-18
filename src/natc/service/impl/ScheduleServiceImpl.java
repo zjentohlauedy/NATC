@@ -510,6 +510,18 @@ public class ScheduleServiceImpl implements ScheduleService {
 			
 			ps.executeUpdate();
 			
+			// Off-season moves
+			time = getTime( Integer.valueOf( year ).intValue(), Calendar.FEBRUARY, 28 );
+			
+			ps.setString(  1, year                             );
+			ps.setInt(     2, sequence++                       );
+			ps.setInt(     3, ScheduleType.OFF_SEASON_MOVES    );
+			ps.setNull(    4, Types.VARCHAR                    );
+			ps.setDate(    5, new java.sql.Date( time )        );
+			ps.setBoolean( 6, false                            );
+			
+			ps.executeUpdate();
+			
 			// Rookie draft - round 1
 			time = getRookieDraftTime( Integer.valueOf( year ).intValue() ); // first monday in march
 			

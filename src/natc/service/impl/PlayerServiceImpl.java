@@ -95,10 +95,12 @@ public class PlayerServiceImpl implements PlayerService {
 				}
 				
 				// Make sure it is not a duplicate
-				ps = DatabaseImpl.getPlayerByNameSelectPs( dbConn );
+				ps = DatabaseImpl.getPlayerOrManagerByNameSelectPs( dbConn );
 			
 				ps.setString( 1, names[0] );
 				ps.setString( 2, names[1] );
+				ps.setString( 3, names[0] );
+				ps.setString( 4, names[1] );
 			
 				dbRs = ps.executeQuery();
 			}
@@ -184,8 +186,8 @@ public class PlayerServiceImpl implements PlayerService {
 			DatabaseImpl.closeDbStmt( ps );
 		}
 	}
-	
-	public void updatePlayer( Player player, boolean is_on_team, boolean is_released ) throws SQLException {
+
+	public void updatePlayer( Player player ) throws SQLException {
 		
 		PreparedStatement ps = null;
 		
@@ -193,8 +195,8 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps = DatabaseImpl.getPlayerUpdatePs( dbConn );
 			
-			if   ( is_on_team ) ps.setInt(  1, player.getTeam_id() );
-			else                ps.setNull( 1, Types.INTEGER       );
+			if   ( player.getTeam_id() == 0 ) ps.setNull( 1, Types.INTEGER       );
+			else                              ps.setInt(  1, player.getTeam_id() );
 			
 			ps.setString(   2, player.getFirst_name()      );
 			ps.setString(   3, player.getLast_name()       );
@@ -219,14 +221,8 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setInt(     22, player.getSeasons_played()  );
 			ps.setBoolean( 23, player.isReleased()         );
 			
-			if   ( is_released  &&  player.getReleased_by() == 0 ) {
-				
-				ps.setInt( 24, player.getTeam_id()     );
-			}
-			else {
-				
-				ps.setInt( 24, player.getReleased_by() );
-			}
+			if   ( player.getReleased_by() == 0 ) ps.setNull( 24, Types.INTEGER           );
+			else                                  ps.setInt(  24, player.getReleased_by() );
 			
 			ps.setString(  25, year                        );
 			ps.setInt(     26, player.getPlayer_id()       );
@@ -793,7 +789,7 @@ public class PlayerServiceImpl implements PlayerService {
 		
 		try {
 			
-			ps = DatabaseImpl.getUpdateSeasonesPlayedUpdatePs( dbConn );
+			ps = DatabaseImpl.getUpdateSeasonsPlayedUpdatePs( dbConn );
 			
 			ps.setString(  1, this.year );
 			
@@ -1306,6 +1302,67 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 		
 		return selection;
+	}
+
+	public List getManagerialCandidates() throws SQLException {
+		
+		List playerList = null;
+		
+		PreparedStatement ps        = null;
+		ResultSet         dbRs      = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getManagerialCandidatesSelectPs( dbConn );
+			
+			ps.setString( 1, year );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				Player player = new Player();
+				
+				player.setPlayer_id(       dbRs.getInt(      1 ) );
+				player.setTeam_id(         dbRs.getInt(      2 ) );
+				player.setYear(            dbRs.getString(   3 ) );
+				player.setFirst_name(      dbRs.getString(   4 ) );
+				player.setLast_name(       dbRs.getString(   5 ) );
+				player.setAge(             dbRs.getInt(      6 ) );
+				player.setScoring(         dbRs.getDouble(   7 ) );
+				player.setPassing(         dbRs.getDouble(   8 ) );
+				player.setBlocking(        dbRs.getDouble(   9 ) );
+				player.setTackling(        dbRs.getDouble(  10 ) );
+				player.setStealing(        dbRs.getDouble(  11 ) );
+				player.setPresence(        dbRs.getDouble(  12 ) );
+				player.setDiscipline(      dbRs.getDouble(  13 ) );
+				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
+				player.setPenalty_offense( dbRs.getDouble(  15 ) );
+				player.setPenalty_defense( dbRs.getDouble(  16 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setConfidence(      dbRs.getDouble(  18 ) );
+				player.setVitality(        dbRs.getDouble(  19 ) );
+				player.setRookie(          dbRs.getBoolean( 20 ) );
+				player.setRetired(         dbRs.getBoolean( 21 ) );
+				player.setAward(           dbRs.getInt(     22 ) );
+				player.setDraft_pick(      dbRs.getInt(     23 ) );
+				player.setSeasons_played(  dbRs.getInt(     24 ) );
+				player.setAllstar_team_id( dbRs.getInt(     25 ) );
+				player.setReleased(        dbRs.getBoolean( 26 ) );
+				player.setReleased_by(     dbRs.getInt(     27 ) );
+				
+				if ( playerList == null ) playerList = new ArrayList();
+				
+				playerList.add( player );
+			}
+		}
+		finally {
+		
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return playerList;
 	}
 	
 }

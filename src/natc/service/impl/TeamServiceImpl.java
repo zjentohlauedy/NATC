@@ -16,6 +16,7 @@ import natc.data.Team;
 import natc.data.TeamDefense;
 import natc.data.TeamGame;
 import natc.data.TeamOffense;
+import natc.service.ManagerService;
 import natc.service.PlayerService;
 import natc.service.TeamService;
 import natc.view.TeamGameView;
@@ -116,7 +117,7 @@ public class TeamServiceImpl implements TeamService {
 					player.setAge( (int)Math.floor( (Math.random() * 12.0) + 18.0 ) );
 					player.setRookie( false );
 					
-					playerService.updatePlayer( player, true, false );
+					playerService.updatePlayer( player );
 				}
 			}
 			
@@ -267,7 +268,6 @@ public class TeamServiceImpl implements TeamService {
 	public Team getTeamById( int team_id ) throws SQLException {
 
 		Team team    = null;
-		List players = null;
 		
 		PreparedStatement ps       = null;
 		ResultSet         dbRs     = null;
@@ -315,22 +315,32 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
 				
+				// Get manager
+				ManagerService managerService = new ManagerServiceImpl( dbConn, year );
+				
+				if ( team.getName().equals( "All Stars" ) ) {
+				
+					team.setManager( managerService.getManagerByAllstarTeamId( team_id ) );
+				}
+				else {
+				
+					team.setManager( managerService.getManagerByTeamId( team_id ) );
+				}
+				
 				// Get players
 				PlayerService playerService = new PlayerServiceImpl( dbConn, year );
 				
 				if ( team.getName().equals( "All Stars" ) ) {
 					
-					players = playerService.getPlayersByAllstarTeamId( team_id );
+					team.setPlayers( playerService.getPlayersByAllstarTeamId( team_id ) );
 				}
 				else {
 					
-					players = playerService.getPlayersByTeamId( team_id );
+					team.setPlayers( playerService.getPlayersByTeamId( team_id ) );
 				}
 				
-				if ( players != null ) {
+				if ( team.getPlayers() != null ) {
 					
-					team.setPlayers( players );
-
 					team.calcTeamRatings();
 				}
 			}

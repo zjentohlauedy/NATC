@@ -77,6 +77,24 @@
               </td>
             </tr>
           </logic:iterate>
+          <logic:present name="manager0">
+            <tr class="heading">
+              <td><bean:message key="awards.label.manager" /></td>
+              <td><bean:message key="awards.label.team"    /></td>
+            </tr>
+            <tr>
+              <td>
+                <html:link page="/Manager.do" paramId="manager_id" paramName="manager0" paramProperty="manager_id">
+                  <bean:write name="manager0" property="last_name" />, <bean:write name="manager0" property="first_name" />
+                </html:link>
+              </td>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="manager0" paramProperty="team_id">
+                  <bean:write name="manager0" property="team_abbrev" />
+                </html:link>
+              </td>
+            </tr>
+          </logic:present>
         </table>
       </logic:present>
     </td>
@@ -111,6 +129,24 @@
               </td>
             </tr>
           </logic:iterate>
+          <logic:present name="manager1">
+            <tr class="heading">
+              <td><bean:message key="awards.label.manager" /></td>
+              <td><bean:message key="awards.label.team"    /></td>
+            </tr>
+            <tr>
+              <td>
+                <html:link page="/Manager.do" paramId="manager_id" paramName="manager1" paramProperty="manager_id">
+                  <bean:write name="manager1" property="last_name" />, <bean:write name="manager1" property="first_name" />
+                </html:link>
+              </td>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="manager1" paramProperty="team_id">
+                  <bean:write name="manager1" property="team_abbrev" />
+                </html:link>
+              </td>
+            </tr>
+          </logic:present>
         </table>
       </logic:present>
     </td>
@@ -148,6 +184,24 @@
               </td>
             </tr>
           </logic:iterate>
+          <logic:present name="manager2">
+            <tr class="heading">
+              <td><bean:message key="awards.label.manager" /></td>
+              <td><bean:message key="awards.label.team"    /></td>
+            </tr>
+            <tr>
+              <td>
+                <html:link page="/Manager.do" paramId="manager_id" paramName="manager2" paramProperty="manager_id">
+                  <bean:write name="manager2" property="last_name" />, <bean:write name="manager2" property="first_name" />
+                </html:link>
+              </td>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="manager2" paramProperty="team_id">
+                  <bean:write name="manager2" property="team_abbrev" />
+                </html:link>
+              </td>
+            </tr>
+          </logic:present>
         </table>
       </logic:present>
     </td>
@@ -182,6 +236,24 @@
               </td>
             </tr>
           </logic:iterate>
+          <logic:present name="manager3">
+            <tr class="heading">
+              <td><bean:message key="awards.label.manager" /></td>
+              <td><bean:message key="awards.label.team"    /></td>
+            </tr>
+            <tr>
+              <td>
+                <html:link page="/Manager.do" paramId="manager_id" paramName="manager3" paramProperty="manager_id">
+                  <bean:write name="manager3" property="last_name" />, <bean:write name="manager3" property="first_name" />
+                </html:link>
+              </td>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="manager3" paramProperty="team_id">
+                  <bean:write name="manager3" property="team_abbrev" />
+                </html:link>
+              </td>
+            </tr>
+          </logic:present>
         </table>
       </logic:present>
     </td>

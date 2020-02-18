@@ -94,6 +94,7 @@ public class Player {
 		this.allstar_team_id = 0;
 		this.score           = 0;
 		this.released        = false;
+		this.released_by     = 0;
 		this.game            = null;
 	}
 	
@@ -131,6 +132,7 @@ public class Player {
 		this.allstar_team_id = 0;
 		this.score           = 0;
 		this.released        = false;
+		this.released_by     = 0;
 		this.game            = null;
 	}
 
@@ -216,14 +218,14 @@ public class Player {
 
 	public double getPerformanceRating() {
 	
-		return          this.scoring
+		return       (  this.scoring
 		/**/          + this.passing
 		/**/          + this.blocking
 		/**/          + this.tackling
 		/**/          + this.stealing
 		/**/          + this.presence
 		/**/          + this.discipline
-		/**/          + this.endurance;
+		/**/          + this.endurance  ) / 8.0;
 	}
 
 	public double getAdjustedPerformanceRating() {
@@ -237,6 +239,8 @@ public class Player {
 		/**/          + this.discipline
 		/**/          + this.endurance;
 
+		rating /= 8.0;
+		
 		if ( this.isIn_game() ) {
 
 			rating *= this.getRatingCoefficient( true, true );
@@ -261,6 +265,8 @@ public class Player {
 		/**/          + this.discipline
 		/**/          + this.endurance;
 
+		rating /= 8.0;
+		
 		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
 
 		if ( applyFatigue && this.fatigue > 1.0 ) {
@@ -343,6 +349,78 @@ public class Player {
 		return rating;
 	}
 
+	public double getIntangibleRating() {
+	
+		return (this.blocking + this.presence + this.discipline + this.endurance) / 4.0;
+	}
+
+	public double getAdjustedIntangibleRating() {
+	
+		double rating = (this.blocking + this.presence + this.discipline + this.endurance) / 4.0;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedIntangibleRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+	
+		double rating = (this.blocking + this.presence + this.discipline + this.endurance) / 4.0;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getPenaltyRating() {
+	
+		return (this.penalty_shot + this.penalty_offense + this.penalty_defense) / 3.0;
+	}
+
+	public double getAdjustedPenaltyRating() {
+	
+		double rating = (this.penalty_shot + this.penalty_offense + this.penalty_defense) / 3.0;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenaltyRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+	
+		double rating = (this.penalty_shot + this.penalty_offense + this.penalty_defense) / 3.0;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+	
 	public double getTurnoverRating() {
 	
 		// The inverse of discipline and passing

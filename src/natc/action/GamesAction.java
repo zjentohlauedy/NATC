@@ -23,10 +23,12 @@ import natc.data.Team;
 import natc.data.TeamGame;
 import natc.form.GamesForm;
 import natc.service.GameService;
+import natc.service.ManagerService;
 import natc.service.PlayerService;
 import natc.service.ScheduleService;
 import natc.service.TeamService;
 import natc.service.impl.GameServiceImpl;
+import natc.service.impl.ManagerServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
@@ -44,6 +46,7 @@ public class GamesAction extends Action {
 		PlayerService   playerService   = null;
 		ScheduleService scheduleService = null;
 		TeamService     teamService     = null;
+		ManagerService  managerService  = null;
 		Schedule        scheduleEntry   = null;
 		DataSource      dataSource      = null;
 		Connection      dbConn          = null;
@@ -217,6 +220,18 @@ public class GamesAction extends Action {
 			switch ( scheduleEntry.getType().getValue() ) {
 
 			case ScheduleType.BEGINNING_OF_SEASON:     nextPage = "games";         break;
+			case ScheduleType.OFF_SEASON_MOVES:
+				
+				managerService = (ManagerService)new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
+				
+				if ( (data = managerService.getRetiredManagers()) != null ) request.setAttribute( "retired_managers", data );
+				if ( (data = managerService.getFiredManagers())   != null ) request.setAttribute( "fired_managers",   data );
+				if ( (data = managerService.getHiredManagers())   != null ) request.setAttribute( "hired_managers",   data );
+				
+				nextPage = "off_season";
+				
+				break;
+				
 			case ScheduleType.ROOKIE_DRAFT_ROUND_1:
 				
 				if ( (data = gameService.getDraftPicks( 1 )) != null ) {
@@ -471,8 +486,9 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.ALL_STARS:
 				
-				teamService   = new TeamServiceImpl(   dbConn, scheduleEntry.getYear() );
-				playerService = new PlayerServiceImpl( dbConn, scheduleEntry.getYear() );
+				teamService    = new TeamServiceImpl(    dbConn, scheduleEntry.getYear() );
+				playerService  = new PlayerServiceImpl(  dbConn, scheduleEntry.getYear() );
+				managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
 				
 				int allstarTeamIds[] = teamService.getAllstarTeamIds();
 				
@@ -480,6 +496,11 @@ public class GamesAction extends Action {
 				data = playerService.getAllstarsByTeamId( allstarTeamIds[1] ); request.setAttribute( "div1stars", data );
 				data = playerService.getAllstarsByTeamId( allstarTeamIds[2] ); request.setAttribute( "div2stars", data );
 				data = playerService.getAllstarsByTeamId( allstarTeamIds[3] ); request.setAttribute( "div3stars", data );
+				
+				request.setAttribute( "manager0", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[0] ) );
+				request.setAttribute( "manager1", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[1] ) );
+				request.setAttribute( "manager2", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[2] ) );
+				request.setAttribute( "manager3", managerService.getManagerViewByAllstarTeamId( allstarTeamIds[3] ) );
 				
 				nextPage = "allstars";
 				

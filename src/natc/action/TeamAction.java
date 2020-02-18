@@ -16,6 +16,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import natc.data.Manager;
 import natc.data.Player;
 import natc.data.Schedule;
 import natc.data.Team;
@@ -39,6 +40,7 @@ public class TeamAction extends Action {
 		ScheduleService scheduleService = null;
 		TeamService     teamService     = null;
 		String          team_id         = null; 
+		Manager         manager         = null;
 		
 		if ( (team_id = (String)request.getParameter( "team_id" )) == null ) {
 		
@@ -66,6 +68,8 @@ public class TeamAction extends Action {
 			Team team = teamService.getTeamById( Integer.parseInt( team_id ) );
 			
 			request.setAttribute( "team", team );
+			
+			if ( (manager = team.getManager()) != null ) request.setAttribute( "manager", manager );
 			
 			List teamOffense;
 			List teamDefense;
@@ -97,7 +101,22 @@ public class TeamAction extends Action {
 				teamPlayerView.setRookie(          player.isRookie()           );
 				teamPlayerView.setAward(           player.getAward()           );
 				teamPlayerView.setAllstar_team_id( player.getAllstar_team_id() );
-				teamPlayerView.setRating(          player.getAdjustedPerformanceRating( true, false, false ) / 10.0 ); // 10 is theoretical max - convert to 0-1 ratio
+				
+				if ( manager == null ) {
+				
+					teamPlayerView.setRating( player.getAdjustedPerformanceRating( true, false, false ) ); // 10 is theoretical max - convert to 0-1 ratio
+				}
+				else {
+				
+					switch( manager.getStyle() ) {
+					
+					case Manager.STYLE_OFFENSIVE:  teamPlayerView.setRating( player.getAdjustedOffensiveRating(   true, false, false ) );  break;
+					case Manager.STYLE_DEFENSIVE:  teamPlayerView.setRating( player.getAdjustedDefensiveRating(   true, false, false ) );  break;
+					case Manager.STYLE_INTANGIBLE: teamPlayerView.setRating( player.getAdjustedIntangibleRating(  true, false, false ) );  break;
+					case Manager.STYLE_PENALTY:    teamPlayerView.setRating( player.getAdjustedPenaltyRating(     true, false, false ) );  break;
+					case Manager.STYLE_BALANCED:   teamPlayerView.setRating( player.getAdjustedPerformanceRating( true, false, false ) );  break;
+					}
+				}
 				
 				teamService.getTeamPlayerData( teamPlayerView );
 				
@@ -105,11 +124,23 @@ public class TeamAction extends Action {
 			}
 			
 			// Sort players by games played and time per game
-			Collections.sort( teamPlayers, new Comparator() { public int compare( Object arg1, Object arg2 ){
-				/**/                                                              TeamPlayerView tp1 = (TeamPlayerView)arg1;
-				/**/                                                              TeamPlayerView tp2 = (TeamPlayerView)arg2;
-				/**/                                                              if ( tp1.getGames() == tp2.getGames() ) return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
-				/**/                                                              return (tp1.getGames() > tp2.getGames()) ? 1 : -1; } });
+			Collections.sort( teamPlayers, new Comparator() {
+				
+				public int compare( Object arg1, Object arg2 ) {
+					
+					TeamPlayerView tp1 = (TeamPlayerView)arg1;
+					TeamPlayerView tp2 = (TeamPlayerView)arg2;
+					
+					if ( (tp1.getGames() + tp2.getGames()) == 0 ) {
+					
+						return (tp1.getRating() > tp2.getRating()) ? 1 : -1;
+					}
+					
+					if ( tp1.getGames() == tp2.getGames() ) return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
+					
+					return (tp1.getGames() > tp2.getGames()) ? 1 : -1;
+				}
+			});
 			Collections.reverse( teamPlayers );
 			
 			request.setAttribute( "teamPlayers", teamPlayers );

@@ -10,7 +10,7 @@ public interface PlayerService {
 
 	public Player generatePlayer( boolean is_on_team, int team_id ) throws SQLException;
 	public void   updatePlayersForNewSeason( String last_year ) throws SQLException;
-	public void   updatePlayer( Player player, boolean is_on_team, boolean is_released ) throws SQLException;
+	public void   updatePlayer( Player player ) throws SQLException;
 	public void   insertPlayerGame( PlayerGame playerGame ) throws SQLException;
 	public void   updatePlayerStats( Player player, int type ) throws SQLException;
 	public Player getPlayerById( int player_id ) throws SQLException;
@@ -33,4 +33,5 @@ public interface PlayerService {
 	public void   updateAllstarTeamId( int player_id, int team_id ) throws SQLException;
 	public List   getAllstarsByTeamId( int division ) throws SQLException;
 	public int    selectAllstarForTeam( int team_id ) throws SQLException;
+	public List   getManagerialCandidates() throws SQLException;
 }
