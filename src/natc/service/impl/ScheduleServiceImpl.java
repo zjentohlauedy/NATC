@@ -575,29 +575,17 @@ public class ScheduleServiceImpl implements ScheduleService {
 			ps.setBoolean( 6, false                            );
 
 			ps.executeUpdate();
-			
-			// Retirements
-			time = advanceTime( time, 7 ); // next monday
-			
-			ps.setString(  1, year                             );
-			ps.setInt(     2, sequence++                       );
-			ps.setInt(     3, ScheduleType.PLAYER_RETIREMENT   );
-			ps.setNull(    4, Types.VARCHAR                    );
-			ps.setDate(    5, new java.sql.Date( time )        );
-			ps.setBoolean( 6, false                            );
 
-			ps.executeUpdate();
-			
-			// Free Agency
+			// Player Changes (Free Agency and Retirement)
 			time = getTime( Integer.valueOf( year ).intValue(), Calendar.FEBRUARY, 28 );
 			
 			ps.setString(  1, year                             );
 			ps.setInt(     2, sequence++                       );
-			ps.setInt(     3, ScheduleType.FREE_AGENCY         );
+			ps.setInt(     3, ScheduleType.PLAYER_CHANGES      );
 			ps.setNull(    4, Types.VARCHAR                    );
 			ps.setDate(    5, new java.sql.Date( time )        );
 			ps.setBoolean( 6, false                            );
-			
+
 			ps.executeUpdate();
 			
 			// Rookie draft - round 1

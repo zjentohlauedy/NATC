@@ -628,8 +628,6 @@ public class ManagerServiceImpl implements ManagerService {
 				managerView.setIntangible(  dbRs1.getDouble(  7 ) );
 				managerView.setPenalty(     dbRs1.getDouble(  8 ) );
 				managerView.setStyle(       dbRs1.getInt(     9 ) );
-				managerView.setTeam_id(     dbRs1.getInt(    10 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 11 ) );
 				
 				ps2 = DatabaseImpl.getManagerCareerWinPctSelectPs( dbConn );
 				
@@ -762,8 +760,6 @@ public class ManagerServiceImpl implements ManagerService {
 				managerView.setIntangible(  dbRs1.getDouble(  6 ) );
 				managerView.setPenalty(     dbRs1.getDouble(  7 ) );
 				managerView.setStyle(       dbRs1.getInt(     8 ) );
-				managerView.setTeam_id(     dbRs1.getInt(     9 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 10 ) );
 				
 				ps2 = DatabaseImpl.getManagerTeamWinPctSelectPs( dbConn );
 

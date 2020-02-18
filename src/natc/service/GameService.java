@@ -18,10 +18,6 @@ public interface GameService {
 	public List     getRankedTeamsByDivision( int division ) throws SQLException;
 	public List     getRankedTeamList() throws SQLException;
 	public List     getRankedRookieList() throws SQLException;
-	public List     getReleasedPlayers() throws SQLException;
-	public List     getFreeAgentMoves() throws SQLException;
-	public List     getRetiredPlayersByTeam() throws SQLException;
-	public List     getRetiredPlayersWithoutTeam() throws SQLException;
 	public List     getInjuriesByDate( Date datestamp ) throws SQLException;
 	public List     getRankedAllstarTeams() throws SQLException;
 	public GameView getChampionshipGame() throws SQLException;

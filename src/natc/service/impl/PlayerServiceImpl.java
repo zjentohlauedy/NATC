@@ -16,14 +16,18 @@ import natc.data.Player;
 import natc.data.PlayerGame;
 import natc.data.PlayerScore;
 import natc.data.PlayerStats;
+import natc.data.Team;
 import natc.data.TeamGame;
 import natc.service.PlayerService;
+import natc.service.TeamService;
 import natc.view.DraftView;
 import natc.view.PlayerAllstarView;
 import natc.view.PlayerAwardsView;
 import natc.view.PlayerGameView;
 import natc.view.PlayerInjuryView;
 import natc.view.PlayerStatsView;
+import natc.view.ReleaseView;
+import natc.view.PlayerView;
 import natc.view.RookieInfoView;
 import natc.view.StringView;
 import natc.view.TrainingView;
@@ -1273,7 +1277,28 @@ public class PlayerServiceImpl implements PlayerService {
 		return allstars;
 	}
 
-	public void retirePlayers() throws SQLException {
+	public void retireTeamPlayers() throws SQLException {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getRetiredTeamPlayersUpdatePs( dbConn );
+			
+			ps.setBoolean( 1, true          );
+			ps.setBoolean( 2, false         );
+			ps.setNull(    3, Types.INTEGER );
+			ps.setString(  4, this.year     );
+			
+			ps.executeUpdate();
+		}
+		finally {
+			
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+
+	public void retireFreePlayers() throws SQLException {
 		
 		PreparedStatement ps = null;
 		
@@ -1283,16 +1308,6 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps.setBoolean( 1, true      );
 			ps.setString(  2, this.year );
-			
-			ps.executeUpdate();
-			
-			DatabaseImpl.closeDbStmt( ps );
-			
-			ps = DatabaseImpl.getRetiredTeamPlayersUpdatePs( dbConn );
-			
-			ps.setBoolean( 1, true          );
-			ps.setNull(    2, Types.INTEGER );
-			ps.setString(  3, this.year     );
 			
 			ps.executeUpdate();
 		}
@@ -1748,6 +1763,465 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 		
 		return playersList;
+	}
+
+	public List getPlayerChangesByTeam() throws SQLException {
+
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+		
+		List teams = teamService.getTeamList();
+		
+		Iterator i = teams.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			List playersList = new ArrayList();
+			List tempList    = null;
+			
+			if ( (tempList = getRetiredPlayersByTeam(  team.getTeam_id() )) != null ) playersList.addAll( tempList );
+			if ( (tempList = getReleasedPlayersByTeam( team.getTeam_id() )) != null ) playersList.addAll( tempList );
+			if ( (tempList = getSignedPlayersByTeam(   team.getTeam_id() )) != null ) playersList.addAll( tempList );
+
+			if ( playersList.size() == 0 ) {
+			
+				i.remove();
+			}
+			else {
+			
+				team.setPlayers( playersList );
+			}
+		}
+		
+		Team team = new Team();
+		
+		List playersList = getRetiredPlayersWithoutTeam();
+
+		if ( playersList != null ) {
+		
+			team.setPlayers( playersList );
+			
+			teams.add( team );
+		}
+		
+		return teams;
+	}
+
+	private void getAwardsForPlayer( PlayerView playerView ) throws SQLException {
+
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, playerView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.PLATINUM_AWARD );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				playerView.setPlatinum_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, playerView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.GOLD_AWARD     );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				playerView.setGold_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+
+			ps = DatabaseImpl.getAwardCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, playerView.getPlayer_id() );
+			ps.setInt( 2, PlayerScore.SILVER_AWARD   );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				playerView.setSilver_count( dbRs.getInt( 1 ) );
+			}
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+			
+			ps = DatabaseImpl.getAllstarCountByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt( 1, playerView.getPlayer_id() );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				playerView.setAllstar_count( dbRs.getInt( 1 ) );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+	
+	private List getRetiredPlayersByTeam( int team_id ) throws SQLException {
+
+		PreparedStatement ps1         = null;
+		PreparedStatement ps2         = null;
+		ResultSet         dbRs1       = null;
+		ResultSet         dbRs2       = null;
+		List              playersList = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getRetiredPlayersByTeamSelectPs( dbConn );
+			
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
+			
+			dbRs1 = ps1.executeQuery();
+
+			while ( dbRs1.next() ) {
+			
+				PlayerView playerView = new PlayerView();
+				
+				playerView.setStatus( PlayerView.STATUS_RETIRED );
+				
+				playerView.setPlayer_id(      dbRs1.getInt(    1 ) );
+				playerView.setFirst_name(     dbRs1.getString( 2 ) );
+				playerView.setLast_name(      dbRs1.getString( 3 ) );
+				playerView.setAge(            dbRs1.getInt(    4 ) );
+				playerView.setSeasons_played( dbRs1.getInt(    5 ) );
+				
+				ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+				
+				ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+				ps2.setInt( 2, playerView.getPlayer_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+					
+					playerView.setGoals(   dbRs2.getDouble( 1 ) );
+					playerView.setAssists( dbRs2.getDouble( 2 ) );
+					playerView.setStops(   dbRs2.getDouble( 3 ) );
+					playerView.setSteals(  dbRs2.getDouble( 4 ) );
+					playerView.setPsm(     dbRs2.getDouble( 5 ) );
+					playerView.setPoints(  dbRs2.getDouble( 6 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForPlayer( playerView );
+				
+				if ( playersList == null ) playersList = new ArrayList();
+				
+				playersList.add( playerView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+
+		return playersList;
+	}
+
+	private List getRetiredPlayersWithoutTeam() throws SQLException {
+
+		PreparedStatement ps1         = null;
+		PreparedStatement ps2         = null;
+		ResultSet         dbRs1       = null;
+		ResultSet         dbRs2       = null;
+		List              playersList = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getRetiredPlayersWithoutTeamSelectPs( dbConn );
+			
+			ps1.setInt(     1, 0    );
+			ps1.setString(  2, year );
+			ps1.setBoolean( 3, true );
+			
+			dbRs1 = ps1.executeQuery();
+
+			while ( dbRs1.next() ) {
+			
+				PlayerView playerView = new PlayerView();
+				
+				playerView.setStatus( PlayerView.STATUS_RETIRED );
+				
+				playerView.setPlayer_id(      dbRs1.getInt(    1 ) );
+				playerView.setFirst_name(     dbRs1.getString( 2 ) );
+				playerView.setLast_name(      dbRs1.getString( 3 ) );
+				playerView.setAge(            dbRs1.getInt(    4 ) );
+				playerView.setSeasons_played( dbRs1.getInt(    5 ) );
+				
+				ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+				
+				ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+				ps2.setInt( 2, playerView.getPlayer_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+					
+					playerView.setGoals(   dbRs2.getDouble( 1 ) );
+					playerView.setAssists( dbRs2.getDouble( 2 ) );
+					playerView.setStops(   dbRs2.getDouble( 3 ) );
+					playerView.setSteals(  dbRs2.getDouble( 4 ) );
+					playerView.setPsm(     dbRs2.getDouble( 5 ) );
+					playerView.setPoints(  dbRs2.getDouble( 6 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForPlayer( playerView );
+				
+				if ( playersList == null ) playersList = new ArrayList();
+				
+				playersList.add( playerView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+
+		return playersList;
+	}
+
+	private List getReleasedPlayersByTeam( int team_id ) throws SQLException {
+
+		PreparedStatement ps1         = null;
+		PreparedStatement ps2         = null;
+		ResultSet         dbRs1       = null;
+		ResultSet         dbRs2       = null;
+		List              playersList = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getReleasedFreeAgentsByTeamSelectPs( dbConn );
+			
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
+			
+			dbRs1 = ps1.executeQuery();
+
+			while ( dbRs1.next() ) {
+			
+				PlayerView playerView = new PlayerView();
+				
+				playerView.setStatus( PlayerView.STATUS_RELEASED );
+				
+				playerView.setPlayer_id(      dbRs1.getInt(    1 ) );
+				playerView.setFirst_name(     dbRs1.getString( 2 ) );
+				playerView.setLast_name(      dbRs1.getString( 3 ) );
+				playerView.setAge(            dbRs1.getInt(    4 ) );
+				playerView.setSeasons_played( dbRs1.getInt(    5 ) );
+				
+				ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+				
+				ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+				ps2.setInt( 2, playerView.getPlayer_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+					
+					playerView.setGoals(   dbRs2.getDouble( 1 ) );
+					playerView.setAssists( dbRs2.getDouble( 2 ) );
+					playerView.setStops(   dbRs2.getDouble( 3 ) );
+					playerView.setSteals(  dbRs2.getDouble( 4 ) );
+					playerView.setPsm(     dbRs2.getDouble( 5 ) );
+					playerView.setPoints(  dbRs2.getDouble( 6 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForPlayer( playerView );
+				
+				if ( playersList == null ) playersList = new ArrayList();
+				
+				playersList.add( playerView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+
+		return playersList;
+	}
+
+	private List getSignedPlayersByTeam( int team_id ) throws SQLException {
+		
+		PreparedStatement ps1         = null;
+		PreparedStatement ps2         = null;
+		ResultSet         dbRs1       = null;
+		ResultSet         dbRs2       = null;
+		TeamService       teamService = null;
+		List              playersList = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getSignedFreeAgentsByTeamSelectPs( dbConn );
+			
+			ps1.setString(  1, year    );
+			ps1.setInt(     2, team_id );
+			ps1.setBoolean( 3, true    );
+			
+			dbRs1 = ps1.executeQuery();
+
+			while ( dbRs1.next() ) {
+			
+				PlayerView playerView = new PlayerView();
+				
+				playerView.setStatus( PlayerView.STATUS_SIGNED );
+				
+				playerView.setPlayer_id(      dbRs1.getInt(    1 ) );
+				playerView.setFirst_name(     dbRs1.getString( 2 ) );
+				playerView.setLast_name(      dbRs1.getString( 3 ) );
+				playerView.setAge(            dbRs1.getInt(    4 ) );
+				playerView.setSeasons_played( dbRs1.getInt(    5 ) );
+				playerView.setFormer_team_id( dbRs1.getInt(    6 ) );
+				
+				if ( teamService == null ) teamService = new TeamServiceImpl( dbConn, year );
+				
+				playerView.setFormer_team_abbrev( teamService.getAbbrevForTeamId( playerView.getFormer_team_id() ) );
+				
+				ps2 = DatabaseImpl.getSeasonAveragesByPlayerSelectPs( dbConn );
+				
+				ps2.setInt( 1, TeamGame.gt_RegularSeason  );
+				ps2.setInt( 2, playerView.getPlayer_id() );
+				
+				dbRs2 = ps2.executeQuery();
+				
+				if ( dbRs2.next() ) {
+					
+					playerView.setGoals(   dbRs2.getDouble( 1 ) );
+					playerView.setAssists( dbRs2.getDouble( 2 ) );
+					playerView.setStops(   dbRs2.getDouble( 3 ) );
+					playerView.setSteals(  dbRs2.getDouble( 4 ) );
+					playerView.setPsm(     dbRs2.getDouble( 5 ) );
+					playerView.setPoints(  dbRs2.getDouble( 6 ) );
+				}
+				
+				DatabaseImpl.closeDbRs( dbRs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				getAwardsForPlayer( playerView );
+				
+				if ( playersList == null ) playersList = new ArrayList();
+				
+				playersList.add( playerView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs1 );
+			DatabaseImpl.closeDbRs( dbRs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+
+		return playersList;
+	}
+
+	public List getReleasedPlayers() throws SQLException {
+
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+
+		List teams = teamService.getTeamList();
+
+		Iterator i = teams.iterator();
+
+		while ( i.hasNext() ) {
+
+			Team team = (Team)i.next();
+
+			PreparedStatement ps          = null;
+			ResultSet         dbRs        = null;
+			List              playersList = null;
+
+			try {
+
+				ps = DatabaseImpl.getReleasedPlayersByTeamSelectPs( dbConn );
+
+				ps.setString(  1, year              );
+				ps.setInt(     2, team.getTeam_id() );
+				ps.setBoolean( 3, true              );
+				ps.setBoolean( 4, false             );
+				ps.setBoolean( 5, false             );
+
+				dbRs = ps.executeQuery();
+
+				playersList = null;
+
+				while ( dbRs.next() ) {
+
+					ReleaseView releaseView = new ReleaseView();
+
+					releaseView.setPlayer_id(      dbRs.getInt(     1 ) );
+					releaseView.setFirst_name(     dbRs.getString(  2 ) );
+					releaseView.setLast_name(      dbRs.getString(  3 ) );
+					releaseView.setTeam_id(        dbRs.getInt(     4 ) );
+					releaseView.setTeam_abbrev(    dbRs.getString(  5 ) );
+					releaseView.setRookie(         dbRs.getBoolean( 6 ) );
+					releaseView.setDraft_pick(     dbRs.getInt(     7 ) );
+					releaseView.setAge(            dbRs.getInt(     8 ) );
+					releaseView.setSeasons_played( dbRs.getInt(     9 ) );
+
+					if ( playersList == null ) playersList = new ArrayList();
+
+					playersList.add( releaseView );
+				}
+
+				if ( playersList == null ) {
+
+					i.remove();
+				}
+				else {
+
+					team.setPlayers( playersList );
+				}
+			}
+			finally {
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+		}
+
+		return teams;
 	}
 
 }

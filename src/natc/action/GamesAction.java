@@ -230,35 +230,20 @@ public class GamesAction extends Action {
 			case ScheduleType.BEGINNING_OF_SEASON:    nextPage = "beginning";         break;
 			case ScheduleType.MANAGER_CHANGES:
 				
-				/*
-				if ( (data = managerService.getRetiredManagersByTeam(null)) != null ) request.setAttribute( "retired_managers", data );
-				if ( (data = managerService.getFiredManagersByTeam(0))   != null ) request.setAttribute( "fired_managers",   data );
-				if ( (data = managerService.getHiredManagersByTeam(0))   != null ) request.setAttribute( "hired_managers",   data );
-				*/
-				
-				if ( (data = managerService.getManagerMovesByTeam()) != null ) request.setAttribute( "manager_moves", data );
+				if ( (data = managerService.getManagerMovesByTeam()) != null ) request.setAttribute( "manager_changes", data );
 				
 				nextPage = "manager_changes";
 				
 				break;
 				
-			case ScheduleType.PLAYER_RETIREMENT:
+			case ScheduleType.PLAYER_CHANGES:
 				
-				if ( (data = gameService.getRetiredPlayersByTeam())      != null ) request.setAttribute( "retired_team_players", data );
-				if ( (data = gameService.getRetiredPlayersWithoutTeam()) != null ) request.setAttribute( "retired_players",      data );
+				if ( (data = playerService.getPlayerChangesByTeam()) != null ) request.setAttribute( "player_changes", data );
 				
-				nextPage = "retired_players";
-				
-				break;
-				
-			case ScheduleType.FREE_AGENCY:
-				
-				if ( (data = gameService.getFreeAgentMoves()) != null ) request.setAttribute( "free_agency",  data );
-
-				nextPage = "free_agents";
+				nextPage = "player_changes";
 				
 				break;
-
+				
 			case ScheduleType.ROOKIE_DRAFT_ROUND_1:
 				
 				if ( (data = playerService.getDraftPicks( 1 )) != null ) {
@@ -325,7 +310,7 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.ROSTER_CUT:
 				
-				if ( (data = gameService.getReleasedPlayers()) != null ) request.setAttribute( "released_players", data );
+				if ( (data = playerService.getReleasedPlayers()) != null ) request.setAttribute( "released_players", data );
 				
 				nextPage = "roster_cut";
 				

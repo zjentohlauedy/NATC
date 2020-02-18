@@ -83,11 +83,10 @@
       <forward   name="beginning"       path="/beginning.jsp"       />
       <forward   name="games"           path="/games.jsp"           />
       <forward   name="manager_changes" path="/manager_changes.jsp" />
-      <forward   name="retired_players" path="/retired_players.jsp" />
+      <forward   name="player_changes"  path="/player_changes.jsp"  />
       <forward   name="rookie_draft"    path="/rookie_draft.jsp"    />
       <forward   name="training_camp"   path="/training_camp.jsp"   />
       <forward   name="roster_cut"      path="/roster_cut.jsp"      />
-      <forward   name="free_agents"     path="/free_agents.jsp"     />
       <forward   name="awards"          path="/awards.jsp"          />
       <forward   name="bracket"         path="/bracket.jsp"         />
       <forward   name="allstars"        path="/allstars.jsp"        />

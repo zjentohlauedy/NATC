@@ -50,9 +50,9 @@
   <h2><bean:write name="schedule" property="scheduled"/></h2>
 </logic:present>
 
-<logic:present name="manager_moves">
+<logic:present name="manager_changes">
   <table class="freeagency">
-  <logic:iterate id="team" name="manager_moves">
+  <logic:iterate id="team" name="manager_changes">
     <tr class="label">
       <td colspan="9">
         <logic:notEqual name="team" property="team_id" value="0">
@@ -68,7 +68,7 @@
     <tr class="heading">
       <td><bean:message key="ofs.label.status"  /></td>
       <td><bean:message key="ofs.label.manager" /></td>
-      <td><bean:message key="ofs.label.team"    /></td>
+      <td><bean:message key="ofs.label.from"    /></td>
       <td><bean:message key="ofs.label.ratings" /></td>
       <td><bean:message key="ofs.label.style"   /></td>
       <td><bean:message key="ofs.label.seasons" /></td>
@@ -95,9 +95,6 @@
           </html:link>
         </td>
         <td>
-          <logic:equal name="managerView" property="team_id" value="0">
-            <bean:message key="ofs.label.na" />
-          </logic:equal>
           <logic:notEqual name="managerView" property="team_id" value="0">
             <html:link page="/Team.do" paramId="team_id" paramName="managerView" paramProperty="team_id">
               <bean:write name="managerView" property="team_abbrev"/>

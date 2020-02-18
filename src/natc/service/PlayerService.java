@@ -34,7 +34,8 @@ public interface PlayerService {
 	public List           getPlayerList() throws SQLException;
 	public List           getRookiePlayerList() throws SQLException;
 	public List           getUndraftedRookies() throws SQLException;
-	public void           retirePlayers() throws SQLException;
+	public void           retireFreePlayers() throws SQLException;
+	public void           retireTeamPlayers() throws SQLException;
 	public List           getPlayerStatsSumByPlayerId( int player_id ) throws SQLException;
 	public List           getPlayerScores( int count ) throws SQLException;
 	public List           getPlayerAwards() throws SQLException;
@@ -50,4 +51,6 @@ public interface PlayerService {
 	public List           getMostImprovedPlayers() throws SQLException;
 	public List           getStandoutPlayers() throws SQLException;
 	public List           getStandoutRookies() throws SQLException;
+	public List           getPlayerChangesByTeam() throws SQLException;
+	public List           getReleasedPlayers() throws SQLException;
 }

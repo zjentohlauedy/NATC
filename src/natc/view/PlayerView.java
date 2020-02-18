@@ -1,10 +1,21 @@
 package natc.view;
 
-public class RetiredView {
+import java.text.DecimalFormat;
 
+public class PlayerView {
+
+	public static final int STATUS_RETIRED  = 1;
+	public static final int STATUS_RELEASED = 2;
+	public static final int STATUS_SIGNED   = 3;
+	
+	public static final String NUMBER_FORMAT = "#,##0.#";
+	
+	private int    status;
 	private int    player_id;
 	private String first_name;
 	private String last_name;
+	private int    former_team_id;
+	private String former_team_abbrev;
 	private int    age;
 	private int    seasons_played;
 	private double goals;
@@ -18,25 +29,70 @@ public class RetiredView {
 	private int    silver_count;
 	private int    allstar_count;
 	
-	public RetiredView() {
+	public PlayerView() {
 	
-		this.player_id      = 0;
-		this.first_name     = null;
-		this.last_name      = null;
-		this.age            = 0;
-		this.seasons_played = 0;
-		this.goals          = 0.0;
-		this.assists        = 0.0;
-		this.stops          = 0.0;
-		this.steals         = 0.0;
-		this.psm            = 0.0;
-		this.points         = 0.0;
-		this.platinum_count = 0;
-		this.gold_count     = 0;
-		this.silver_count   = 0;
-		this.allstar_count  = 0;
+		this.status             = 0;
+		this.player_id          = 0;
+		this.first_name         = null;
+		this.last_name          = null;
+		this.former_team_id     = 0;
+		this.former_team_abbrev = null;
+		this.age                = 0;
+		this.seasons_played     = 0;
+		this.goals              = 0.0;
+		this.assists            = 0.0;
+		this.stops              = 0.0;
+		this.steals             = 0.0;
+		this.psm                = 0.0;
+		this.points             = 0.0;
+		this.platinum_count     = 0;
+		this.gold_count         = 0;
+		this.silver_count       = 0;
+		this.allstar_count      = 0;
 	}
 
+	public String getPointsDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.points );
+	}
+	
+	public String getGoalsDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.goals );
+	}
+
+	public String getAssistsDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.assists );
+	}
+
+	public String getStopsDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.stops );
+	}
+
+	public String getStealsDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.steals );
+	}
+
+	public String getPsmDsp() {
+		
+		DecimalFormat df = new DecimalFormat( NUMBER_FORMAT );
+		
+		return df.format( this.psm );
+	}
+	
 	public int getAge() {
 		return age;
 	}
@@ -155,6 +211,30 @@ public class RetiredView {
 
 	public void setAllstar_count(int allstarCount) {
 		allstar_count = allstarCount;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getFormer_team_id() {
+		return former_team_id;
+	}
+
+	public void setFormer_team_id(int formerTeamId) {
+		former_team_id = formerTeamId;
+	}
+
+	public String getFormer_team_abbrev() {
+		return former_team_abbrev;
+	}
+
+	public void setFormer_team_abbrev(String formerTeamAbbrev) {
+		former_team_abbrev = formerTeamAbbrev;
 	}
 	
 }
