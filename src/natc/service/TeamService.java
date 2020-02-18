@@ -16,6 +16,7 @@ public interface TeamService {
 	public void         insertTeamGame( TeamGame teamGame ) throws SQLException;
 	public void         updateTeamStats( Team team, Team opponent, int type ) throws SQLException;
 	public List         getTeamList() throws SQLException;
+	public List         getAllstarTeamList() throws SQLException;
 	public Team         getTeamById( int team_id ) throws SQLException;
 	public List         getTeamsByDivision( int division ) throws SQLException;
 	public List         getTeamsByPlayoffRank( int rank ) throws SQLException;
@@ -28,5 +29,7 @@ public interface TeamService {
 	public int[]        getAllstarTeamIds() throws SQLException;
 	public int[]        getVsDivisionWins( int division1, int division2 ) throws SQLException;
 	public int[]        getVsConferenceWins( int conference1, int conference2 ) throws SQLException;
-	public void         getTeamPlayerData( TeamPlayerView teamPlayer ) throws SQLException;
+	public void         getTeamPlayerData( TeamPlayerView teamPlayer, int gameType ) throws SQLException;
+	public void         updateExpectations() throws SQLException;
+	public List         getTeamInjuriesByTeamId( int team_id ) throws SQLException;
 }

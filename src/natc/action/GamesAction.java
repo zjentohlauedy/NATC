@@ -32,6 +32,7 @@ import natc.service.impl.ManagerServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
+import natc.view.ManagerView;
 
 public class GamesAction extends Action {
 
@@ -338,12 +339,17 @@ public class GamesAction extends Action {
 
 			case ScheduleType.AWARDS:
 				
-				playerService = new PlayerServiceImpl( dbConn, scheduleEntry.getYear() );
+				managerService = new ManagerServiceImpl( dbConn, scheduleEntry.getYear() );
+				playerService  = new PlayerServiceImpl(  dbConn, scheduleEntry.getYear() );
 				
 				if ( (data = playerService.getPlayerAwards()) != null ) {
 				
 					request.setAttribute( "awards", data );
 				}
+				
+				ManagerView managerView = managerService.getManagerOfTheYear();
+				
+				if ( managerView != null ) request.setAttribute( "manager", managerView );
 				
 				nextPage = "awards";
 				
@@ -524,6 +530,8 @@ public class GamesAction extends Action {
 			case ScheduleType.ALL_STAR_DAY_1:
 			case ScheduleType.ALL_STAR_DAY_2:
 
+				data = gameService.getRankedAllstarTeams(); request.setAttribute( "allstarTeams", data );
+				
 				if ( (data = gameService.getGamesByDate( scheduleEntry.getScheduled() )) != null ) {
 
 					request.setAttribute( "games", data );

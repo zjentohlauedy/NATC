@@ -30,28 +30,33 @@ public class ManagerStatsView {
 	private int    def_psa;
 	private int    def_psm;
 	
+	private int    allstar_team_id;
+	private int    award;
+	
 	public ManagerStatsView() {
 	
-		this.team_id        = 0;
-		this.team_abbrev    = null;
-		this.year           = null;
-		this.games          = 0;
-		this.wins           = 0;
-		this.losses         = 0;
-		this.division_rank  = 0;
-		this.playoff_rank   = 0;
-		this.off_possession = 0;
-		this.off_points     = 0;
-		this.off_attempts   = 0;
-		this.off_goals      = 0;
-		this.off_psa        = 0;
-		this.off_psm        = 0;
-		this.def_possession = 0;
-		this.def_points     = 0;
-		this.def_attempts   = 0;
-		this.def_goals      = 0;
-		this.def_psa        = 0;
-		this.def_psm        = 0;
+		this.team_id         = 0;
+		this.team_abbrev     = null;
+		this.year            = null;
+		this.games           = 0;
+		this.wins            = 0;
+		this.losses          = 0;
+		this.division_rank   = 0;
+		this.playoff_rank    = 0;
+		this.off_possession  = 0;
+		this.off_points      = 0;
+		this.off_attempts    = 0;
+		this.off_goals       = 0;
+		this.off_psa         = 0;
+		this.off_psm         = 0;
+		this.def_possession  = 0;
+		this.def_points      = 0;
+		this.def_attempts    = 0;
+		this.def_goals       = 0;
+		this.def_psa         = 0;
+		this.def_psm         = 0;
+		this.allstar_team_id = 0;
+		this.award           = 0;
 	}
 
 	public String getOffScoringEfficiencyDsp() {
@@ -318,6 +323,22 @@ public class ManagerStatsView {
 
 	public void setDef_psm(int defPsm) {
 		def_psm = defPsm;
+	}
+
+	public int getAllstar_team_id() {
+		return allstar_team_id;
+	}
+
+	public void setAllstar_team_id(int allstarTeamId) {
+		allstar_team_id = allstarTeamId;
+	}
+
+	public int getAward() {
+		return award;
+	}
+
+	public void setAward(int award) {
+		this.award = award;
 	}
 	
 }

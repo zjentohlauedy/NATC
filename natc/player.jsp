@@ -39,10 +39,20 @@
     <td colspan="2">
       <bean:write name="player" property="first_name"/> <bean:write name="player" property="last_name"/>
       <logic:equal name="player" property="rookie" value="true">
-        <bean:message key="team.label.rookie" />
+        <bean:message key="player.label.rookie" />
+      </logic:equal>
+      <logic:equal name="player" property="injured" value="true">
+        <bean:message key="player.label.injured" />
       </logic:equal>
     </td>
   </tr>
+  <logic:equal name="player" property="injured" value="true">
+    <tr>
+      <td colspan="2">
+        <bean:message key="player.label.returns" /> <bean:write name="player" property="return_date"/>
+      </td>
+    </tr>
+  </logic:equal>
   <logic:present name="team">
   <tr class="sublabel">
     <td colspan="2">
@@ -105,6 +115,36 @@
     <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPenalty_defense" />&value2=<bean:write name="player" property="penalty_defense" />'></td>
   </tr>
 </table>
+
+<logic:present name="injuries">
+  <table class="injuries">
+    <tr class="label"><td colspan="2"><bean:write name="player" property="year"/> <bean:message key="player.label.injuries" /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="player.label.game"     /></td>
+      <td><bean:message key="player.label.duration" /></td>
+    </tr>
+    <logic:iterate id="playerInjuryView" name="injuries">
+      <tr>
+        <td>
+          <logic:equal name="playerInjuryView" property="road_game" value="true">
+            <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
+              <bean:message key="player.label.at" />
+            </html:link>
+          </logic:equal>
+          <logic:equal name="playerInjuryView" property="road_game" value="false">
+            <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
+              <bean:message key="player.label.vs" />
+            </html:link>
+          </logic:equal>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerInjuryView" paramProperty="opponent">
+            <bean:write name="playerInjuryView" property="opponent_abbrev"/>
+          </html:link>
+        </td>
+        <td><bean:write name="playerInjuryView" property="durationDsp"/></td>
+      </tr>
+    </logic:iterate>
+  </table>
+</logic:present>
 
 <table class="boxscores">
 <logic:present name="playerStats">

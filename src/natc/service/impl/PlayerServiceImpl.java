@@ -20,6 +20,7 @@ import natc.service.PlayerService;
 import natc.view.AllstarView;
 import natc.view.AwardsView;
 import natc.view.PlayerGameView;
+import natc.view.PlayerInjuryView;
 import natc.view.PlayerStatsView;
 import natc.view.StringView;
 
@@ -1486,6 +1487,47 @@ public class PlayerServiceImpl implements PlayerService {
 		
 			DatabaseImpl.closeDbStmt( ps );
 		}
+	}
+
+	public List getPlayerInjuriesById( int player_id ) throws SQLException {
+		
+		List injuries = null;
+		
+		PreparedStatement ps   = null;
+		ResultSet         dbRs = null;
+		
+
+		try {
+			
+			ps = DatabaseImpl.getInjuriesByPlayerIdSelectPs( dbConn );
+			
+			ps.setInt(    1, player_id );
+			ps.setString( 2, year      );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+				
+				PlayerInjuryView playerInjuryView = new PlayerInjuryView();
+				
+				playerInjuryView.setOpponent(        dbRs.getInt(     1 ) );
+				playerInjuryView.setOpponent_abbrev( dbRs.getString(  2 ) );
+				playerInjuryView.setRoad_game(       dbRs.getBoolean( 3 ) );
+				playerInjuryView.setGame_id(         dbRs.getInt(     4 ) );
+				playerInjuryView.setDuration(        dbRs.getInt(     5 ) );
+				
+				if ( injuries == null ) injuries = new ArrayList();
+				
+				injuries.add( playerInjuryView );
+			}
+		}
+		finally {
+		
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}
+		
+		return injuries;
 	}
 	
 }

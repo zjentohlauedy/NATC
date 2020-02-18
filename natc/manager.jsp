@@ -91,6 +91,18 @@
   </tr>
 </table>
 
+<logic:notEqual name="manager" property="player_id" value="0">
+  <table class="ratings">
+    <tr class="sublabel">
+      <td>
+        <html:link page="/Player.do" paramId="player_id" paramName="manager" paramProperty="player_id">
+          <bean:message key="manager.label.as_player" />
+        </html:link>
+      </td>
+    </tr>
+  </table>
+</logic:notEqual>
+
 <logic:present name="team">
 
 <table class="boxscores">
@@ -302,12 +314,13 @@
 <logic:present name="history">
   <table class="boxscores">
     <tr class="label">
-      <td><bean:message key="manager.label.history"/></td>
+      <td colspan="13"><bean:message key="manager.label.history"/></td>
     </tr>
     <tr class="heading">
       <td colspan="4"></td>
       <td colspan="4"><bean:message key="manager.label.offense" /></td>
       <td colspan="4"><bean:message key="manager.label.defense" /></td>
+      <td></td>
     </tr>
     <tr class="heading">
       <td><bean:message key="manager.label.team"    /></td>
@@ -322,6 +335,7 @@
       <td><bean:message key="manager.label.score"   /></td>
       <td><bean:message key="manager.label.eff"     /></td>
       <td><bean:message key="manager.label.ps_eff"  /></td>
+      <td><bean:message key="manager.label.awards"  /></td>
     </tr>
     <logic:iterate id="managerStatsView" name="history">
       <logic:equal name="managerStatsView" property="year" value="Total">
@@ -396,6 +410,14 @@
       <td><bean:write name="managerStatsView" property="def_points"              /></td>
       <td><bean:write name="managerStatsView" property="defScoringEfficiencyDsp" /></td>
       <td><bean:write name="managerStatsView" property="defPsEfficiencyDsp"      /></td>
+      <td>
+        <logic:equal name="managerStatsView" property="award" value="1">
+          <bean:message key="manager.label.moty" />
+        </logic:equal>
+        <logic:notEqual name="managerStatsView" property="allstar_team_id" value="0">
+          <bean:message key="manager.label.allstar_award" />
+        </logic:notEqual>
+      </td>
     </logic:iterate>
   </table>
 </logic:present>

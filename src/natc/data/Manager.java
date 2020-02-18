@@ -4,11 +4,15 @@ import java.util.Arrays;
 
 public class Manager {
 
+	public static final double DEFAULT_PERFORMANCE_RATING = 1.0;
+	
 	public static final int STYLE_OFFENSIVE  = 1;
 	public static final int STYLE_DEFENSIVE  = 2;
 	public static final int STYLE_INTANGIBLE = 3;
 	public static final int STYLE_PENALTY    = 4;
 	public static final int STYLE_BALANCED   = 5;
+	
+	public static final int MANAGER_OF_THE_YEAR = 1;
 	
 	private int     manager_id;
 	
@@ -16,6 +20,7 @@ public class Manager {
 	
 	private int     team_id;
 	private int     allstar_team_id;
+	private int     award;
 	
 	private String  year;
 	
@@ -39,6 +44,10 @@ public class Manager {
 	
 	private int     seasons;
 	
+	private int     score;
+	
+	private double  cpr; // career performance rating
+	
 	public Manager() {
 	
 		this.manager_id      = 0;
@@ -60,6 +69,9 @@ public class Manager {
 		this.released_by     = 0;
 		this.retired         = false;
 		this.seasons         = 0;
+		this.score           = 0;
+		this.award           = 0;
+		this.cpr             = 0.0;
 	}
 
 	public Manager( int manager_id, String first_name, String last_name ) {
@@ -82,6 +94,9 @@ public class Manager {
 		this.released_by     = 0;
 		this.retired         = false;
 		this.seasons         = 0;
+		this.score           = 0;
+		this.award           = 0;
+		this.cpr             = 0.0;
 		
 		determineStyle();
 	}
@@ -107,6 +122,9 @@ public class Manager {
 		this.released_by     = 0;
 		this.retired         = false;
 		this.seasons         = 0;
+		this.score           = 0;
+		this.award           = 0;
+		this.cpr             = 0.0;
 	}
 
 	private class Attribute implements Comparable {
@@ -208,6 +226,18 @@ public class Manager {
 	public double getOverallRating() {
 		
 		return (this.offense + this.defense + this.intangible + this.penalties) / 4.0;
+	}
+	
+	public double getPerformanceRating() {
+	
+		if ( this.seasons > 0 ) {
+		
+			double performanceRating = ((double)this.score / (double)this.seasons);
+			
+			return (performanceRating > this.cpr) ? performanceRating : this.cpr;
+		}
+		
+		return DEFAULT_PERFORMANCE_RATING;
 	}
 	
 	public int getManager_id() {
@@ -360,6 +390,30 @@ public class Manager {
 
 	public void setSeasons(int seasons) {
 		this.seasons = seasons;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public int getAward() {
+		return award;
+	}
+
+	public void setAward(int award) {
+		this.award = award;
+	}
+
+	public double getCpr() {
+		return cpr;
+	}
+
+	public void setCpr(double cpr) {
+		this.cpr = cpr;
 	}
 	
 }

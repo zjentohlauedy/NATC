@@ -26,7 +26,7 @@ h1 {
 h2 {
 	margin: 0px;
 	margin-left: 5px;
-	padding 0px;
+	padding: 0px;
 }
 
 /*-Main Layout-------------------------------------------*/
@@ -34,6 +34,11 @@ h2 {
 .standings {
 	margin-top: 20px;
 	width: 100%;
+}
+
+.allstar_standings {
+	margin-top: 20px;
+	width: 20%;
 }
 
 .standing {
@@ -233,4 +238,12 @@ h2 {
     float: left;
     width: 25%;
     margin: 2em;
+}
+
+.injuries {
+	clear: both;
+}
+
+.round #rank {
+	width: 10%;	
 }

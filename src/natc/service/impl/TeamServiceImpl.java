@@ -19,7 +19,9 @@ import natc.data.TeamOffense;
 import natc.service.ManagerService;
 import natc.service.PlayerService;
 import natc.service.TeamService;
+import natc.view.PlayerInjuryView;
 import natc.view.TeamGameView;
+import natc.view.TeamInjuryView;
 import natc.view.TeamPlayerView;
 import natc.view.TeamStatsView;
 
@@ -45,7 +47,7 @@ public class TeamServiceImpl implements TeamService {
 		/**/                                      { "Philadelphia",   "Photons",     "PHI." },
 		/**/                                      { "Detroit",        "Thunder",     "DET." },
 		/**/                                      { "Atlanta",        "Renegades",   "ATL." },
-		/**/                                      { "Baltimore",      "BlueCrabs",   "BAL." },
+		/**/                                      { "Baltimore",      "Crabbers",    "BAL." },
 		/**/                                      { "St. Louis",      "Juggernauts", "S.L." },
 		/**/                                      { "Orlando",        "Hurricanes",  "ORL." },
 		/**/                                      { "Las Vegas",      "Vampires",    "L.V." },
@@ -250,6 +252,72 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
+				
+				if ( teamList == null ) teamList = new ArrayList();
+				
+				teamList.add( team );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return teamList;
+	}
+
+	public List getAllstarTeamList() throws SQLException {
+	
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		List              teamList = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAllstarTeamListSelectPs( dbConn );
+			
+			ps.setString( 1, year );
+			
+			dbRs = ps.executeQuery();
+
+			while ( dbRs.next() ) {
+				
+				Team team = new Team();
+				
+				team.setTeam_id(          dbRs.getInt(     1 ) );
+				team.setYear(             dbRs.getString(  2 ) );
+				team.setLocation(         dbRs.getString(  3 ) );
+				team.setName(             dbRs.getString(  4 ) );
+				team.setAbbrev(           dbRs.getString(  5 ) );
+				team.setConference(       dbRs.getInt(     6 ) );
+				team.setDivision(         dbRs.getInt(     7 ) );
+				team.setPreseason_games(  dbRs.getInt(     8 ) );
+				team.setPreseason_wins(   dbRs.getInt(     9 ) );
+				team.setPreseason_losses( dbRs.getInt(    10 ) );
+				team.setGames(            dbRs.getInt(    11 ) );
+				team.setWins(             dbRs.getInt(    12 ) );
+				team.setLosses(           dbRs.getInt(    13 ) );
+				team.setDivision_wins(    dbRs.getInt(    14 ) );
+				team.setDivision_losses(  dbRs.getInt(    15 ) );
+				team.setOoc_wins(         dbRs.getInt(    16 ) );
+				team.setOoc_losses(       dbRs.getInt(    17 ) );
+				team.setOt_wins(          dbRs.getInt(    18 ) );
+				team.setOt_losses(        dbRs.getInt(    19 ) );
+				team.setRoad_wins(        dbRs.getInt(    20 ) );
+				team.setRoad_losses(      dbRs.getInt(    21 ) );
+				team.setHome_wins(        dbRs.getInt(    22 ) );
+				team.setHome_losses(      dbRs.getInt(    23 ) );
+				team.setDivision_rank(    dbRs.getInt(    24 ) );
+				team.setPlayoff_rank(     dbRs.getInt(    25 ) );
+				team.setPlayoff_games(    dbRs.getInt(    26 ) );
+				team.setRound1_wins(      dbRs.getInt(    27 ) );
+				team.setRound2_wins(      dbRs.getInt(    28 ) );
+				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -314,6 +382,8 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				// Get manager
 				ManagerService managerService = new ManagerServiceImpl( dbConn, year );
@@ -402,6 +472,8 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -465,6 +537,8 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -515,9 +589,11 @@ public class TeamServiceImpl implements TeamService {
 			ps.setInt(    25, team.getRound1_wins()      );
 			ps.setInt(    26, team.getRound2_wins()      );
 			ps.setInt(    27, team.getRound3_wins()      );
+			ps.setDouble( 28, team.getExpectation()      );
+			ps.setInt(    29, team.getDrought()          );
 			
-			ps.setString( 28, this.year         );
-			ps.setInt(    29, team.getTeam_id() );
+			ps.setString( 30, this.year         );
+			ps.setInt(    31, team.getTeam_id() );
 			
 			ps.executeUpdate();
 		}
@@ -937,6 +1013,8 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -1238,6 +1316,8 @@ public class TeamServiceImpl implements TeamService {
 				team.setRound1_wins(      dbRs.getInt(    27 ) );
 				team.setRound2_wins(      dbRs.getInt(    28 ) );
 				team.setRound3_wins(      dbRs.getInt(    29 ) );
+				team.setExpectation(      dbRs.getDouble( 30 ) );
+				team.setDrought(          dbRs.getInt(    31 ) );
 				
 				if ( teamList == null ) teamList = new ArrayList();
 				
@@ -1253,7 +1333,7 @@ public class TeamServiceImpl implements TeamService {
 		return teamList;
 	}
 
-	public void getTeamPlayerData( TeamPlayerView teamPlayer ) throws SQLException {
+	public void getTeamPlayerData( TeamPlayerView teamPlayer, int gameType ) throws SQLException {
 		
 		PreparedStatement ps           = null;
 		ResultSet         dbRs         = null;
@@ -1264,7 +1344,7 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps.setInt(    1, teamPlayer.getPlayer_id() );
 			ps.setString( 2, this.year                 );
-			ps.setInt(    3, TeamGame.gt_RegularSeason );
+			ps.setInt(    3, gameType                  );
 			
 			dbRs = ps.executeQuery();
 			
@@ -1286,6 +1366,88 @@ public class TeamServiceImpl implements TeamService {
 			DatabaseImpl.closeDbRs( dbRs );
 			DatabaseImpl.closeDbStmt( ps );
 		}
+	}
+
+	public void updateExpectations() throws SQLException {
+		
+		List teamList = getTeamList();
+		
+		Iterator i = teamList.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			if ( team.getExpectation() == 0 ) team.setExpectation( Team.BASE_EXPECTATION );
+			
+			if ( team.getPlayoff_rank() == 0 ) {
+				
+				if ( team.getWins() < 50 ) team.setDrought( team.getDrought() + 1 );
+				if ( team.getWins() > 50 ) team.setDrought( 0                     );
+			}
+			else {
+				
+				team.setDrought( 0 );
+			}
+			
+			if ( team.getDrought() >= Team.MAX_DROUGHT ) {
+			
+				team.setExpectation( Team.BASE_EXPECTATION );
+				team.setDrought(     0                     );
+			}
+			else {
+			
+				team.setExpectation( team.getExpectation() + ((double)team.getPlayoff_rank() / 10.0) );
+			}
+			
+			if ( team.getExpectation() > Team.MAX_EXPECTATION ) team.setExpectation( Team.MAX_EXPECTATION );
+			
+			updateTeam( team );
+		}
+	}
+
+	public List getTeamInjuriesByTeamId( int team_id ) throws SQLException {
+		
+		List injuries = null;
+		
+		PreparedStatement ps   = null;
+		ResultSet         dbRs = null;
+		
+
+		try {
+			
+			ps = DatabaseImpl.getInjuriesByTeamIdSelectPs( dbConn );
+			
+			ps.setString( 1, year    );
+			ps.setInt(    2, team_id );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+				
+				TeamInjuryView teamInjuryView = new TeamInjuryView();
+				
+				teamInjuryView.setPlayer_id(       dbRs.getInt(     1 ) );
+				teamInjuryView.setFirst_name(      dbRs.getString(  2 ) );
+				teamInjuryView.setLast_name(       dbRs.getString(  3 ) );
+				teamInjuryView.setOpponent(        dbRs.getInt(     4 ) );
+				teamInjuryView.setOpponent_abbrev( dbRs.getString(  5 ) );
+				teamInjuryView.setRoad_game(       dbRs.getBoolean( 6 ) );
+				teamInjuryView.setGame_id(         dbRs.getInt(     7 ) );
+				teamInjuryView.setDuration(        dbRs.getInt(     8 ) );
+				
+				if ( injuries == null ) injuries = new ArrayList();
+				
+				injuries.add( teamInjuryView );
+			}
+		}
+		finally {
+		
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}
+		
+		return injuries;
 	}
 	
 }

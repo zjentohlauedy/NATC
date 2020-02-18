@@ -54,6 +54,13 @@ a:hover {
 	font-weight: bold;
 }
 
+.round #rank {
+	font-size: 8pt;
+	font-weight: normal;
+	font-style: normal;
+	color: #888800;
+}
+
 .teams {
 	font-size: 10pt;
 	font-weight: bold;
@@ -95,6 +102,11 @@ a:hover {
 }
 
 .roster {
+	font-size: small;
+	font-weight: bold;
+}
+
+.injuries {
 	font-size: small;
 	font-weight: bold;
 }

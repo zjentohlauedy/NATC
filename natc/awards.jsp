@@ -111,5 +111,26 @@
   </table>
 </logic:present>
 
+<logic:present name="manager">
+  <table class="awards">
+    <tr class="heading">
+      <td><bean:message key="awards.label.moty"       /></td>
+      <td><bean:message key="awards.label.team"       /></td>
+    </tr>
+    <tr>
+      <td>
+        <html:link page="/Manager.do" paramId="manager_id" paramName="manager" paramProperty="manager_id">
+          <bean:write name="manager" property="last_name"/>, <bean:write name="manager" property="first_name"/>
+        </html:link>
+      </td>
+      <td>
+        <html:link page="/Team.do" paramId="team_id" paramName="manager" paramProperty="team_id">
+          <bean:write name="manager" property="team_abbrev" />
+        </html:link>
+      </td>
+    </tr>
+  </table>
+</logic:present>
+
 </body>
 </html:html>

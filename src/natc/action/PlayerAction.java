@@ -84,6 +84,13 @@ public class PlayerAction extends Action {
 				request.setAttribute( "playerStats", playerStats );
 			}
 			
+			List injuries;
+			
+			if ( (injuries = playerService.getPlayerInjuriesById( player.getPlayer_id() )) != null ) {
+				
+				request.setAttribute( "injuries", injuries );
+			}
+			
 			List history;
 			
 			if ( (history = playerService.getPlayerHistoryById( player.getPlayer_id() )) != null ) {

@@ -27,4 +27,9 @@ public interface ManagerService {
 	public void        updateSeasons() throws SQLException;
 	public void        updateManagersForNewSeason( String last_year ) throws SQLException;
 	public void        ageManagers() throws SQLException;
+	public void        updateScore() throws SQLException;
+	public void        selectManagerOfTheYear() throws SQLException;
+	public ManagerView getManagerOfTheYear() throws SQLException;
+	public Manager     getBestManagerByDivision( int division ) throws SQLException;
+	public void        updateCareerPerformanceRating() throws SQLException;
 }

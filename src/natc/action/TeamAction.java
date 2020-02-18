@@ -19,7 +19,9 @@ import org.apache.struts.action.ActionMapping;
 import natc.data.Manager;
 import natc.data.Player;
 import natc.data.Schedule;
+import natc.data.ScheduleType;
 import natc.data.Team;
+import natc.data.TeamGame;
 import natc.service.ScheduleService;
 import natc.service.TeamService;
 import natc.service.impl.ScheduleServiceImpl;
@@ -119,12 +121,13 @@ public class TeamAction extends Action {
 					}
 				}
 				
-				teamService.getTeamPlayerData( teamPlayerView );
+				if   ( schedule.getType().getValue() < ScheduleType.REGULAR_SEASON ) teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_Preseason     );
+				else                                                                 teamService.getTeamPlayerData( teamPlayerView, TeamGame.gt_RegularSeason );
 				
 				teamPlayers.add( teamPlayerView );
 			}
 			
-			// Sort players by games played and time per game
+			// Sort players by time per game
 			Collections.sort( teamPlayers, new Comparator() {
 				
 				public int compare( Object arg1, Object arg2 ) {
@@ -132,19 +135,26 @@ public class TeamAction extends Action {
 					TeamPlayerView tp1 = (TeamPlayerView)arg1;
 					TeamPlayerView tp2 = (TeamPlayerView)arg2;
 					
-					if ( (tp1.getGames() + tp2.getGames()) == 0 ) {
+					if ( (tp1.getTime_per_game() + tp2.getTime_per_game()) == 0 ) {
 					
 						return (tp1.getRating() > tp2.getRating()) ? 1 : -1;
 					}
 					
-					if ( tp1.getGames() == tp2.getGames() ) return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
+					if ( tp1.getTime_per_game() == tp2.getTime_per_game() ) return (tp1.getGames() > tp2.getGames()) ? 1 : -1;
 					
-					return (tp1.getGames() > tp2.getGames()) ? 1 : -1;
+					return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
 				}
 			});
 			Collections.reverse( teamPlayers );
 			
 			request.setAttribute( "teamPlayers", teamPlayers );
+			
+			List injuries;
+			
+			if ( (injuries = teamService.getTeamInjuriesByTeamId( team.getTeam_id() )) != null ) {
+			
+				request.setAttribute( "injuries", injuries );
+			}
 			
 			List history;
 			

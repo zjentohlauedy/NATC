@@ -28,7 +28,9 @@ CREATE TABLE Teams_T
     Playoff_Games    INTEGER,
     Round1_Wins      INTEGER,
     Round2_Wins      INTEGER,
-    Round3_Wins      INTEGER
+    Round3_Wins      INTEGER,
+    Expectation      DOUBLE,
+    Drought          INTEGER
 );
 
 CREATE INDEX Team_Year    ON Teams_T ( Year    );
@@ -54,7 +56,10 @@ CREATE TABLE Managers_T
     Released_By     INTEGER,
     Retired         INTEGER,
     Allstar_Team_Id INTEGER,
-    Seasons         INTEGER
+    Award           INTEGER,
+    Seasons         INTEGER,
+    Score           INTEGER,
+    Cpr             DOUBLE
 );
 
 CREATE INDEX Manager_Year       ON Managers_T ( Year       );
@@ -332,26 +337,28 @@ END;
 
 CREATE PROCEDURE copyTeamsForNewYear ( IN lastYear CHAR(4), IN thisYear CHAR(4) )
 BEGIN
-  DECLARE team_id_var    INT;
-  DECLARE location_var   VARCHAR(30);
-  DECLARE name_var       VARCHAR(30);
-  DECLARE abbrev_var     VARCHAR( 5);
-  DECLARE conference_var INT;
-  DECLARE division_var   INT;
+  DECLARE team_id_var     INT;
+  DECLARE location_var    VARCHAR(30);
+  DECLARE name_var        VARCHAR(30);
+  DECLARE abbrev_var      VARCHAR( 5);
+  DECLARE conference_var  INT;
+  DECLARE division_var    INT;
+  DECLARE expectation_var DOUBLE;
+  DECLARE drought_var     INT;
 
-  DECLARE done           INT DEFAULT 0;
+  DECLARE done            INT DEFAULT 0;
 
-  DECLARE teams_cur CURSOR FOR SELECT Team_Id, Location, Name, Abbrev, Conference, Division FROM Teams_T WHERE Year = lastYear;
+  DECLARE teams_cur CURSOR FOR SELECT Team_Id, Location, Name, Abbrev, Conference, Division, Expectation, Drought FROM Teams_T WHERE Year = lastYear;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
   OPEN teams_cur;
 
   REPEAT
-    FETCH teams_cur INTO team_id_var, location_var, name_var, abbrev_var, conference_var, division_var;
+    FETCH teams_cur INTO team_id_var, location_var, name_var, abbrev_var, conference_var, division_var, expectation_var, drought_var;
 
     IF NOT done THEN
-      INSERT INTO Teams_T ( Team_Id,         Year, Location,     Name,     Abbrev,     Conference,     Division     )
-                   VALUES ( team_id_var, thisYear, location_var, name_var, abbrev_var, conference_var, division_var );
+      INSERT INTO Teams_T ( Team_Id,         Year, Location,     Name,     Abbrev,     Conference,     Division,     Expectation,     Drought     )
+                   VALUES ( team_id_var, thisYear, location_var, name_var, abbrev_var, conference_var, division_var, expectation_var, drought_var );
     END IF;
   UNTIL done END REPEAT;
 
@@ -374,6 +381,8 @@ BEGIN
   DECLARE vitality_var        DOUBLE;
   DECLARE style_var           INT;
   DECLARE seasons_var         INT;
+  DECLARE score_var           INT;
+  DECLARE cpr_var             DOUBLE;
 
   DECLARE done           INT DEFAULT 0;
 
@@ -390,7 +399,9 @@ BEGIN
            Penalties,
            Vitality,
            Style,
-           Seasons
+           Seasons,
+           Score,
+           Cpr
     FROM   Managers_T
     WHERE  Year = lastYear
     AND    Retired = 0;
@@ -412,7 +423,9 @@ BEGIN
                             penalties_var,
                             vitality_var,
                             style_var,
-                            seasons_var;
+                            seasons_var,
+                            score_var,
+                            cpr_var;
 
     IF NOT done THEN
       INSERT INTO Managers_T ( Manager_Id,
@@ -431,7 +444,9 @@ BEGIN
                                New_Hire,
                                Released,
                                Retired,
-                               Seasons
+                               Seasons,
+                               Score,
+                               Cpr
                              )
                       VALUES ( manager_id_var,
                                team_id_var,
@@ -449,7 +464,9 @@ BEGIN
                                0,
                                0,
                                0,
-                               seasons_var
+                               seasons_var,
+                               score_var,
+                               cpr_var
                              );
     END IF;
   UNTIL done END REPEAT;

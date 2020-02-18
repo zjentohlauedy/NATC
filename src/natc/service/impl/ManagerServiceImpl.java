@@ -11,8 +11,10 @@ import java.util.List;
 
 import natc.data.Manager;
 import natc.data.Player;
+import natc.data.Team;
 import natc.data.TeamGame;
 import natc.service.ManagerService;
+import natc.service.TeamService;
 import natc.view.ManagerStatsView;
 import natc.view.ManagerView;
 
@@ -140,7 +142,10 @@ public class ManagerServiceImpl implements ManagerService {
 			ps.setBoolean( 14, manager.isNew_hire()    );
 			ps.setBoolean( 15, manager.isReleased()    );
 			ps.setBoolean( 16, manager.isRetired()     );
-			ps.setInt(     17, manager.getSeasons()    );
+			ps.setInt(     17, manager.getAward()      );
+			ps.setInt(     18, manager.getSeasons()    );
+			ps.setInt(     19, manager.getScore()      );
+			ps.setDouble(  20, manager.getCpr()        );
 			
 			ps.executeUpdate();
 		}
@@ -198,7 +203,10 @@ public class ManagerServiceImpl implements ManagerService {
 			ps.setBoolean( 14, manager.isNew_hire()    );
 			ps.setBoolean( 15, manager.isReleased()    );
 			ps.setBoolean( 16, manager.isRetired()     );
-			ps.setInt(     17, manager.getSeasons()    );
+			ps.setInt(     17, manager.getAward()      );
+			ps.setInt(     18, manager.getSeasons()    );
+			ps.setInt(     19, manager.getScore()      );
+			ps.setDouble(  20, manager.getCpr()        );
 			
 			ps.executeUpdate();
 		}
@@ -247,7 +255,10 @@ public class ManagerServiceImpl implements ManagerService {
 				manager.setReleased_by(     dbRs.getInt(     16 ) );
 				manager.setRetired(         dbRs.getBoolean( 17 ) );
 				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setSeasons(         dbRs.getInt(     19 ) );
+				manager.setAward(           dbRs.getInt(     19 ) );
+				manager.setSeasons(         dbRs.getInt(     20 ) );
+				manager.setScore(           dbRs.getInt(     21 ) );
+				manager.setCpr(             dbRs.getDouble(  22 ) );
 				
 				if ( managers == null ) managers = new ArrayList();
 				
@@ -301,7 +312,10 @@ public class ManagerServiceImpl implements ManagerService {
 				manager.setReleased_by(     dbRs.getInt(     16 ) );
 				manager.setRetired(         dbRs.getBoolean( 17 ) );
 				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setSeasons(         dbRs.getInt(     19 ) );
+				manager.setAward(           dbRs.getInt(     19 ) );
+				manager.setSeasons(         dbRs.getInt(     20 ) );
+				manager.setScore(           dbRs.getInt(     21 ) );
+				manager.setCpr(             dbRs.getDouble(  22 ) );
 			}
 		}
 		finally {
@@ -362,7 +376,10 @@ public class ManagerServiceImpl implements ManagerService {
 					manager.setReleased_by(     dbRs2.getInt(     16 ) );
 					manager.setRetired(         dbRs2.getBoolean( 17 ) );
 					manager.setAllstar_team_id( dbRs2.getInt(     18 ) );
-					manager.setSeasons(         dbRs2.getInt(     19 ) );
+					manager.setAward(           dbRs2.getInt(     19 ) );
+					manager.setSeasons(         dbRs2.getInt(     20 ) );
+					manager.setScore(           dbRs2.getInt(     21 ) );
+					manager.setCpr(             dbRs2.getDouble(  22 ) );
 				}
 			}
 		}
@@ -415,7 +432,10 @@ public class ManagerServiceImpl implements ManagerService {
 				manager.setReleased_by(     dbRs.getInt(     16 ) );
 				manager.setRetired(         dbRs.getBoolean( 17 ) );
 				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setSeasons(         dbRs.getInt(     19 ) );
+				manager.setAward(           dbRs.getInt(     19 ) );
+				manager.setSeasons(         dbRs.getInt(     20 ) );
+				manager.setScore(           dbRs.getInt(     21 ) );
+				manager.setCpr(             dbRs.getDouble(  22 ) );
 			}
 		}
 		finally {
@@ -465,7 +485,10 @@ public class ManagerServiceImpl implements ManagerService {
 				manager.setReleased_by(     dbRs.getInt(     16 ) );
 				manager.setRetired(         dbRs.getBoolean( 17 ) );
 				manager.setAllstar_team_id( dbRs.getInt(     18 ) );
-				manager.setSeasons(         dbRs.getInt(     19 ) );
+				manager.setAward(           dbRs.getInt(     19 ) );
+				manager.setSeasons(         dbRs.getInt(     20 ) );
+				manager.setScore(           dbRs.getInt(     21 ) );
+				manager.setCpr(             dbRs.getDouble(  22 ) );
 			}
 		}
 		finally {
@@ -690,10 +713,13 @@ public class ManagerServiceImpl implements ManagerService {
 			else                                   ps.setInt(  14, manager.getReleased_by() );
 			
 			ps.setBoolean( 15, manager.isRetired()      );
-			ps.setInt(     16, manager.getSeasons()     );
+			ps.setInt(     16, manager.getAward()       );
+			ps.setInt(     17, manager.getSeasons()     );
+			ps.setInt(     18, manager.getScore()       );
+			ps.setDouble(  19, manager.getCpr()         );
 			
-			ps.setString(  17, manager.getYear()       );
-			ps.setInt(     18, manager.getManager_id() );
+			ps.setString(  20, manager.getYear()       );
+			ps.setInt(     21, manager.getManager_id() );
 			
 			ps.executeUpdate();
 		}
@@ -744,26 +770,28 @@ public class ManagerServiceImpl implements ManagerService {
 			
 				ManagerStatsView managerStatsView = new ManagerStatsView();
 				
-				managerStatsView.setTeam_id(        dbRs.getInt(     1 ) );
-				managerStatsView.setTeam_abbrev(    dbRs.getString(  2 ) );
-				managerStatsView.setYear(           dbRs.getString(  3 ) );
-				managerStatsView.setGames(          dbRs.getInt(     4 ) );
-				managerStatsView.setWins(           dbRs.getInt(     5 ) );
-				managerStatsView.setLosses(         dbRs.getInt(     6 ) );
-				managerStatsView.setDivision_rank(  dbRs.getInt(     7 ) );
-				managerStatsView.setPlayoff_rank(   dbRs.getInt(     8 ) );
-				managerStatsView.setOff_possession( dbRs.getInt(     9 ) );
-				managerStatsView.setOff_points(     dbRs.getInt(    10 ) );
-				managerStatsView.setOff_attempts(   dbRs.getInt(    11 ) );
-				managerStatsView.setOff_goals(      dbRs.getInt(    12 ) );
-				managerStatsView.setOff_psa(        dbRs.getInt(    13 ) );
-				managerStatsView.setOff_psm(        dbRs.getInt(    14 ) );
-				managerStatsView.setDef_possession( dbRs.getInt(    15 ) );
-				managerStatsView.setDef_points(     dbRs.getInt(    16 ) );
-				managerStatsView.setDef_attempts(   dbRs.getInt(    17 ) );
-				managerStatsView.setDef_goals(      dbRs.getInt(    18 ) );
-				managerStatsView.setDef_psa(        dbRs.getInt(    19 ) );
-				managerStatsView.setDef_psm(        dbRs.getInt(    20 ) );
+				managerStatsView.setTeam_id(         dbRs.getInt(     1 ) );
+				managerStatsView.setTeam_abbrev(     dbRs.getString(  2 ) );
+				managerStatsView.setYear(            dbRs.getString(  3 ) );
+				managerStatsView.setGames(           dbRs.getInt(     4 ) );
+				managerStatsView.setWins(            dbRs.getInt(     5 ) );
+				managerStatsView.setLosses(          dbRs.getInt(     6 ) );
+				managerStatsView.setDivision_rank(   dbRs.getInt(     7 ) );
+				managerStatsView.setPlayoff_rank(    dbRs.getInt(     8 ) );
+				managerStatsView.setOff_possession(  dbRs.getInt(     9 ) );
+				managerStatsView.setOff_points(      dbRs.getInt(    10 ) );
+				managerStatsView.setOff_attempts(    dbRs.getInt(    11 ) );
+				managerStatsView.setOff_goals(       dbRs.getInt(    12 ) );
+				managerStatsView.setOff_psa(         dbRs.getInt(    13 ) );
+				managerStatsView.setOff_psm(         dbRs.getInt(    14 ) );
+				managerStatsView.setDef_possession(  dbRs.getInt(    15 ) );
+				managerStatsView.setDef_points(      dbRs.getInt(    16 ) );
+				managerStatsView.setDef_attempts(    dbRs.getInt(    17 ) );
+				managerStatsView.setDef_goals(       dbRs.getInt(    18 ) );
+				managerStatsView.setDef_psa(         dbRs.getInt(    19 ) );
+				managerStatsView.setDef_psm(         dbRs.getInt(    20 ) );
+				managerStatsView.setAllstar_team_id( dbRs.getInt(    21 ) );
+				managerStatsView.setAward(           dbRs.getInt(    22 ) );
 				
 				if ( managerStats == null ) managerStats = new ArrayList();
 				
@@ -866,4 +894,193 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 	}
 
+	public void updateScore() throws SQLException {
+		
+		TeamService teamService = new TeamServiceImpl( dbConn, this.year );
+		
+		List teamList = teamService.getTeamList();
+		
+		Iterator i = teamList.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			Manager manager = getManagerByTeamId( team.getTeam_id() );
+			
+			// Add points based on team success
+			if      ( team.getPlayoff_rank() == 5                ) manager.setScore( manager.getScore() + 5 );
+			else if ( team.getPlayoff_rank() >  0                ) manager.setScore( manager.getScore() + 3 );
+			else if ( team.getWins()         >  team.getLosses() ) manager.setScore( manager.getScore() + 1 );
+			
+			// Add points based on manager awards
+			if      ( manager.getAward()            > 0 ) manager.setScore( manager.getScore() + 2 );
+			else if ( manager.getAllstar_team_id() != 0 ) manager.setScore( manager.getScore() + 1 );
+			
+			updateManager( manager );
+		}
+	}
+
+	public void selectManagerOfTheYear() throws SQLException {
+		
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getManagerByPerformanceSelectPs( dbConn );
+			
+			ps.setString( 1,     this.year             );
+			ps.setInt(    2, TeamGame.gt_RegularSeason );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+			
+				int manager_id = dbRs.getInt( 1 );
+				
+				Manager manager = getManagerById( manager_id );
+				
+				manager.setAward( Manager.MANAGER_OF_THE_YEAR );
+				
+				updateManager( manager );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+
+	public ManagerView getManagerOfTheYear() throws SQLException {
+
+		ManagerView managerView = null;
+
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getManagerByAwardSelectPs( dbConn );
+			
+			ps.setString( 1,    this.year                );
+			ps.setInt(    2, Manager.MANAGER_OF_THE_YEAR );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+			
+				managerView = new ManagerView();
+				
+				managerView.setManager_id(  dbRs.getInt(    1 ) );
+				managerView.setFirst_name(  dbRs.getString( 2 ) );
+				managerView.setLast_name(   dbRs.getString( 3 ) );
+				managerView.setTeam_id(     dbRs.getInt(    4 ) );
+				managerView.setTeam_abbrev( dbRs.getString( 5 ) );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return managerView;
+	}
+
+	public Manager getBestManagerByDivision( int division ) throws SQLException {
+		
+		PreparedStatement ps       = null;
+		ResultSet         dbRs     = null;
+		Manager           manager  = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getManagerByPerfForDivSelectPs( dbConn );
+			
+			ps.setString( 1,     this.year             );
+			ps.setInt(    2,          division         );
+			ps.setInt(    3, TeamGame.gt_RegularSeason );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+			
+				int manager_id = dbRs.getInt( 1 );
+				
+				manager = getManagerById( manager_id );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return manager;
+	}
+
+	public void updateCareerPerformanceRating() throws SQLException {
+	
+		PreparedStatement ps1     = null;
+		PreparedStatement ps2     = null;
+		ResultSet         rs1     = null;
+		ResultSet         rs2     = null;
+		
+		try {
+			
+			ps1 = DatabaseImpl.getActiveManagerIdsSelectPs( dbConn );
+			
+			ps1.setString( 1, year );
+			
+			rs1 = ps1.executeQuery();
+			
+			while ( rs1.next() ) {
+			
+				int seasons    = 0;
+				int totalScore = 0;
+				int manager_id = rs1.getInt( 1 );
+				
+				ps2 = DatabaseImpl.getManagerSeasonsSelectPs( dbConn );
+				
+				ps2.setInt( 1, manager_id );
+				
+				rs2 = ps2.executeQuery();
+				
+				if ( rs2.next() ) seasons = rs2.getInt( 1 );
+				
+				DatabaseImpl.closeDbRs(   rs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				ps2 = DatabaseImpl.getManagerTotalScoreSelectPs( dbConn );
+				
+				ps2.setInt( 1, manager_id );
+				
+				rs2 = ps2.executeQuery();
+				
+				if ( rs2.next() ) totalScore = rs2.getInt( 1 );
+				
+				DatabaseImpl.closeDbRs(   rs2 );
+				DatabaseImpl.closeDbStmt( ps2 );
+				
+				double cpr = (double)totalScore / (double)seasons;
+				
+				ps2 = DatabaseImpl.getManagerCprUpdatePs( dbConn );
+				
+				ps2.setDouble( 1, cpr        );
+				ps2.setString( 2, year       );
+				ps2.setInt(    3, manager_id );
+				
+				ps2.execute();
+			}
+		}
+		finally {
+
+			DatabaseImpl.closeDbRs(   rs1 );
+			DatabaseImpl.closeDbRs(   rs2 );
+			DatabaseImpl.closeDbStmt( ps1 );
+			DatabaseImpl.closeDbStmt( ps2 );
+		}
+	}
 }

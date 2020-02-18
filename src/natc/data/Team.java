@@ -8,7 +8,10 @@ import java.util.List;
 
 public class Team {
 
-	public static final int AVG_TIME_PER_STOPPAGE = 67;
+	public static final double BASE_EXPECTATION      =  1.0;
+	public static final double MAX_EXPECTATION       =  3.1;
+	public static final int    AVG_TIME_PER_STOPPAGE = 67;
+	public static final int    MAX_DROUGHT           =  5;
 	
 	private String   year;
 	
@@ -50,6 +53,9 @@ public class Team {
 	
 	private int      streak_wins;
 	private int      streak_losses;
+	
+	private double   expectation;
+	private int      drought;
 	
 	// Team Ratings
 	private double   offense;
@@ -99,6 +105,8 @@ public class Team {
 		this.preseason_losses = 0;
 		this.streak_wins      = 0;
 		this.streak_losses    = 0;
+		this.expectation      = 0.0;
+		this.drought          = 0;
 		this.offense          = 0.0;
 		this.defense          = 0.0;
 		this.discipline       = 0.0;
@@ -164,27 +172,21 @@ public class Team {
 				continue;
 			}
 
+			if ( player.isInjured() ) {
+
+				player.setPlaying( false  );
+				player.setResting( true );
+
+				continue;
+			}
+			
 			active_players++;
 
 			player.setPlaying( true  );
 			player.setResting( false );
 			player.setPlayed_in_game( true );
 		}
-		/*
-		System.out.println( "Ot Offense for " + this.abbrev + ", shooter: " + shooter.getFirst_name() + " " + shooter.getLast_name() + ", Rating: " + String.valueOf( shooter.getAdjustedPenalty_shot() ) );
 		
-		i = this.players.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Player p = (Player)i.next();
-			
-			if ( p.isPlaying() ) {
-			
-				System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Rating: " + String.valueOf( p.getAdjustedPenalty_offense() ) );
-			}
-		}
-		*/
 		this.calcTeamRatings();
 	}
 
@@ -214,27 +216,21 @@ public class Team {
 				continue;
 			}
 
+			if ( player.isInjured() ) {
+
+				player.setPlaying( false  );
+				player.setResting( true );
+
+				continue;
+			}
+			
 			active_players++;
 
 			player.setPlaying( true  );
 			player.setResting( false );
 			player.setPlayed_in_game( true );
 		}
-		/*
-		System.out.println( "Ot Defense for " + this.abbrev );
 		
-		i = this.players.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Player p = (Player)i.next();
-			
-			if ( p.isPlaying() ) {
-			
-				System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Rating: " + String.valueOf( p.getAdjustedPenalty_defense() ) );
-			}
-		}
-		*/
 		this.calcTeamRatings();
 	}
 	
@@ -333,44 +329,7 @@ public class Team {
 				active_players++;
 			}
 		}
-		/*
-		if ( this.team_id == 34 ) {
 		
-			System.out.println( "Active Players for " + this.abbrev + " with time remaining: " + String.valueOf( time_remaining / 60 ) + ":" + String.valueOf( time_remaining % 60 ) + "." );
-			
-			switch ( this.manager.getStyle() ) {
-			
-			case Manager.STYLE_OFFENSIVE:  System.out.println( "Manager Style: Offensive"  );  break;
-			case Manager.STYLE_DEFENSIVE:  System.out.println( "Manager Style: Defensive"  );  break;
-			case Manager.STYLE_INTANGIBLE: System.out.println( "Manager Style: Intangible" );  break;
-			case Manager.STYLE_PENALTY:    System.out.println( "Manager Style: Penalty"    );  break;
-			case Manager.STYLE_BALANCED:   System.out.println( "Manager Style: Balanced"   );  break;
-			}
-			
-			i = this.players.iterator();
-			
-			while ( i.hasNext() ) {
-			
-				Player p = (Player)i.next();
-				
-				if ( p.isPlaying() ) {
-				
-					System.out.print( p.getFirst_name() + " " + p.getLast_name() + ", Age: " + String.valueOf( p.getAge() ) );
-					
-					switch ( this.manager.getStyle() ) {
-					
-					case Manager.STYLE_OFFENSIVE:  System.out.print( ", Rating: " + String.valueOf( p.getAdjustedOffensiveRating()   ) );  break;
-					case Manager.STYLE_DEFENSIVE:  System.out.print( ", Rating: " + String.valueOf( p.getAdjustedDefensiveRating()   ) );  break;
-					case Manager.STYLE_INTANGIBLE: System.out.print( ", Rating: " + String.valueOf( p.getAdjustedIntangibleRating()  ) );  break;
-					case Manager.STYLE_PENALTY:    System.out.print( ", Rating: " + String.valueOf( p.getAdjustedPenaltyRating()     ) );  break;
-					case Manager.STYLE_BALANCED:   System.out.print( ", Rating: " + String.valueOf( p.getAdjustedPerformanceRating() ) );  break;
-					}
-					
-					System.out.println( ", Fatigue: " + String.valueOf( p.getFatigue() ) );
-				}
-			}
-		}
-		*/
 		this.calcTeamRatings();
 	}
 
@@ -1180,6 +1139,22 @@ public class Team {
 
 	public void setManager(Manager manager) {
 		this.manager = manager;
+	}
+
+	public double getExpectation() {
+		return expectation;
+	}
+
+	public void setExpectation(double expectation) {
+		this.expectation = expectation;
+	}
+
+	public int getDrought() {
+		return drought;
+	}
+
+	public void setDrought(int drought) {
+		this.drought = drought;
 	}
 
 }

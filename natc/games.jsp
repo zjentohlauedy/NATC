@@ -164,6 +164,32 @@
   </table>
 </logic:present>
 
+<logic:present name="allstarTeams">
+  <table class="allstar_standings">
+    <tr>
+      <td>
+        <table class="standing">
+          <tr class="heading">
+            <td colspan="4"><bean:message key="games.label.allstars"/></td>
+          </tr>
+          <logic:iterate id="team" name="allstarTeams">
+            <tr>
+              <td>
+                <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+                  <bean:write name="team" property="location" />
+                </html:link>
+              </td>
+              <td><bean:write name="team" property="wins"     /></td>
+              <td><bean:write name="team" property="losses"   /></td>
+              <td></td>
+            </tr>
+          </logic:iterate>
+        </table>
+      </td>
+    </tr>
+  </table>
+</logic:present>
+
 <logic:present name="round1">
   <table class="bracket">
     <tr>
@@ -176,6 +202,9 @@
               <td height="24" valign="middle"></td>
             </logic:equal>
             <logic:greaterThan name="team" property="playoff_rank" value="0">
+              <td id="rank" align="right" valign="middle" height="24">
+                <bean:write name="team" property="division_rank" />
+              </td>
               <td height="24" valign="middle">
                 <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
                   <bean:write name="team" property="abbrev" />
@@ -196,6 +225,9 @@
               <td height="50" valign="middle"></td>
             </logic:equal>
             <logic:greaterThan name="team" property="playoff_rank" value="0">
+              <td id="rank" align="right" valign="middle" height="50">
+                <bean:write name="team" property="division_rank" />
+              </td>
               <td height="50" valign="middle">
                 <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
                   <bean:write name="team" property="abbrev"      />
@@ -216,6 +248,9 @@
               <td height="102" valign="middle"></td>
             </logic:equal>
             <logic:greaterThan name="team" property="playoff_rank" value="0">
+              <td id="rank" align="right" valign="middle" height="102">
+                <bean:write name="team" property="division_rank" />
+              </td>
               <td height="102" valign="middle">
                 <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
                   <bean:write name="team" property="abbrev"      />
@@ -236,6 +271,9 @@
               <td height="206" valign="middle"></td>
             </logic:equal>
             <logic:greaterThan name="team" property="playoff_rank" value="0">
+              <td id="rank" align="right" valign="middle" height="206">
+                <bean:write name="team" property="division_rank" />
+              </td>
               <td height="206" valign="middle">
                 <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
                   <bean:write name="team" property="abbrev"      />
@@ -256,6 +294,9 @@
               <td height="414" valign="middle"></td>
             </logic:equal>
             <logic:greaterThan name="team" property="playoff_rank" value="0">
+              <td id="rank" align="right" valign="middle" height="414">
+                <bean:write name="team" property="division_rank" />
+              </td>
               <td height="414" valign="middle">
                 <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
                   <bean:write name="team" property="abbrev"      />
