@@ -105,7 +105,7 @@ public class TeamAction extends Action {
 				teamPlayerView.setAward(           player.getAward()           );
 				teamPlayerView.setAllstar_team_id( player.getAllstar_team_id() );
 				
-				if ( team.getName().equals( "All Stars" ) ) {
+				if ( team.isAllstar_team() ) {
 				
 					teamPlayerView.setTeam_id(                                     player.getTeam_id()   );
 					teamPlayerView.setTeam_abbrev( teamService.getAbbrevForTeamId( player.getTeam_id() ) );

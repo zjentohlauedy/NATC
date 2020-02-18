@@ -64,6 +64,7 @@ public class Player {
 	private int     draft_pick;
 	private int     seasons_played;
 	private int     allstar_team_id;
+	private boolean allstar_alternate;
 	
 	// Tracking roster cuts
 	private boolean released;
@@ -75,92 +76,94 @@ public class Player {
 	
 	public Player() {
 	
-		this.player_id       = 0;
-		this.team_id         = 0;
-		this.year            = null;
-		this.first_name      = null;
-		this.last_name       = null;
-		this.age             = 0;
-		this.scoring         = 0;
-		this.passing         = 0;
-		this.blocking        = 0;
-		this.tackling        = 0;
-		this.stealing        = 0;
-		this.presence        = 0;
-		this.discipline      = 0;
-		this.penalty_shot    = 0;
-		this.penalty_offense = 0;
-		this.penalty_defense = 0;
-		this.endurance       = 0;
-		this.confidence      = 0;
-		this.vitality        = 0;
-		this.fatigue         = 0;
-		this.in_game         = false;
-		this.playing         = false;
-		this.resting         = false;
-		this.played_in_game  = false;
-		this.started         = false;
-		this.durability      = 0;
-		this.injured         = false;
-		this.duration        = 0;
-		this.return_date     = null;
-		this.rookie          = false;
-		this.free_agent      = false;
-		this.signed          = false;
-		this.retired         = false;
-		this.award           = 0;
-		this.draft_pick      = 0;
-		this.seasons_played  = 0;
-		this.allstar_team_id = 0;
-		this.score           = 0;
-		this.released        = false;
-		this.former_team_id  = 0;
-		this.game            = null;
+		this.player_id         = 0;
+		this.team_id           = 0;
+		this.year              = null;
+		this.first_name        = null;
+		this.last_name         = null;
+		this.age               = 0;
+		this.scoring           = 0;
+		this.passing           = 0;
+		this.blocking          = 0;
+		this.tackling          = 0;
+		this.stealing          = 0;
+		this.presence          = 0;
+		this.discipline        = 0;
+		this.penalty_shot      = 0;
+		this.penalty_offense   = 0;
+		this.penalty_defense   = 0;
+		this.endurance         = 0;
+		this.confidence        = 0;
+		this.vitality          = 0;
+		this.fatigue           = 0;
+		this.in_game           = false;
+		this.playing           = false;
+		this.resting           = false;
+		this.played_in_game    = false;
+		this.started           = false;
+		this.durability        = 0;
+		this.injured           = false;
+		this.duration          = 0;
+		this.return_date       = null;
+		this.rookie            = false;
+		this.free_agent        = false;
+		this.signed            = false;
+		this.retired           = false;
+		this.award             = 0;
+		this.draft_pick        = 0;
+		this.seasons_played    = 0;
+		this.allstar_team_id   = 0;
+		this.allstar_alternate = false;
+		this.score             = 0;
+		this.released          = false;
+		this.former_team_id    = 0;
+		this.game              = null;
 	}
 	
 	public Player( int player_id, String first_name, String last_name, boolean rookie, int age ) {
 	
-		this.player_id       = player_id;
-		this.team_id         = 0;
-		this.year            = null;
-		this.first_name      = first_name;
-		this.last_name       = last_name;
-		this.age             = age;
-		this.scoring         = Math.random();
-		this.passing         = Math.random();
-		this.blocking        = Math.random();
-		this.tackling        = Math.random();
-		this.stealing        = Math.random();
-		this.presence        = Math.random();
-		this.discipline      = Math.random();
-		this.penalty_shot    = Math.random();
-		this.penalty_offense = Math.random();
-		this.penalty_defense = Math.random();
-		this.endurance       = Math.random();
-		this.confidence      = Math.random();
-		this.vitality        = Math.random();
-		this.fatigue         = 0.0;
-		this.in_game         = false;
-		this.playing         = false;
-		this.resting         = false;
-		this.played_in_game  = false;
-		this.started         = false;
-		this.durability      = Math.random();
-		this.injured         = false;
-		this.duration        = 0;
-		this.return_date     = null;
-		this.rookie          = rookie;
-		this.free_agent      = false;
-		this.signed          = false;
-		this.retired         = false;
-		this.award           = 0;
-		this.draft_pick      = 0;
-		this.seasons_played  = 0;
-		this.allstar_team_id = 0;
-		this.score           = 0;
-		this.released        = false;
-		this.former_team_id  = 0;
-		this.game            = null;
+		this.player_id         = player_id;
+		this.team_id           = 0;
+		this.year              = null;
+		this.first_name        = first_name;
+		this.last_name         = last_name;
+		this.age               = age;
+		this.scoring           = Math.random();
+		this.passing           = Math.random();
+		this.blocking          = Math.random();
+		this.tackling          = Math.random();
+		this.stealing          = Math.random();
+		this.presence          = Math.random();
+		this.discipline        = Math.random();
+		this.penalty_shot      = Math.random();
+		this.penalty_offense   = Math.random();
+		this.penalty_defense   = Math.random();
+		this.endurance         = Math.random();
+		this.confidence        = Math.random();
+		this.vitality          = Math.random();
+		this.fatigue           = 0.0;
+		this.in_game           = false;
+		this.playing           = false;
+		this.resting           = false;
+		this.played_in_game    = false;
+		this.started           = false;
+		this.durability        = Math.random();
+		this.injured           = false;
+		this.duration          = 0;
+		this.return_date       = null;
+		this.rookie            = rookie;
+		this.free_agent        = false;
+		this.signed            = false;
+		this.retired           = false;
+		this.award             = 0;
+		this.draft_pick        = 0;
+		this.seasons_played    = 0;
+		this.allstar_team_id   = 0;
+		this.allstar_alternate = false;
+		this.score             = 0;
+		this.released          = false;
+		this.former_team_id    = 0;
+		this.game              = null;
 	}
 
 	public double getOverallRating() {
@@ -1266,6 +1269,14 @@ public class Player {
 
 	public void setFree_agent(boolean freeAgent) {
 		free_agent = freeAgent;
+	}
+
+	public boolean isAllstar_alternate() {
+		return allstar_alternate;
+	}
+
+	public void setAllstar_alternate(boolean allstarAlternate) {
+		allstar_alternate = allstarAlternate;
 	}
 
 }

@@ -23,6 +23,7 @@ public class Team {
 	
 	private int      conference;
 	private int      division;
+	private boolean  allstar_team;
 	
 	private int      games;
 	private int      wins;
@@ -81,6 +82,7 @@ public class Team {
 		this.abbrev           = null;
 		this.conference       = 0;
 		this.division         = 0;
+		this.allstar_team     = false;
 		this.games            = 0;
 		this.wins             = 0;
 		this.losses           = 0;
@@ -1171,6 +1173,14 @@ public class Team {
 
 	public void setDrought(int drought) {
 		this.drought = drought;
+	}
+
+	public boolean isAllstar_team() {
+		return allstar_team;
+	}
+
+	public void setAllstar_team(boolean allstarTeam) {
+		allstar_team = allstarTeam;
 	}
 
 }

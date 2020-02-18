@@ -326,7 +326,7 @@
   </tr>
   <tr class="heading">
     <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.player"        /></a></td>
-    <logic:equal name="team" property="name" value="All Stars">
+    <logic:equal name="team" property="allstar_team" value="true">
     <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.team"          /></a></td>
     </logic:equal>
     <td><a href="" onclick="return sortTable( null, this )"><bean:message key="team.label.age"           /></a></td>
@@ -367,7 +367,7 @@
           <h7><bean:message key="team.label.injured" /></h7>
         </logic:equal>
       </td>
-      <logic:equal name="team" property="name" value="All Stars">
+      <logic:equal name="team" property="allstar_team" value="true">
       <td>
         <html:link page="/Team.do" paramId="team_id" paramName="teamPlayer" paramProperty="team_id">
           <bean:write name="teamPlayer" property="team_abbrev"/>

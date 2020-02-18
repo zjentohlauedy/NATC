@@ -426,8 +426,8 @@ public class GameServiceImpl implements GameService {
 				injury.setPlayer_id( player.getPlayer_id()         );
 				injury.setDuration(  player.getDuration()          );
 				
-				if   ( t1.getName().equals( "All Stars" ) ) injury.setTeam_id( player.getAllstar_team_id() );
-				else                                        injury.setTeam_id( player.getTeam_id()         );
+				if   ( t1.isAllstar_team() ) injury.setTeam_id( player.getAllstar_team_id() );
+				else                         injury.setTeam_id( player.getTeam_id()         );
 				
 				injuries.add( injury );
 				
@@ -1501,7 +1501,7 @@ public class GameServiceImpl implements GameService {
 		while ( player_selected == true );
 		
 		// Finally retire those players that are ready and no longer on a team
-		playerService.retireTeamPlayers();
+		playerService.retireFreePlayers();
 	}
 	
 	private void processRookieDraft( Schedule event ) throws SQLException {
@@ -1955,8 +1955,8 @@ public class GameServiceImpl implements GameService {
 
 	private void selectAllstarTeams( Schedule event )  throws SQLException {
 	
-		int[]  allstarTeamIds = null;
-		List   teamList       = null;
+		int[]  allstarTeamIds     = null;
+		List   teamList           = null;
 		Manager[] allstarManagers = new Manager[4];
 		
 		TeamService    teamService    = new TeamServiceImpl( dbConn, event.getYear() );
@@ -1967,10 +1967,6 @@ public class GameServiceImpl implements GameService {
 		
 		teamList = teamService.getTeamList();
 		
-		// Sort teams with best teams at top
-		//Collections.sort( teamList, new TeamComparator( dbConn, year, false ) );
-		//Collections.reverse( teamList );
-		
 		Iterator i = teamList.iterator();
 		
 		while ( i.hasNext() ) {
@@ -1979,7 +1975,7 @@ public class GameServiceImpl implements GameService {
 
 			Player player = playerService.getPlayerById( playerService.selectAllstarForTeam( team.getTeam_id() ) );
 			
-			playerService.updateAllstarTeamId( player.getPlayer_id(), allstarTeamIds[team.getDivision()] );
+			playerService.updateAllstarTeamId( player.getPlayer_id(), allstarTeamIds[team.getDivision()], false );
 			
 			if ( allstarManagers[ team.getDivision() ] == null ) {
 			
@@ -1989,6 +1985,21 @@ public class GameServiceImpl implements GameService {
 			}
 		}
 
+		// Choose Alternates by Division
+		for ( int j = 0; j < Constants.NUMBER_OF_DIVISIONS; ++j ) {
+		
+			List playerList = playerService.selectAllstarAlternatesForDivision( j );
+			
+			i = playerList.iterator();
+			
+			while ( i.hasNext() ) {
+			
+				Player player = (Player)i.next();
+				
+				playerService.updateAllstarTeamId( player.getPlayer_id(), allstarTeamIds[j], true );
+			}
+		}
+		
 		// Update Day 1 Allstar Schedule
 		ScheduleService scheduleService = new ScheduleServiceImpl( dbConn, event.getYear() );
 		

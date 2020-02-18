@@ -41,9 +41,10 @@ public interface PlayerService {
 	public List           getPlayerAwards() throws SQLException;
 	public List           getPlayerGamesForTeamByGame( int game_id, int team_id ) throws SQLException;
 	public void           updateSeasonsPlayed() throws SQLException;
-	public void           updateAllstarTeamId( int player_id, int team_id ) throws SQLException;
+	public void           updateAllstarTeamId( int player_id, int team_id, boolean alternate ) throws SQLException;
 	public List           getAllstarsByTeamId( int division ) throws SQLException;
 	public int            selectAllstarForTeam( int team_id ) throws SQLException;
+	public List           selectAllstarAlternatesForDivision( int division ) throws SQLException;
 	public List           getManagerialCandidates() throws SQLException;
 	public RookieInfoView getRookieInfo( int player_id ) throws SQLException;
 	public void           agePlayers() throws SQLException;

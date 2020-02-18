@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import natc.data.TeamGame;
+import natc.service.ScheduleService;
 import natc.service.StatsService;
 import natc.view.StatsView;
 
@@ -270,6 +271,10 @@ public class StatsServiceImpl implements StatsService {
 
 	public Collection getTopPlayersByCareer() throws SQLException {
 
+		ScheduleService scheduleService = new ScheduleServiceImpl( dbConn, null );
+		
+		String currentYear = scheduleService.getLastScheduleEntry().getYear();
+		
 		ArrayList categories = new ArrayList();
 		
 		categories.add( new Parameters( DatabaseImpl.STAT_SCORE,         StatsView.KEY_SCORE,         false ) );
@@ -335,6 +340,8 @@ public class StatsServiceImpl implements StatsService {
 					statsView.setFirst_year(     dbRs.getString( 5 ) );
 					statsView.setLast_year(      dbRs.getString( 6 ) );
 					statsView.setSeasons_played( dbRs.getInt(    7 ) );
+					
+					if ( statsView.getLast_year().equals( currentYear ) ) statsView.setLast_year( null );
 					
 					if ( list == null ) {
 						

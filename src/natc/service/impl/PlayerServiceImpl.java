@@ -45,38 +45,39 @@ public class PlayerServiceImpl implements PlayerService {
 	
 	private void copyPlayerFromResultSet( Player player, ResultSet resultSet ) throws SQLException {
 	
-		player.setPlayer_id(       resultSet.getInt(      1 ) );
-		player.setTeam_id(         resultSet.getInt(      2 ) );
-		player.setYear(            resultSet.getString(   3 ) );
-		player.setFirst_name(      resultSet.getString(   4 ) );
-		player.setLast_name(       resultSet.getString(   5 ) );
-		player.setAge(             resultSet.getInt(      6 ) );
-		player.setScoring(         resultSet.getDouble(   7 ) );
-		player.setPassing(         resultSet.getDouble(   8 ) );
-		player.setBlocking(        resultSet.getDouble(   9 ) );
-		player.setTackling(        resultSet.getDouble(  10 ) );
-		player.setStealing(        resultSet.getDouble(  11 ) );
-		player.setPresence(        resultSet.getDouble(  12 ) );
-		player.setDiscipline(      resultSet.getDouble(  13 ) );
-		player.setPenalty_shot(    resultSet.getDouble(  14 ) );
-		player.setPenalty_offense( resultSet.getDouble(  15 ) );
-		player.setPenalty_defense( resultSet.getDouble(  16 ) );
-		player.setEndurance(       resultSet.getDouble(  17 ) );
-		player.setConfidence(      resultSet.getDouble(  18 ) );
-		player.setVitality(        resultSet.getDouble(  19 ) );
-		player.setDurability(      resultSet.getDouble(  20 ) );
-		player.setRookie(          resultSet.getBoolean( 21 ) );
-		player.setInjured(         resultSet.getBoolean( 22 ) );
-		player.setReturn_date(     resultSet.getDate(    23 ) );
-		player.setFree_agent(      resultSet.getBoolean( 24 ) );
-		player.setSigned(          resultSet.getBoolean( 25 ) );
-		player.setReleased(        resultSet.getBoolean( 26 ) );
-		player.setRetired(         resultSet.getBoolean( 27 ) );
-		player.setFormer_team_id(  resultSet.getInt(     28 ) );
-		player.setAllstar_team_id( resultSet.getInt(     29 ) );
-		player.setAward(           resultSet.getInt(     30 ) );
-		player.setDraft_pick(      resultSet.getInt(     31 ) );
-		player.setSeasons_played(  resultSet.getInt(     32 ) );
+		player.setPlayer_id(       resultSet.getInt(        1 ) );
+		player.setTeam_id(         resultSet.getInt(        2 ) );
+		player.setYear(            resultSet.getString(     3 ) );
+		player.setFirst_name(      resultSet.getString(     4 ) );
+		player.setLast_name(       resultSet.getString(     5 ) );
+		player.setAge(             resultSet.getInt(        6 ) );
+		player.setScoring(         resultSet.getDouble(     7 ) );
+		player.setPassing(         resultSet.getDouble(     8 ) );
+		player.setBlocking(        resultSet.getDouble(     9 ) );
+		player.setTackling(        resultSet.getDouble(    10 ) );
+		player.setStealing(        resultSet.getDouble(    11 ) );
+		player.setPresence(        resultSet.getDouble(    12 ) );
+		player.setDiscipline(      resultSet.getDouble(    13 ) );
+		player.setPenalty_shot(    resultSet.getDouble(    14 ) );
+		player.setPenalty_offense( resultSet.getDouble(    15 ) );
+		player.setPenalty_defense( resultSet.getDouble(    16 ) );
+		player.setEndurance(       resultSet.getDouble(    17 ) );
+		player.setConfidence(      resultSet.getDouble(    18 ) );
+		player.setVitality(        resultSet.getDouble(    19 ) );
+		player.setDurability(      resultSet.getDouble(    20 ) );
+		player.setRookie(          resultSet.getBoolean(   21 ) );
+		player.setInjured(         resultSet.getBoolean(   22 ) );
+		player.setReturn_date(     resultSet.getDate(      23 ) );
+		player.setFree_agent(      resultSet.getBoolean(   24 ) );
+		player.setSigned(          resultSet.getBoolean(   25 ) );
+		player.setReleased(        resultSet.getBoolean(   26 ) );
+		player.setRetired(         resultSet.getBoolean(   27 ) );
+		player.setFormer_team_id(  resultSet.getInt(       28 ) );
+		player.setAllstar_team_id( resultSet.getInt(       29 ) );
+		player.setAllstar_alternate( resultSet.getBoolean( 30 ) );
+		player.setAward(           resultSet.getInt(       31 ) );
+		player.setDraft_pick(      resultSet.getInt(       32 ) );
+		player.setSeasons_played(  resultSet.getInt(       33 ) );
 	}
 	
 	private int getNextPlayerId() throws SQLException {
@@ -1208,7 +1209,7 @@ public class PlayerServiceImpl implements PlayerService {
 		return playerGames;
 	}
 
-	public void updateAllstarTeamId( int player_id, int team_id ) throws SQLException {
+	public void updateAllstarTeamId( int player_id, int team_id, boolean alternate ) throws SQLException {
 		
 		PreparedStatement ps = null;
 		
@@ -1216,9 +1217,10 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps = DatabaseImpl.getAllstarTeamIdUpdatePs( dbConn );
 			
-			ps.setInt(    1, team_id   );
-			ps.setString( 2, this.year );
-			ps.setInt(    3, player_id );
+			ps.setInt(     1, team_id   );
+			ps.setBoolean( 2, alternate );
+			ps.setString(  3, this.year );
+			ps.setInt(     4, player_id );
 			
 			ps.executeUpdate();
 		}
@@ -1253,15 +1255,16 @@ public class PlayerServiceImpl implements PlayerService {
 				playerAllstarView.setLast_name(   dbRs.getString(   3 ) );
 				playerAllstarView.setRookie(      dbRs.getBoolean(  4 ) );
 				playerAllstarView.setInjured(     dbRs.getBoolean(  5 ) );
-				playerAllstarView.setAward(       dbRs.getInt(      6 ) );
-				playerAllstarView.setTeam_id(     dbRs.getInt(      7 ) );
-				playerAllstarView.setTeam_abbrev( dbRs.getString(   8 ) );
-				playerAllstarView.setPoints(      dbRs.getInt(      9 ) );
-				playerAllstarView.setGoals(       dbRs.getInt(     10 ) );
-				playerAllstarView.setAssists(     dbRs.getInt(     11 ) );
-				playerAllstarView.setStops(       dbRs.getInt(     12 ) );
-				playerAllstarView.setSteals(      dbRs.getInt(     13 ) );
-				playerAllstarView.setPsm(         dbRs.getInt(     14 ) );
+				playerAllstarView.setAlternate(   dbRs.getBoolean(  6 ) );
+				playerAllstarView.setAward(       dbRs.getInt(      7 ) );
+				playerAllstarView.setTeam_id(     dbRs.getInt(      8 ) );
+				playerAllstarView.setTeam_abbrev( dbRs.getString(   9 ) );
+				playerAllstarView.setPoints(      dbRs.getInt(     10 ) );
+				playerAllstarView.setGoals(       dbRs.getInt(     11 ) );
+				playerAllstarView.setAssists(     dbRs.getInt(     12 ) );
+				playerAllstarView.setStops(       dbRs.getInt(     13 ) );
+				playerAllstarView.setSteals(      dbRs.getInt(     14 ) );
+				playerAllstarView.setPsm(         dbRs.getInt(     15 ) );
 				
 				if ( allstars == null ) allstars = new ArrayList();
 				
@@ -1286,9 +1289,8 @@ public class PlayerServiceImpl implements PlayerService {
 			ps = DatabaseImpl.getRetiredTeamPlayersUpdatePs( dbConn );
 			
 			ps.setBoolean( 1, true          );
-			ps.setBoolean( 2, false         );
-			ps.setNull(    3, Types.INTEGER );
-			ps.setString(  4, this.year     );
+			ps.setNull(    2, Types.INTEGER );
+			ps.setString(  3, this.year     );
 			
 			ps.executeUpdate();
 		}
@@ -1307,7 +1309,8 @@ public class PlayerServiceImpl implements PlayerService {
 			ps = DatabaseImpl.getRetiredFreePlayersUpdatePs( dbConn );
 			
 			ps.setBoolean( 1, true      );
-			ps.setString(  2, this.year );
+			ps.setBoolean( 2, false     );
+			ps.setString(  3, this.year );
 			
 			ps.executeUpdate();
 		}
@@ -1345,6 +1348,43 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 		
 		return selection;
+	}
+
+	public List selectAllstarAlternatesForDivision( int division ) throws SQLException {
+
+		PreparedStatement ps         = null;
+		ResultSet         dbRs       = null;
+		List              playerList = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAllstarAlternatesForDivisionSelectPs( dbConn );
+			
+			ps.setString( 1, year                      );
+			ps.setInt(    2, TeamGame.gt_RegularSeason );
+			ps.setInt(    3, division                  );
+			ps.setInt(    4, 3                         );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				int selection = dbRs.getInt( 1 );
+				
+				Player player = getPlayerById( selection );
+				
+				if ( playerList == null ) playerList = new ArrayList();
+				
+				playerList.add( player );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return playerList;
 	}
 
 	public List getManagerialCandidates() throws SQLException {
@@ -1958,7 +1998,7 @@ public class PlayerServiceImpl implements PlayerService {
 			
 			ps1 = DatabaseImpl.getRetiredPlayersWithoutTeamSelectPs( dbConn );
 			
-			ps1.setInt(     1, 0    );
+			ps1.setInt(     1, 1    );
 			ps1.setString(  2, year );
 			ps1.setBoolean( 3, true );
 			

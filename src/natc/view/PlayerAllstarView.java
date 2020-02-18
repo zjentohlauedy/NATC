@@ -7,6 +7,7 @@ public class PlayerAllstarView {
 	private String  last_name;
 	private boolean rookie;
 	private boolean injured;
+	private boolean alternate;
 	private int     award;
 	
 	private int     team_id;
@@ -26,6 +27,7 @@ public class PlayerAllstarView {
 		this.last_name   = null;
 		this.rookie      = false;
 		this.injured     = false;
+		this.alternate   = false;
 		this.award       = 0;
 		this.team_id     = 0;
 		this.team_abbrev = null;
@@ -147,6 +149,14 @@ public class PlayerAllstarView {
 
 	public void setPsm(int psm) {
 		this.psm = psm;
+	}
+
+	public boolean isAlternate() {
+		return alternate;
+	}
+
+	public void setAlternate(boolean alternate) {
+		this.alternate = alternate;
 	}
 	
 }

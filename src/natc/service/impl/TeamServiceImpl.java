@@ -78,37 +78,38 @@ public class TeamServiceImpl implements TeamService {
 	
 	private void copyTeamFromResultSet( Team team, ResultSet resultSet ) throws SQLException {
 
-		team.setTeam_id(          resultSet.getInt(     1 ) );
-		team.setYear(             resultSet.getString(  2 ) );
-		team.setLocation(         resultSet.getString(  3 ) );
-		team.setName(             resultSet.getString(  4 ) );
-		team.setAbbrev(           resultSet.getString(  5 ) );
-		team.setConference(       resultSet.getInt(     6 ) );
-		team.setDivision(         resultSet.getInt(     7 ) );
-		team.setPreseason_games(  resultSet.getInt(     8 ) );
-		team.setPreseason_wins(   resultSet.getInt(     9 ) );
-		team.setPreseason_losses( resultSet.getInt(    10 ) );
-		team.setGames(            resultSet.getInt(    11 ) );
-		team.setWins(             resultSet.getInt(    12 ) );
-		team.setLosses(           resultSet.getInt(    13 ) );
-		team.setDivision_wins(    resultSet.getInt(    14 ) );
-		team.setDivision_losses(  resultSet.getInt(    15 ) );
-		team.setOoc_wins(         resultSet.getInt(    16 ) );
-		team.setOoc_losses(       resultSet.getInt(    17 ) );
-		team.setOt_wins(          resultSet.getInt(    18 ) );
-		team.setOt_losses(        resultSet.getInt(    19 ) );
-		team.setRoad_wins(        resultSet.getInt(    20 ) );
-		team.setRoad_losses(      resultSet.getInt(    21 ) );
-		team.setHome_wins(        resultSet.getInt(    22 ) );
-		team.setHome_losses(      resultSet.getInt(    23 ) );
-		team.setDivision_rank(    resultSet.getInt(    24 ) );
-		team.setPlayoff_rank(     resultSet.getInt(    25 ) );
-		team.setPlayoff_games(    resultSet.getInt(    26 ) );
-		team.setRound1_wins(      resultSet.getInt(    27 ) );
-		team.setRound2_wins(      resultSet.getInt(    28 ) );
-		team.setRound3_wins(      resultSet.getInt(    29 ) );
-		team.setExpectation(      resultSet.getDouble( 30 ) );
-		team.setDrought(          resultSet.getInt(    31 ) );
+		team.setTeam_id(          resultSet.getInt(      1 ) );
+		team.setYear(             resultSet.getString(   2 ) );
+		team.setLocation(         resultSet.getString(   3 ) );
+		team.setName(             resultSet.getString(   4 ) );
+		team.setAbbrev(           resultSet.getString(   5 ) );
+		team.setConference(       resultSet.getInt(      6 ) );
+		team.setDivision(         resultSet.getInt(      7 ) );
+		team.setAllstar_team(     resultSet.getBoolean(  8 ) );
+		team.setPreseason_games(  resultSet.getInt(      9 ) );
+		team.setPreseason_wins(   resultSet.getInt(     10 ) );
+		team.setPreseason_losses( resultSet.getInt(     11 ) );
+		team.setGames(            resultSet.getInt(     12 ) );
+		team.setWins(             resultSet.getInt(     13 ) );
+		team.setLosses(           resultSet.getInt(     14 ) );
+		team.setDivision_wins(    resultSet.getInt(     15 ) );
+		team.setDivision_losses(  resultSet.getInt(     16 ) );
+		team.setOoc_wins(         resultSet.getInt(     17 ) );
+		team.setOoc_losses(       resultSet.getInt(     18 ) );
+		team.setOt_wins(          resultSet.getInt(     19 ) );
+		team.setOt_losses(        resultSet.getInt(     20 ) );
+		team.setRoad_wins(        resultSet.getInt(     21 ) );
+		team.setRoad_losses(      resultSet.getInt(     22 ) );
+		team.setHome_wins(        resultSet.getInt(     23 ) );
+		team.setHome_losses(      resultSet.getInt(     24 ) );
+		team.setDivision_rank(    resultSet.getInt(     25 ) );
+		team.setPlayoff_rank(     resultSet.getInt(     26 ) );
+		team.setPlayoff_games(    resultSet.getInt(     27 ) );
+		team.setRound1_wins(      resultSet.getInt(     28 ) );
+		team.setRound2_wins(      resultSet.getInt(     29 ) );
+		team.setRound3_wins(      resultSet.getInt(     30 ) );
+		team.setExpectation(      resultSet.getDouble(  31 ) );
+		team.setDrought(          resultSet.getInt(     32 ) );
 	}
 	
 	public void generateTeams() throws SQLException {
@@ -132,55 +133,60 @@ public class TeamServiceImpl implements TeamService {
 			
 			for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; ++i ) {
 			
-				ps.setInt(    1, ++team_id                          );
-				ps.setString( 2, year                               );
-				ps.setString( 3, teamData[i][0]                     );
-				ps.setString( 4, teamData[i][1]                     );
-				ps.setString( 5, teamData[i][2]                     );
-				ps.setInt(    6, i / Constants.TEAMS_PER_CONFERENCE );
-				ps.setInt(    7, i / Constants.TEAMS_PER_DIVISION   );
+				ps.setInt(     1, ++team_id                          );
+				ps.setString(  2, year                               );
+				ps.setString(  3, teamData[i][0]                     );
+				ps.setString(  4, teamData[i][1]                     );
+				ps.setString(  5, teamData[i][2]                     );
+				ps.setInt(     6, i / Constants.TEAMS_PER_CONFERENCE );
+				ps.setInt(     7, i / Constants.TEAMS_PER_DIVISION   );
+				ps.setBoolean( 8, false                              );
 				
 				ps.executeUpdate();
 			}
 			
 			// All Star Teams
-			ps.setInt(    1, ++team_id   );
-			ps.setString( 2, year        );
-			ps.setString( 3, "Greene"    );
-			ps.setString( 4, "All Stars" );
-			ps.setString( 5, "GRN."      );
-			ps.setInt(    6, 0           );
-			ps.setInt(    7, 0           );
+			ps.setInt(     1, ++team_id   );
+			ps.setString(  2, year        );
+			ps.setString(  3, "Greene"    );
+			ps.setString(  4, "All Stars" );
+			ps.setString(  5, "GRN."      );
+			ps.setInt(     6, 0           );
+			ps.setInt(     7, 0           );
+			ps.setBoolean( 8, true        );
 			
 			ps.executeUpdate();
 			
-			ps.setInt(    1, ++team_id   );
-			ps.setString( 2, year        );
-			ps.setString( 3, "Davis"     );
-			ps.setString( 4, "All Stars" );
-			ps.setString( 5, "DVS."      );
-			ps.setInt(    6, 0           );
-			ps.setInt(    7, 1           );
-			
-			ps.executeUpdate();
-
-			ps.setInt(    1, ++team_id   );
-			ps.setString( 2, year        );
-			ps.setString( 3, "Smith"     );
-			ps.setString( 4, "All Stars" );
-			ps.setString( 5, "SMI."      );
-			ps.setInt(    6, 1           );
-			ps.setInt(    7, 2           );
+			ps.setInt(     1, ++team_id   );
+			ps.setString(  2, year        );
+			ps.setString(  3, "Davis"     );
+			ps.setString(  4, "All Stars" );
+			ps.setString(  5, "DVS."      );
+			ps.setInt(     6, 0           );
+			ps.setInt(     7, 1           );
+			ps.setBoolean( 8, true        );
 			
 			ps.executeUpdate();
 
-			ps.setInt(    1, ++team_id   );
-			ps.setString( 2, year        );
-			ps.setString( 3, "Lawrence"  );
-			ps.setString( 4, "All Stars" );
-			ps.setString( 5, "LAW."      );
-			ps.setInt(    6, 1           );
-			ps.setInt(    7, 3           );
+			ps.setInt(     1, ++team_id   );
+			ps.setString(  2, year        );
+			ps.setString(  3, "Smith"     );
+			ps.setString(  4, "All Stars" );
+			ps.setString(  5, "SMI."      );
+			ps.setInt(     6, 1           );
+			ps.setInt(     7, 2           );
+			ps.setBoolean( 8, true        );
+			
+			ps.executeUpdate();
+
+			ps.setInt(     1, ++team_id   );
+			ps.setString(  2, year        );
+			ps.setString(  3, "Lawrence"  );
+			ps.setString(  4, "All Stars" );
+			ps.setString(  5, "LAW."      );
+			ps.setInt(     6, 1           );
+			ps.setInt(     7, 3           );
+			ps.setBoolean( 8, true        );
 			
 			ps.executeUpdate();
 			
@@ -227,7 +233,8 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps = DatabaseImpl.getTeamListSelectPs( dbConn );
 			
-			ps.setString( 1, year );
+			ps.setString(  1, year );
+			ps.setBoolean( 2, false );
 			
 			dbRs = ps.executeQuery();
 
@@ -261,7 +268,8 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps = DatabaseImpl.getAllstarTeamListSelectPs( dbConn );
 			
-			ps.setString( 1, year );
+			ps.setString(  1, year );
+			ps.setBoolean( 2, true );
 			
 			dbRs = ps.executeQuery();
 
@@ -310,7 +318,7 @@ public class TeamServiceImpl implements TeamService {
 				// Get manager
 				ManagerService managerService = new ManagerServiceImpl( dbConn, year );
 				
-				if ( team.getName().equals( "All Stars" ) ) {
+				if ( team.isAllstar_team() ) {
 				
 					team.setManager( managerService.getManagerByAllstarTeamId( team_id ) );
 				}
@@ -322,7 +330,7 @@ public class TeamServiceImpl implements TeamService {
 				// Get players
 				PlayerService playerService = new PlayerServiceImpl( dbConn, year );
 				
-				if ( team.getName().equals( "All Stars" ) ) {
+				if ( team.isAllstar_team() ) {
 					
 					team.setPlayers( playerService.getPlayersByAllstarTeamId( team_id ) );
 				}
@@ -356,8 +364,9 @@ public class TeamServiceImpl implements TeamService {
 		
 			ps = DatabaseImpl.getTeamsByDivisionSelectPs( dbConn );
 			
-			ps.setString( 1, this.year );
-			ps.setInt(    2, division  );
+			ps.setString(  1, this.year );
+			ps.setInt(     2, division  );
+			ps.setBoolean( 3, false     );
 			
 			dbRs = ps.executeQuery();
 			
@@ -429,33 +438,34 @@ public class TeamServiceImpl implements TeamService {
 			ps.setString(  3, team.getAbbrev()           );
 			ps.setInt(     4, team.getConference()       );
 			ps.setInt(     5, team.getDivision()         );
-			ps.setInt(     6, team.getPreseason_games()  );
-			ps.setInt(     7, team.getPreseason_wins()   );
-			ps.setInt(     8, team.getPreseason_losses() );
-			ps.setInt(     9, team.getGames()            );
-			ps.setInt(    10, team.getWins()             );
-			ps.setInt(    11, team.getLosses()           );
-			ps.setInt(    12, team.getDivision_wins()    );
-			ps.setInt(    13, team.getDivision_losses()  );
-			ps.setInt(    14, team.getOoc_wins()         );
-			ps.setInt(    15, team.getOoc_losses()       );
-			ps.setInt(    16, team.getOt_wins()          );
-			ps.setInt(    17, team.getOt_losses()        );
-			ps.setInt(    18, team.getRoad_wins()        );
-			ps.setInt(    19, team.getRoad_losses()      );
-			ps.setInt(    20, team.getHome_wins()        );
-			ps.setInt(    21, team.getHome_losses()      );
-			ps.setInt(    22, team.getDivision_rank()    );
-			ps.setInt(    23, team.getPlayoff_rank()     );
-			ps.setInt(    24, team.getPlayoff_games()    );
-			ps.setInt(    25, team.getRound1_wins()      );
-			ps.setInt(    26, team.getRound2_wins()      );
-			ps.setInt(    27, team.getRound3_wins()      );
-			ps.setDouble( 28, team.getExpectation()      );
-			ps.setInt(    29, team.getDrought()          );
+			ps.setBoolean( 6, team.isAllstar_team()      );
+			ps.setInt(     7, team.getPreseason_games()  );
+			ps.setInt(     8, team.getPreseason_wins()   );
+			ps.setInt(     9, team.getPreseason_losses() );
+			ps.setInt(    10, team.getGames()            );
+			ps.setInt(    11, team.getWins()             );
+			ps.setInt(    12, team.getLosses()           );
+			ps.setInt(    13, team.getDivision_wins()    );
+			ps.setInt(    14, team.getDivision_losses()  );
+			ps.setInt(    15, team.getOoc_wins()         );
+			ps.setInt(    16, team.getOoc_losses()       );
+			ps.setInt(    17, team.getOt_wins()          );
+			ps.setInt(    18, team.getOt_losses()        );
+			ps.setInt(    19, team.getRoad_wins()        );
+			ps.setInt(    20, team.getRoad_losses()      );
+			ps.setInt(    21, team.getHome_wins()        );
+			ps.setInt(    22, team.getHome_losses()      );
+			ps.setInt(    23, team.getDivision_rank()    );
+			ps.setInt(    24, team.getPlayoff_rank()     );
+			ps.setInt(    25, team.getPlayoff_games()    );
+			ps.setInt(    26, team.getRound1_wins()      );
+			ps.setInt(    27, team.getRound2_wins()      );
+			ps.setInt(    28, team.getRound3_wins()      );
+			ps.setDouble( 29, team.getExpectation()      );
+			ps.setInt(    30, team.getDrought()          );
 			
-			ps.setString( 30, this.year         );
-			ps.setInt(    31, team.getTeam_id() );
+			ps.setString( 31, this.year         );
+			ps.setInt(    32, team.getTeam_id() );
 			
 			ps.executeUpdate();
 		}
@@ -1006,8 +1016,8 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps = DatabaseImpl.getAllstarTeamIdsSelectPs( dbConn );
 			
-			ps.setString( 1, year       );
-			ps.setString( 2, "All Stars" );
+			ps.setString(  1, year );
+			ps.setBoolean( 2, true );
 			
 			dbRs = ps.executeQuery();
 			
