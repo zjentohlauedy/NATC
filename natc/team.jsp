@@ -379,8 +379,9 @@
 
 <logic:present name="injuries">
   <table class="injuries">
-    <tr class="label"><td colspan="3"><bean:message key="team.label.injuries" /></td></tr>
+    <tr class="label"><td colspan="4"><bean:message key="team.label.injuries" /></td></tr>
     <tr class="heading">
+      <td><bean:message key="team.label.date"     /></td>
       <td><bean:message key="team.label.player"   /></td>
       <td><bean:message key="team.label.game"     /></td>
       <td><bean:message key="team.label.duration" /></td>
@@ -388,20 +389,18 @@
     <logic:iterate id="teamInjuryView" name="injuries">
       <tr>
         <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="teamInjuryView" paramProperty="game_id">
+            <bean:write name="teamInjuryView" property="datestamp"/>
+          </html:link>
+        </td>
+        <td>
           <html:link page="/Player.do" paramId="player_id" paramName="teamInjuryView" paramProperty="player_id">
             <bean:write name="teamInjuryView" property="last_name"/>, <bean:write name="teamInjuryView" property="first_name"/>
           </html:link>
         </td>
         <td>
           <logic:equal name="teamInjuryView" property="road_game" value="true">
-            <html:link page="/Game.do" paramId="game_id" paramName="teamInjuryView" paramProperty="game_id">
-              <bean:message key="player.label.at" />
-            </html:link>
-          </logic:equal>
-          <logic:equal name="teamInjuryView" property="road_game" value="false">
-            <html:link page="/Game.do" paramId="game_id" paramName="teamInjuryView" paramProperty="game_id">
-              <bean:message key="player.label.vs" />
-            </html:link>
+            <bean:message key="player.label.at" />
           </logic:equal>
           <html:link page="/Team.do" paramId="team_id" paramName="teamInjuryView" paramProperty="opponent">
             <bean:write name="teamInjuryView" property="opponent_abbrev"/>

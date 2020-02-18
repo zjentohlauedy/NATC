@@ -1,5 +1,7 @@
 package natc.view;
 
+import java.text.DecimalFormat;
+
 public class ManagerView {
 
 	private int    manager_id;
@@ -7,6 +9,8 @@ public class ManagerView {
 	private String last_name;
 	private int    team_id;
 	private String team_abbrev;
+	private int    seasons;
+	private double win_pct;
 	
 	public ManagerView() {
 	
@@ -15,8 +19,17 @@ public class ManagerView {
 		this.last_name   = null;
 		this.team_id     = 0;
 		this.team_abbrev = null;
+		this.seasons     = 0;
+		this.win_pct     = 0.0;
 	}
 
+	public String getWinPctDsp() {
+	
+		DecimalFormat df = new DecimalFormat("#.###");
+		
+		return df.format( win_pct );
+	}
+	
 	public int getManager_id() {
 		return manager_id;
 	}
@@ -55,6 +68,22 @@ public class ManagerView {
 
 	public void setTeam_abbrev(String teamAbbrev) {
 		team_abbrev = teamAbbrev;
+	}
+
+	public int getSeasons() {
+		return seasons;
+	}
+
+	public void setSeasons(int seasons) {
+		this.seasons = seasons;
+	}
+
+	public double getWin_pct() {
+		return win_pct;
+	}
+
+	public void setWin_pct(double winPct) {
+		win_pct = winPct;
 	}
 	
 }

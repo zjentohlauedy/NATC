@@ -13,6 +13,7 @@ public class Manager {
 	public static final int STYLE_BALANCED   = 5;
 	
 	public static final int MANAGER_OF_THE_YEAR = 1;
+	public static final int STARTING_AGE        = 40;
 	
 	private int     manager_id;
 	
@@ -39,14 +40,13 @@ public class Manager {
 	
 	private boolean new_hire;
 	private boolean released;
-	private int     released_by;
 	private boolean retired;
+	private int     former_team_id;
 	
 	private int     seasons;
-	
 	private int     score;
-	
-	private double  cpr; // career performance rating
+	private int     total_seasons;
+	private int     total_score;
 	
 	public Manager() {
 	
@@ -66,12 +66,13 @@ public class Manager {
 		this.style           = 0;
 		this.new_hire        = false;
 		this.released        = false;
-		this.released_by     = 0;
 		this.retired         = false;
+		this.former_team_id  = 0;
 		this.seasons         = 0;
 		this.score           = 0;
+		this.total_seasons   = 0;
+		this.total_score     = 0;
 		this.award           = 0;
-		this.cpr             = 0.0;
 	}
 
 	public Manager( int manager_id, String first_name, String last_name ) {
@@ -83,7 +84,7 @@ public class Manager {
 		this.year            = null;
 		this.first_name      = first_name;
 		this.last_name       = last_name;
-		this.age             = 40;
+		this.age             = STARTING_AGE;
 		this.offense         = Math.random();
 		this.defense         = Math.random();
 		this.intangible      = Math.random();
@@ -91,12 +92,13 @@ public class Manager {
 		this.vitality        = Math.random();
 		this.new_hire        = false;
 		this.released        = false;
-		this.released_by     = 0;
 		this.retired         = false;
+		this.former_team_id  = 0;
 		this.seasons         = 0;
 		this.score           = 0;
+		this.total_seasons   = 0;
+		this.total_score     = 0;
 		this.award           = 0;
-		this.cpr             = 0.0;
 		
 		determineStyle();
 	}
@@ -110,7 +112,7 @@ public class Manager {
 		this.year            = null;
 		this.first_name      = first_name;
 		this.last_name       = last_name;
-		this.age             = 40;
+		this.age             = STARTING_AGE;
 		this.offense         = 0.0;
 		this.defense         = 0.0;
 		this.intangible      = 0.0;
@@ -119,12 +121,13 @@ public class Manager {
 		this.style           = 0;
 		this.new_hire        = false;
 		this.released        = false;
-		this.released_by     = 0;
 		this.retired         = false;
+		this.former_team_id  = 0;
 		this.seasons         = 0;
 		this.score           = 0;
+		this.total_seasons   = 0;
+		this.total_score     = 0;
 		this.award           = 0;
-		this.cpr             = 0.0;
 	}
 
 	private class Attribute implements Comparable {
@@ -232,9 +235,10 @@ public class Manager {
 	
 		if ( this.seasons > 0 ) {
 		
-			double performanceRating = ((double)this.score / (double)this.seasons);
+			double currentPerformanceRating = ((double)this.score       / (double)this.seasons);
+			double careerPerformanceRating  = ((double)this.total_score / (double)this.total_seasons);
 			
-			return (performanceRating > this.cpr) ? performanceRating : this.cpr;
+			return (currentPerformanceRating > careerPerformanceRating) ? currentPerformanceRating : careerPerformanceRating;
 		}
 		
 		return DEFAULT_PERFORMANCE_RATING;
@@ -344,20 +348,20 @@ public class Manager {
 		this.released = released;
 	}
 
-	public int getReleased_by() {
-		return released_by;
-	}
-
-	public void setReleased_by(int releasedBy) {
-		released_by = releasedBy;
-	}
-
 	public boolean isRetired() {
 		return retired;
 	}
 
 	public void setRetired(boolean retired) {
 		this.retired = retired;
+	}
+
+	public int getFormer_team_id() {
+		return former_team_id;
+	}
+
+	public void setFormer_team_id(int formerTeamId) {
+		former_team_id = formerTeamId;
 	}
 
 	public int getStyle() {
@@ -408,12 +412,20 @@ public class Manager {
 		this.award = award;
 	}
 
-	public double getCpr() {
-		return cpr;
+	public int getTotal_seasons() {
+		return total_seasons;
 	}
 
-	public void setCpr(double cpr) {
-		this.cpr = cpr;
+	public void setTotal_seasons(int totalSeasons) {
+		total_seasons = totalSeasons;
 	}
-	
+
+	public int getTotal_score() {
+		return total_score;
+	}
+
+	public void setTotal_score(int totalScore) {
+		total_score = totalScore;
+	}
+
 }

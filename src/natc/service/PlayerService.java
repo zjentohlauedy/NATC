@@ -10,7 +10,8 @@ import natc.data.PlayerGame;
 
 public interface PlayerService {
 
-	public Player generatePlayer( boolean is_on_team, int team_id ) throws SQLException;
+	public Player generatePlayer( boolean rookie, int age ) throws SQLException;
+	public void   generatePlayers() throws SQLException;
 	public void   updatePlayersForNewSeason( String last_year ) throws SQLException;
 	public void   updatePlayer( Player player ) throws SQLException;
 	public void   insertPlayerGame( PlayerGame playerGame ) throws SQLException;

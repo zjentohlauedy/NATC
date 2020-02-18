@@ -53,13 +53,14 @@ CREATE TABLE Managers_T
     Style           INTEGER,
     New_Hire        INTEGER,
     Released        INTEGER,
-    Released_By     INTEGER,
     Retired         INTEGER,
+    Former_Team_Id  INTEGER,
     Allstar_Team_Id INTEGER,
     Award           INTEGER,
     Seasons         INTEGER,
     Score           INTEGER,
-    Cpr             DOUBLE
+    Total_Seasons   INTEGER,
+    Total_Score     INTEGER
 );
 
 CREATE INDEX Manager_Year       ON Managers_T ( Year       );
@@ -382,7 +383,8 @@ BEGIN
   DECLARE style_var           INT;
   DECLARE seasons_var         INT;
   DECLARE score_var           INT;
-  DECLARE cpr_var             DOUBLE;
+  DECLARE total_seasons_var   INT;
+  DECLARE total_score_var     INT;
 
   DECLARE done           INT DEFAULT 0;
 
@@ -401,9 +403,10 @@ BEGIN
            Style,
            Seasons,
            Score,
-           Cpr
+           Total_Seasons,
+           Total_Score
     FROM   Managers_T
-    WHERE  Year = lastYear
+    WHERE  Year    = lastYear
     AND    Retired = 0;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
@@ -425,7 +428,8 @@ BEGIN
                             style_var,
                             seasons_var,
                             score_var,
-                            cpr_var;
+                            total_seasons_var,
+                            total_score_var;
 
     IF NOT done THEN
       INSERT INTO Managers_T ( Manager_Id,
@@ -446,7 +450,8 @@ BEGIN
                                Retired,
                                Seasons,
                                Score,
-                               Cpr
+                               Total_Seasons,
+                               Total_Score
                              )
                       VALUES ( manager_id_var,
                                team_id_var,
@@ -466,7 +471,8 @@ BEGIN
                                0,
                                seasons_var,
                                score_var,
-                               cpr_var
+                               total_seasons_var,
+                               total_score_var
                              );
     END IF;
   UNTIL done END REPEAT;

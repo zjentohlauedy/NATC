@@ -48,9 +48,12 @@
 
 <logic:present name="retired_managers">
   <table class="freeagency">
-    <tr class="label"><td><bean:message key="ofs.label.retired"  /></td></tr>
+    <tr class="label"><td colspan="3"><bean:message key="ofs.label.retired"  /></td></tr>
     <tr class="heading">
-      <td><bean:message key="ofs.label.manager"/></td>
+      <td><bean:message key="ofs.label.manager" /></td>
+      <td><bean:message key="ofs.label.team"    /></td>
+      <td><bean:message key="ofs.label.seasons" /></td>
+      <td><bean:message key="ofs.label.win_pct" /></td>
     </tr>
     <logic:iterate id="manager" name="retired_managers">
       <tr>
@@ -59,6 +62,18 @@
             <bean:write name="manager" property="last_name"  />, <bean:write name="manager" property="first_name" />
           </html:link>
         </td>
+        <td>
+          <logic:equal name="manager" property="team_id" value="0">
+            <bean:message key="ofs.label.na" />
+          </logic:equal>
+          <logic:notEqual name="manager" property="team_id" value="0">
+            <html:link page="/Team.do" paramId="team_id" paramName="manager" paramProperty="team_id">
+              <bean:write name="manager" property="team_abbrev"/>
+            </html:link>
+          </logic:notEqual>
+        </td>
+        <td><bean:write name="manager" property="seasons"    /></td>
+        <td><bean:write name="manager" property="winPctDsp"  /></td>
       </tr>
     </logic:iterate>
   </table>
@@ -66,10 +81,12 @@
 
 <logic:present name="fired_managers">
   <table class="freeagency">
-    <tr class="label"><td colspan="2"><bean:message key="ofs.label.fired"  /></td></tr>
+    <tr class="label"><td colspan="4"><bean:message key="ofs.label.fired"  /></td></tr>
     <tr class="heading">
       <td><bean:message key="ofs.label.manager" /></td>
       <td><bean:message key="ofs.label.team"    /></td>
+      <td><bean:message key="ofs.label.seasons" /></td>
+      <td><bean:message key="ofs.label.win_pct" /></td>
     </tr>
     <logic:iterate id="manager" name="fired_managers">
       <tr>
@@ -83,6 +100,8 @@
             <bean:write name="manager" property="team_abbrev"/>
           </html:link>
         </td>
+        <td><bean:write name="manager" property="seasons"    /></td>
+        <td><bean:write name="manager" property="winPctDsp"  /></td>
       </tr>
     </logic:iterate>
   </table>
@@ -90,10 +109,12 @@
 
 <logic:present name="hired_managers">
   <table class="freeagency">
-    <tr class="label"><td colspan="2"><bean:message key="ofs.label.hired"  /></td></tr>
+    <tr class="label"><td colspan="4"><bean:message key="ofs.label.hired"  /></td></tr>
     <tr class="heading">
       <td><bean:message key="ofs.label.manager" /></td>
       <td><bean:message key="ofs.label.team"    /></td>
+      <td><bean:message key="ofs.label.seasons" /></td>
+      <td><bean:message key="ofs.label.win_pct" /></td>
     </tr>
     <logic:iterate id="manager" name="hired_managers">
       <tr>
@@ -107,6 +128,8 @@
             <bean:write name="manager" property="team_abbrev"/>
           </html:link>
         </td>
+        <td><bean:write name="manager" property="seasons"    /></td>
+        <td><bean:write name="manager" property="winPctDsp"  /></td>
       </tr>
     </logic:iterate>
   </table>

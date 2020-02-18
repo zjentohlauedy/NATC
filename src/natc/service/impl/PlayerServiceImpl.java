@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import natc.data.Constants;
 import natc.data.Injury;
 import natc.data.Player;
 import natc.data.PlayerGame;
@@ -118,7 +119,7 @@ public class PlayerServiceImpl implements PlayerService {
 		return names;
 	}
 	
-	public Player generatePlayer( boolean is_on_team, int team_id ) throws SQLException {
+	public Player generatePlayer( boolean rookie, int age ) throws SQLException {
 		
 		PreparedStatement ps     = null;
 		Player            player = null;
@@ -128,15 +129,12 @@ public class PlayerServiceImpl implements PlayerService {
 			int      player_id = getNextPlayerId();
 			String[] name      = generatePlayerName();
 			
-			player = new Player( player_id, name[0], name[1], team_id );
+			player = new Player( player_id, name[0], name[1], rookie, age );
 			
 			ps = DatabaseImpl.getPlayerInsertPs( dbConn );
 			
 			ps.setInt(      1, player.getPlayer_id()       );
-			
-			if   ( is_on_team ) ps.setInt(  2, player.getTeam_id() );
-			else                ps.setNull( 2, Types.INTEGER       );
-			
+			ps.setNull(     2, Types.INTEGER               ); // team_id
 			ps.setString(   3, year                        );
 			ps.setString(   4, player.getFirst_name()      );
 			ps.setString(   5, player.getLast_name()       );
@@ -157,10 +155,7 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setDouble(  20, player.getDurability()      );
 			ps.setBoolean( 21, player.isRookie()           );
 			ps.setBoolean( 22, player.isInjured()          );
-			
-			if   ( player.getReturn_date() != null ) ps.setDate( 23, new java.sql.Date( player.getReturn_date().getTime() ) );
-			else                                     ps.setNull( 23,                     Types.DATE                         );
-			
+			ps.setNull(    23, Types.DATE                  ); // return_date
 			ps.setBoolean( 24, player.isRetired()          );
 			ps.setInt(     25, player.getAward()           );
 			ps.setInt(     26, player.getDraft_pick()      );
@@ -175,6 +170,14 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 		
 		return player;
+	}
+
+	public void generatePlayers() throws SQLException {
+
+		for ( int j = 0; j < (Constants.PLAYERS_PER_TEAM * Constants.NUMBER_OF_TEAMS) ; ++j ) {
+			
+			generatePlayer( false, (int)Math.floor( (Math.random() * 12.0) + 18.0 ) );
+		}
 	}
 
 	public void updatePlayersForNewSeason( String last_year ) throws SQLException {

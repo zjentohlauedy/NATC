@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import natc.data.Constants;
-import natc.data.Player;
 import natc.data.Score;
 import natc.data.Team;
 import natc.data.TeamDefense;
@@ -19,7 +18,6 @@ import natc.data.TeamOffense;
 import natc.service.ManagerService;
 import natc.service.PlayerService;
 import natc.service.TeamService;
-import natc.view.PlayerInjuryView;
 import natc.view.TeamGameView;
 import natc.view.TeamInjuryView;
 import natc.view.TeamPlayerView;
@@ -89,7 +87,6 @@ public class TeamServiceImpl implements TeamService {
 		}
 		
 		PreparedStatement ps            = null;
-		PlayerService     playerService = new PlayerServiceImpl( dbConn, year );
 		int               team_id       = 0;
 		
 		try {
@@ -100,9 +97,7 @@ public class TeamServiceImpl implements TeamService {
 			
 			for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; ++i ) {
 			
-				team_id = i + 1;
-				
-				ps.setInt(    1, team_id                            );
+				ps.setInt(    1, ++team_id                          );
 				ps.setString( 2, year                               );
 				ps.setString( 3, teamData[i][0]                     );
 				ps.setString( 4, teamData[i][1]                     );
@@ -111,22 +106,10 @@ public class TeamServiceImpl implements TeamService {
 				ps.setInt(    7, i / Constants.TEAMS_PER_DIVISION   );
 				
 				ps.executeUpdate();
-
-				for ( int j = 0; j < Constants.PLAYERS_PER_TEAM; ++j ) {
-					
-					Player player = playerService.generatePlayer( true, team_id );
-					
-					player.setAge( (int)Math.floor( (Math.random() * 12.0) + 18.0 ) );
-					player.setRookie( false );
-					
-					playerService.updatePlayer( player );
-				}
 			}
 			
-			team_id++;
-			
 			// All Star Teams
-			ps.setInt(    1, team_id     );
+			ps.setInt(    1, ++team_id   );
 			ps.setString( 2, year        );
 			ps.setString( 3, "Greene"    );
 			ps.setString( 4, "All Stars" );
@@ -136,9 +119,7 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps.executeUpdate();
 			
-			team_id++;
-			
-			ps.setInt(    1, team_id     );
+			ps.setInt(    1, ++team_id   );
 			ps.setString( 2, year        );
 			ps.setString( 3, "Davis"     );
 			ps.setString( 4, "All Stars" );
@@ -148,9 +129,7 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps.executeUpdate();
 
-			team_id++;
-			
-			ps.setInt(    1, team_id     );
+			ps.setInt(    1, ++team_id   );
 			ps.setString( 2, year        );
 			ps.setString( 3, "Smith"     );
 			ps.setString( 4, "All Stars" );
@@ -160,9 +139,7 @@ public class TeamServiceImpl implements TeamService {
 			
 			ps.executeUpdate();
 
-			team_id++;
-			
-			ps.setInt(    1, team_id     );
+			ps.setInt(    1, ++team_id   );
 			ps.setString( 2, year        );
 			ps.setString( 3, "Lawrence"  );
 			ps.setString( 4, "All Stars" );
@@ -1427,14 +1404,15 @@ public class TeamServiceImpl implements TeamService {
 				
 				TeamInjuryView teamInjuryView = new TeamInjuryView();
 				
-				teamInjuryView.setPlayer_id(       dbRs.getInt(     1 ) );
-				teamInjuryView.setFirst_name(      dbRs.getString(  2 ) );
-				teamInjuryView.setLast_name(       dbRs.getString(  3 ) );
-				teamInjuryView.setOpponent(        dbRs.getInt(     4 ) );
-				teamInjuryView.setOpponent_abbrev( dbRs.getString(  5 ) );
-				teamInjuryView.setRoad_game(       dbRs.getBoolean( 6 ) );
-				teamInjuryView.setGame_id(         dbRs.getInt(     7 ) );
-				teamInjuryView.setDuration(        dbRs.getInt(     8 ) );
+				teamInjuryView.setDatestamp(       dbRs.getDate(    1 ) );
+				teamInjuryView.setPlayer_id(       dbRs.getInt(     2 ) );
+				teamInjuryView.setFirst_name(      dbRs.getString(  3 ) );
+				teamInjuryView.setLast_name(       dbRs.getString(  4 ) );
+				teamInjuryView.setOpponent(        dbRs.getInt(     5 ) );
+				teamInjuryView.setOpponent_abbrev( dbRs.getString(  6 ) );
+				teamInjuryView.setRoad_game(       dbRs.getBoolean( 7 ) );
+				teamInjuryView.setGame_id(         dbRs.getInt(     8 ) );
+				teamInjuryView.setDuration(        dbRs.getInt(     9 ) );
 				
 				if ( injuries == null ) injuries = new ArrayList();
 				

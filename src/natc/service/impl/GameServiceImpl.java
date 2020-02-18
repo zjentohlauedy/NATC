@@ -1084,15 +1084,79 @@ public class GameServiceImpl implements GameService {
 	
 	public void initializeDatabase() throws SQLException {
 		
-		// Generate teams - also generates players for each team
-		TeamService teamService = new TeamServiceImpl( dbConn, year );
-		
-		teamService.generateTeams();
-		
-		// Generate a new schedule
+		TeamService teamService         = new TeamServiceImpl(     dbConn, year );
+		ManagerService managerService   = new ManagerServiceImpl(  dbConn, year );
+		PlayerService playerService     = new PlayerServiceImpl(   dbConn, year );
 		ScheduleService scheduleService = new ScheduleServiceImpl( dbConn, year );
 		
+		teamService.generateTeams();
+		managerService.generateManagers();
+		playerService.generatePlayers();
 		scheduleService.generateSchedule();
+		
+		// Now that all the data has been created, assign managers and players to teams
+		List teamList    = teamService.getTeamList();
+		List managerList = managerService.getFreeManagers();
+		List playerList  = playerService.getFreePlayers();
+		
+		Collections.shuffle( teamList                             );
+		Collections.sort(    managerList, new ManagerComparator() );
+		
+		Iterator i = teamList.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			// pick the manager with the highest ratings from the pool of available managers
+			Manager bestManager = (Manager)managerList.get( managerList.size() - 1 );
+
+			bestManager.setTeam_id( team.getTeam_id() );
+			bestManager.setNew_hire( true );
+			bestManager.setScore( 0 );
+			bestManager.setSeasons( 0 );
+			
+			managerService.updateManager( bestManager );
+			
+			team.setManager( bestManager );
+			
+			// Remove selected manager from list
+			managerList.remove( managerList.size() - 1 );
+		}
+		
+		for ( int j = 0; j < Constants.PLAYERS_PER_TEAM; ++j ) {
+		
+			Collections.reverse( teamList );
+			
+			i = teamList.iterator();
+			
+			while ( i.hasNext() ) {
+			
+				Team team = (Team)i.next();
+				
+				// Sort list based on managerial style
+				switch ( team.getManager().getStyle() ) {
+				
+				case Manager.STYLE_OFFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive  ) );  break;
+				case Manager.STYLE_DEFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive  ) );  break;
+				case Manager.STYLE_INTANGIBLE: Collections.sort( playerList, new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible ) );  break;
+				case Manager.STYLE_PENALTY:    Collections.sort( playerList, new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty    ) );  break;
+				case Manager.STYLE_BALANCED:   Collections.sort( playerList, new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced   ) );  break;
+				}
+				
+				// Assign highest ranked player to team - playerList is sorted in ascending order
+				Player bestPlayer = (Player)playerList.get( playerList.size() - 1 );
+				
+				bestPlayer.setTeam_id( team.getTeam_id() );
+				
+				// Update player in database
+				playerService.updatePlayer( bestPlayer );
+			
+				// Remove selected player from list
+				playerList.remove( playerList.size() - 1 );
+				
+			}
+		}
 	}
 	
 	public void startNewSeason( String lastYear ) throws SQLException {
@@ -1158,90 +1222,47 @@ public class GameServiceImpl implements GameService {
 		List   teamList    = null;
 		List   managerList = null;
 		String lastYear    = String.valueOf(  Integer.parseInt( event.getYear() ) - 1 );
-		
+
 		// Get count of teamless managers in pool
 		TeamService    teamService    = new TeamServiceImpl( dbConn, lastYear );
 		PlayerService  playerService  = null;
 		ManagerService managerService = new ManagerServiceImpl( dbConn, event.getYear() );
-		
-		// if count == 0, initialize table with ex-players and if still less than 80, random managers up to 80
-		if ( managerService.getManagerCount() == 0 ) {
-			/*
-			int previousYear = Integer.parseInt( event.getYear() ) - 10;
-			int managerCount = 0;
-			
-			do {
-				
-				List playerList = null;
-				
-				playerService = new PlayerServiceImpl( dbConn, String.valueOf( previousYear ) );
-				
-				// starting 10 years from current year, convert 2 best retired players into managers
-				if ( (playerList = playerService.getManagerialCandidates()) == null ) break;
-				
-				Iterator i = playerList.iterator();
-				
-				while ( i.hasNext() ) {
-				
-					Player player = (Player)i.next();
-					
-					if ( managerService.generateManagerFromPlayer( player ) != null ) managerCount++;
-				}
-				
-				// go to previous year and do the above again until there are no previous years
-				previousYear = previousYear - 1;
+
+		managerService.ageManagers();
+
+		// Generate 2 more managers from retired players from 10 years ago
+		int previousYear = Integer.parseInt( event.getYear() ) - 10;
+
+		List playerList = null;
+
+		playerService = new PlayerServiceImpl( dbConn, String.valueOf( previousYear ) );
+
+		if ( (playerList = playerService.getManagerialCandidates()) != null ) {
+
+			Iterator i = playerList.iterator();
+
+			while ( i.hasNext() ) {
+
+				Player player = (Player)i.next();
+
+				managerService.generateManagerFromPlayer( player );
 			}
-			while ( true );
-			
-			// if manager count < 80 generate random managers until count == 80
-			for ( ; managerCount < 80; managerCount++ ) {
-				
-				managerService.generateManager();
-			}
-			*/
-			for ( int managerCount = 0; managerCount < 80; managerCount++ ) {
-			
-				managerService.generateManager();
-			}
+		} else {
+
+			// Just make 2 new managers
+			managerService.generateManager( Manager.STARTING_AGE );
+			managerService.generateManager( Manager.STARTING_AGE );
 		}
-		else {
 
-			managerService.ageManagers();
-			
-			// Generate 2 more managers from retired players from 10 years ago
-			int previousYear = Integer.parseInt( event.getYear() ) - 10;
-
-			List playerList = null;
-
-			playerService = new PlayerServiceImpl( dbConn, String.valueOf( previousYear ) );
-
-			if ( (playerList = playerService.getManagerialCandidates()) != null ) {
-
-				Iterator i = playerList.iterator();
-
-				while ( i.hasNext() ) {
-
-					Player player = (Player)i.next();
-
-					managerService.generateManagerFromPlayer( player );
-				}
-			} else {
-			
-				// Just make 2 new managers
-				managerService.generateManager();
-				managerService.generateManager();
-			}
-			
-			// Make 3 more managers to total 5 new for the season
-			managerService.generateManager();
-			managerService.generateManager();
-			managerService.generateManager();
-		}
+		// Make 3 more managers to total 5 new for the season
+		managerService.generateManager( Manager.STARTING_AGE );
+		managerService.generateManager( Manager.STARTING_AGE );
+		managerService.generateManager( Manager.STARTING_AGE );
 
 		// Get list of teams
 		// Sort by last year's records like rookie draft, or by team rating if first year
 		if ( (teamList = teamService.getTeamList()) != null ) {
-		
+
 			// Rank teams - sort list using compareto of team object
 			Collections.sort( teamList, new TeamComparator( dbConn, lastYear ) );
 		}
@@ -1305,16 +1326,16 @@ public class GameServiceImpl implements GameService {
 				if ( currentManager != null ) {
 				
 					currentManager.setTeam_id( 0 );
-					//currentManager.setSeasons( 0 );
 					
 					if ( currentManager.readyToRetire() ) {
 					
 						currentManager.setRetired( true );
+						currentManager.setFormer_team_id( nextTeam.getTeam_id() );
 					}
 					else {
 						
 						currentManager.setReleased( true );
-						currentManager.setReleased_by( nextTeam.getTeam_id() );
+						currentManager.setFormer_team_id( nextTeam.getTeam_id() );
 						
 						managerList.add( currentManager );
 					}
@@ -1346,7 +1367,7 @@ public class GameServiceImpl implements GameService {
 				Manager bestManager = (Manager)managerList.get( idx );
 				
 				// If the best manager happens to be the one the team just fired, move to the next one
-				if ( bestManager.getReleased_by() == nextTeam.getTeam_id() ) {
+				if ( bestManager.getFormer_team_id() == nextTeam.getTeam_id() ) {
 				
 					idx--;
 					
@@ -1412,7 +1433,7 @@ public class GameServiceImpl implements GameService {
 			// Generate 100 new players for this year and no team_id
 			for ( int i = 0; i < 80; ++i ) {
 			
-				playerService.generatePlayer( false, 0 );
+				playerService.generatePlayer( true, Player.STARTING_AGE );
 			}
 			
 			pick = 1;
@@ -2055,7 +2076,6 @@ public class GameServiceImpl implements GameService {
 		teamService.updateExpectations();
 		managerService.updateSeasons();
 		managerService.updateScore();
-		managerService.updateCareerPerformanceRating();
 		playerService.updateSeasonsPlayed();
 	}
 	

@@ -1,7 +1,10 @@
 package natc.view;
 
+import java.util.Date;
+
 public class TeamInjuryView {
 
+	private Date    datestamp;
 	private int     player_id;
 	private String  first_name;
 	private String  last_name;
@@ -13,6 +16,7 @@ public class TeamInjuryView {
 
 	public TeamInjuryView() {
 	
+		this.datestamp       = null;
 		this.player_id       = 0;
 		this.first_name      = null;
 		this.last_name       = null;
@@ -109,6 +113,14 @@ public class TeamInjuryView {
 
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	public Date getDatestamp() {
+		return datestamp;
+	}
+
+	public void setDatestamp(Date datestamp) {
+		this.datestamp = datestamp;
 	}
 	
 }

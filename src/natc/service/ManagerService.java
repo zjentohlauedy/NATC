@@ -9,7 +9,8 @@ import natc.view.ManagerView;
 
 public interface ManagerService {
 
-	public Manager     generateManager() throws SQLException;
+	public Manager     generateManager( int age ) throws SQLException;
+	public void        generateManagers() throws SQLException;
 	public Manager     generateManagerFromPlayer( Player player ) throws SQLException;
 	public int         getManagerCount() throws SQLException;
 	public Manager     getManagerById( int manager_id ) throws SQLException;
@@ -31,5 +32,4 @@ public interface ManagerService {
 	public void        selectManagerOfTheYear() throws SQLException;
 	public ManagerView getManagerOfTheYear() throws SQLException;
 	public Manager     getBestManagerByDivision( int division ) throws SQLException;
-	public void        updateCareerPerformanceRating() throws SQLException;
 }

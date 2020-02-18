@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class Player {
 
+	public static final int    STARTING_AGE     = 17;
+	
 	public static final double MAX_FATIGUE_RATE = (1.0 / 300.0); // 5 minutes
 	public static final double MIN_FATIGUE_RATE = (1.0 / 420.0); // 7 minutes
 	
@@ -110,14 +112,14 @@ public class Player {
 		this.game            = null;
 	}
 	
-	public Player( int player_id, String first_name, String last_name, int team_id ) {
+	public Player( int player_id, String first_name, String last_name, boolean rookie, int age ) {
 	
 		this.player_id       = player_id;
-		this.team_id         = team_id;
+		this.team_id         = 0;
 		this.year            = null;
 		this.first_name      = first_name;
 		this.last_name       = last_name;
-		this.age             = 17;
+		this.age             = age;
 		this.scoring         = Math.random();
 		this.passing         = Math.random();
 		this.blocking        = Math.random();
@@ -140,7 +142,7 @@ public class Player {
 		this.injured         = false;
 		this.duration        = 0;
 		this.return_date     = null;
-		this.rookie          = true;
+		this.rookie          = rookie;
 		this.retired         = false;
 		this.award           = 0;
 		this.draft_pick      = 0;
@@ -827,7 +829,7 @@ public class Player {
 	
 	public double getConfidenceFactor() {
 	
-		int years = this.age - 17;
+		int years = this.age - STARTING_AGE;
 		
 		return 1.0 - ((1.0 - this.confidence) / ((double)(years * years) + 1.0));
 	}
