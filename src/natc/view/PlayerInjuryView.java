@@ -1,7 +1,10 @@
 package natc.view;
 
+import java.util.Date;
+
 public class PlayerInjuryView {
 
+	private Date    datestamp;
 	private int     opponent;
 	private String  opponent_abbrev;
 	private boolean road_game;
@@ -10,6 +13,7 @@ public class PlayerInjuryView {
 	
 	public PlayerInjuryView() {
 	
+		this.datestamp       = null;
 		this.opponent        = 0;
 		this.opponent_abbrev = null;
 		this.road_game       = false;
@@ -79,6 +83,14 @@ public class PlayerInjuryView {
 
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	public Date getDatestamp() {
+		return datestamp;
+	}
+
+	public void setDatestamp(Date datestamp) {
+		this.datestamp = datestamp;
 	}
 	
 }

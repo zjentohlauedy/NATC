@@ -48,6 +48,7 @@ public class Player {
 	private boolean playing;
 	private boolean resting;
 	private boolean played_in_game;
+	private boolean started;
 	
 	private double  durability;
 	private boolean injured;
@@ -96,6 +97,7 @@ public class Player {
 		this.playing         = false;
 		this.resting         = false;
 		this.played_in_game  = false;
+		this.started         = false;
 		this.durability      = 0;
 		this.injured         = false;
 		this.duration        = 0;
@@ -138,6 +140,7 @@ public class Player {
 		this.playing         = false;
 		this.resting         = false;
 		this.played_in_game  = false;
+		this.started         = false;
 		this.durability      = Math.random();
 		this.injured         = false;
 		this.duration        = 0;
@@ -1233,6 +1236,14 @@ public class Player {
 
 	public void setReturn_date(Date returnDate) {
 		return_date = returnDate;
+	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
 	}
 
 }

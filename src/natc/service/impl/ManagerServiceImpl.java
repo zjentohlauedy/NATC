@@ -669,9 +669,8 @@ public class ManagerServiceImpl implements ManagerService {
 				managerView.setManager_id(  dbRs1.getInt(    1 ) );
 				managerView.setFirst_name(  dbRs1.getString( 2 ) );
 				managerView.setLast_name(   dbRs1.getString( 3 ) );
-				managerView.setSeasons(     dbRs1.getInt(    4 ) );
-				managerView.setTeam_id(     dbRs1.getInt(    5 ) );
-				managerView.setTeam_abbrev( dbRs1.getString( 6 ) );
+				managerView.setTeam_id(     dbRs1.getInt(    4 ) );
+				managerView.setTeam_abbrev( dbRs1.getString( 5 ) );
 				
 				ps2 = DatabaseImpl.getManagerTeamWinPctSelectPs( dbConn );
 
@@ -682,7 +681,8 @@ public class ManagerServiceImpl implements ManagerService {
 				
 				if ( dbRs2.next() ) {
 				
-					managerView.setWin_pct( dbRs2.getDouble( 1 ) );
+					managerView.setSeasons( dbRs2.getInt(    1 ) );
+					managerView.setWin_pct( dbRs2.getDouble( 2 ) );
 				}
 				
 				DatabaseImpl.closeDbRs( dbRs2 );

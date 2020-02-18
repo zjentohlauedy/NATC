@@ -105,6 +105,9 @@
           <logic:equal name="player" property="injured" value="true">
             <h7><bean:message key="player.label.injured" /></h7>
           </logic:equal>
+          <logic:equal name="player" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
+          </logic:equal>
         </td>
         <td></td>
         <td><bean:write name="player" property="gameTimeDsp"          /></td>
@@ -182,6 +185,9 @@
           </html:link>
           <logic:equal name="player" property="injured" value="true">
             <h7><bean:message key="player.label.injured" /></h7>
+          </logic:equal>
+          <logic:equal name="player" property="started" value="true">
+            <h7><bean:message key="player.label.started" /></h7>
           </logic:equal>
         </td>
         <td></td>

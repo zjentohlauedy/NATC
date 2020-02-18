@@ -557,6 +557,12 @@ public class GameServiceImpl implements GameService {
 			roadTeam.determineActivePlayers( 720 );
 			homeTeam.determineActivePlayers( 720 );
 			
+			if ( period == 1 ) {
+			
+				roadTeam.markStarters();
+				homeTeam.markStarters();
+			}
+			
 			// Determine attacker (team in possession of ball)
 			if   ( (period % 2) == 1 ) attacker = homeTeam;
 			else                       attacker = roadTeam;

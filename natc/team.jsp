@@ -17,6 +17,9 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_sorter.js"></script>
+  
 </head>
 <body>
 
@@ -322,17 +325,19 @@
     <td colspan="3"><bean:message key="team.label.players"/></td>
   </tr>
   <tr class="heading">
-    <td><bean:message key="team.label.player"        /></td>
-    <td><bean:message key="team.label.age"           /></td>
-    <td><bean:message key="team.label.skill"         /></td>
-    <td><bean:message key="team.label.games"         /></td>
-    <td><bean:message key="team.label.time_per_game" /></td>
-    <td><bean:message key="team.label.goals"         /></td>
-    <td><bean:message key="team.label.assists"       /></td>
-    <td><bean:message key="team.label.stops"         /></td>
-    <td><bean:message key="team.label.steals"        /></td>
-    <td><bean:message key="team.label.psm"           /></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.player"        /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.age"           /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.skill"         /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.games"         /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.starts"        /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.time_per_game" /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.goals"         /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.assists"       /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.stops"         /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.steals"        /></a></td>
+    <td><a href="" onclick="return sortTable( this )"><bean:message key="team.label.psm"           /></a></td>
   </tr>
+  <tbody id="playerList">
   <logic:iterate id="teamPlayer" name="teamPlayers">
     <tr>
       <td>
@@ -362,9 +367,10 @@
         <bean:write name="teamPlayer" property="age"/>
       </td>
       <td>
-        <img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="teamPlayer" property="rating"/>'>
+        <img id='<bean:write name="teamPlayer" property="adjustedRating"/>' src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="teamPlayer" property="adjustedRating"/>&value2=<bean:write name="teamPlayer" property="rating"/>'>
       </td>
       <td><bean:write name="teamPlayer" property="games"          /></td>
+      <td><bean:write name="teamPlayer" property="games_started"  /></td>
       <td><bean:write name="teamPlayer" property="timePerGameDsp" /></td>
       <td><bean:write name="teamPlayer" property="goals"          /></td>
       <td><bean:write name="teamPlayer" property="assists"        /></td>
@@ -373,6 +379,7 @@
       <td><bean:write name="teamPlayer" property="psm"            /></td>
     </tr>
   </logic:iterate>
+  </tbody>
   <tr class="separator"></tr>
 </table>
 </logic:present>
@@ -383,7 +390,7 @@
     <tr class="heading">
       <td><bean:message key="team.label.date"     /></td>
       <td><bean:message key="team.label.player"   /></td>
-      <td><bean:message key="team.label.game"     /></td>
+      <td><bean:message key="team.label.opponent" /></td>
       <td><bean:message key="team.label.duration" /></td>
     </tr>
     <logic:iterate id="teamInjuryView" name="injuries">
@@ -398,7 +405,7 @@
             <bean:write name="teamInjuryView" property="last_name"/>, <bean:write name="teamInjuryView" property="first_name"/>
           </html:link>
         </td>
-        <td>
+        <td align="right">
           <logic:equal name="teamInjuryView" property="road_game" value="true">
             <bean:message key="player.label.at" />
           </logic:equal>

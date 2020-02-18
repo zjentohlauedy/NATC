@@ -1328,14 +1328,16 @@ public class TeamServiceImpl implements TeamService {
 			if ( dbRs.next() ) {
 			
 				teamPlayer.setGames(         dbRs.getInt( 1 ) );
-				teamPlayer.setGoals(         dbRs.getInt( 3 ) );
-				teamPlayer.setAssists(       dbRs.getInt( 4 ) );
-				teamPlayer.setStops(         dbRs.getInt( 5 ) );
-				teamPlayer.setSteals(        dbRs.getInt( 6 ) );
-				teamPlayer.setPsm(           dbRs.getInt( 7 ) );
+				teamPlayer.setGames_started( dbRs.getInt( 2 ) );
 				
 				if   ( teamPlayer.getGames() == 0 ) teamPlayer.setTime_per_game( 0 );
-				else                                teamPlayer.setTime_per_game( dbRs.getInt( 2 ) / teamPlayer.getGames() );
+				else                                teamPlayer.setTime_per_game( dbRs.getInt( 3 ) / teamPlayer.getGames() );
+				
+				teamPlayer.setGoals(         dbRs.getInt( 4 ) );
+				teamPlayer.setAssists(       dbRs.getInt( 5 ) );
+				teamPlayer.setStops(         dbRs.getInt( 6 ) );
+				teamPlayer.setSteals(        dbRs.getInt( 7 ) );
+				teamPlayer.setPsm(           dbRs.getInt( 8 ) );
 			}
 		}
 		finally {

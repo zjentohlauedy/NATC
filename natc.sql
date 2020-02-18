@@ -194,6 +194,7 @@ CREATE TABLE PlayerGames_T
     Player_Id           INTEGER,
     Team_Id             INTEGER,
     Injured             INTEGER,
+    Started             INTEGER,
     Playing_Time        INTEGER,
     Attempts            INTEGER,
     Goals               INTEGER,
@@ -221,6 +222,7 @@ CREATE TABLE Player_Stats_Sum_T
     Type                INTEGER,
     Player_Id           INTEGER,
     Games               INTEGER,
+    Games_Started       INTEGER,
     Playing_Time        INTEGER,
     Attempts            INTEGER,
     Goals               INTEGER,
@@ -310,7 +312,7 @@ BEGIN
  RETURN result_var;
 END;
 
-
+/*
 CREATE FUNCTION getManagerScore( Playoff_Rank INT, Wins INT )
 RETURNS INT
 DETERMINISTIC
@@ -333,7 +335,7 @@ BEGIN
 
  RETURN result_var;
 END;
-
+*/
 
 
 CREATE PROCEDURE copyTeamsForNewYear ( IN lastYear CHAR(4), IN thisYear CHAR(4) )

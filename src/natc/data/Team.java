@@ -118,6 +118,22 @@ public class Team {
 		this.game             = null;
 	}
 
+	public void markStarters() {
+	
+		Iterator i = this.players.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			if ( player.isPlaying() ) {
+			
+				player.setStarted( true );
+				player.getGame().setStarted( true );
+			}
+		}
+	}
+	
 	public void restPlayers( int rest_time ) {
 	
 		Iterator i = this.players.iterator();

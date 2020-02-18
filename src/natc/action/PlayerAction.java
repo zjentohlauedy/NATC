@@ -21,6 +21,7 @@ import natc.service.TeamService;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 import natc.service.impl.TeamServiceImpl;
+import natc.view.RookieInfoView;
 
 public class PlayerAction extends Action {
 
@@ -76,6 +77,10 @@ public class PlayerAction extends Action {
 				
 				request.setAttribute( "team", team );
 			}
+			
+			RookieInfoView rookieInfoView;
+			
+			if ( (rookieInfoView = playerService.getRookieInfo( player.getPlayer_id() )) != null ) request.setAttribute( "rookieInfoView", rookieInfoView );
 			
 			List playerStats;
 			

@@ -17,8 +17,10 @@ public class TeamPlayerView {
 	private int     allstar_team_id;
 	
 	private double  rating;
+	private double  adjustedRating;
 	
 	private int     games;
+	private int     games_started;
 	private int     time_per_game;
 	private int     goals;
 	private int     assists;
@@ -37,7 +39,9 @@ public class TeamPlayerView {
 		this.award           = 0;
 		this.allstar_team_id = 0;
 		this.rating          = 0.0;
+		this.adjustedRating  = 0.0;
 		this.games           = 0;
+		this.games_started   = 0;
 		this.time_per_game   = 0;
 		this.goals           = 0;
 		this.assists         = 0;
@@ -117,6 +121,14 @@ public class TeamPlayerView {
 		this.rating = rating;
 	}
 
+	public double getAdjustedRating() {
+		return adjustedRating;
+	}
+
+	public void setAdjustedRating(double adjustedRating) {
+		this.adjustedRating = adjustedRating;
+	}
+
 	public int getGoals() {
 		return goals;
 	}
@@ -179,6 +191,14 @@ public class TeamPlayerView {
 
 	public void setInjured(boolean injured) {
 		this.injured = injured;
+	}
+
+	public int getGames_started() {
+		return games_started;
+	}
+
+	public void setGames_started(int gamesStarted) {
+		games_started = gamesStarted;
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import natc.data.Injury;
 import natc.data.Player;
 import natc.data.PlayerGame;
+import natc.view.RookieInfoView;
 
 public interface PlayerService {
 
@@ -41,4 +42,5 @@ public interface PlayerService {
 	public List   getAllstarsByTeamId( int division ) throws SQLException;
 	public int    selectAllstarForTeam( int team_id ) throws SQLException;
 	public List   getManagerialCandidates() throws SQLException;
+	public RookieInfoView getRookieInfo( int player_id ) throws SQLException;
 }

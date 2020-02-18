@@ -6,6 +6,7 @@ public class PlayerStats {
 	private int    type;
 	private int    player_id;
 	private int    games;
+	private int    games_started;
 	private int    playing_time;
 	private int    attempts;
 	private int    goals;
@@ -26,6 +27,7 @@ public class PlayerStats {
 		this.type                = 0;
 		this.player_id           = 0;
 		this.games               = 0;
+		this.games_started       = 0;
 		this.playing_time        = 0;
 		this.attempts            = 0;
 		this.assists             = 0;
@@ -174,6 +176,14 @@ public class PlayerStats {
 
 	public void setOffensive_penalties(int offensive_penalties) {
 		this.offensive_penalties = offensive_penalties;
+	}
+
+	public int getGames_started() {
+		return games_started;
+	}
+
+	public void setGames_started(int gamesStarted) {
+		games_started = gamesStarted;
 	}
 	
 }

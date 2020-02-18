@@ -10,6 +10,7 @@ public class PlayerStatsView {
 	private int     type;
 	
 	private int     games;
+	private int     games_started;
 	private int     playing_time;
 	private int     attempts;
 	private int     goals;
@@ -34,6 +35,7 @@ public class PlayerStatsView {
 	
 		this.year                = null;
 		this.games               = 0;
+		this.games_started       = 0;
 		this.playing_time        = 0;
 		this.attempts            = 0;
 		this.goals               = 0;
@@ -289,6 +291,14 @@ public class PlayerStatsView {
 
 	public void setTeam_abbrev(String teamAbbrev) {
 		team_abbrev = teamAbbrev;
+	}
+
+	public int getGames_started() {
+		return games_started;
+	}
+
+	public void setGames_started(int gamesStarted) {
+		games_started = gamesStarted;
 	}
 
 }

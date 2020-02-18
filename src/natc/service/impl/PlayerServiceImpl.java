@@ -23,6 +23,7 @@ import natc.view.AwardsView;
 import natc.view.PlayerGameView;
 import natc.view.PlayerInjuryView;
 import natc.view.PlayerStatsView;
+import natc.view.RookieInfoView;
 import natc.view.StringView;
 
 public class PlayerServiceImpl implements PlayerService {
@@ -409,23 +410,24 @@ public class PlayerServiceImpl implements PlayerService {
 				
 				playerStatsView.setYear(                dbRs.getString(  1 ) );
 				playerStatsView.setGames(               dbRs.getInt(     2 ) );
-				playerStatsView.setPlaying_time(        dbRs.getInt(     3 ) );
-				playerStatsView.setAttempts(            dbRs.getInt(     4 ) );
-				playerStatsView.setGoals(               dbRs.getInt(     5 ) );
-				playerStatsView.setAssists(             dbRs.getInt(     6 ) );
-				playerStatsView.setTurnovers(           dbRs.getInt(     7 ) );
-				playerStatsView.setStops(               dbRs.getInt(     8 ) );
-				playerStatsView.setSteals(              dbRs.getInt(     9 ) );
-				playerStatsView.setPenalties(           dbRs.getInt(    10 ) );
-				playerStatsView.setOffensive_penalties( dbRs.getInt(    11 ) );
-				playerStatsView.setPsa(                 dbRs.getInt(    12 ) );
-				playerStatsView.setPsm(                 dbRs.getInt(    13 ) );
-				playerStatsView.setOt_psa(              dbRs.getInt(    14 ) );
-				playerStatsView.setOt_psm(              dbRs.getInt(    15 ) );
-				playerStatsView.setAward(               dbRs.getInt(    16 ) );
-				playerStatsView.setAllstar_team_id(     dbRs.getInt(    17 ) );
-				playerStatsView.setTeam_id(             dbRs.getInt(    18 ) );
-				playerStatsView.setTeam_abbrev(         dbRs.getString( 19 ) );
+				playerStatsView.setGames_started(       dbRs.getInt(     3 ) );
+				playerStatsView.setPlaying_time(        dbRs.getInt(     4 ) );
+				playerStatsView.setAttempts(            dbRs.getInt(     5 ) );
+				playerStatsView.setGoals(               dbRs.getInt(     6 ) );
+				playerStatsView.setAssists(             dbRs.getInt(     7 ) );
+				playerStatsView.setTurnovers(           dbRs.getInt(     8 ) );
+				playerStatsView.setStops(               dbRs.getInt(     9 ) );
+				playerStatsView.setSteals(              dbRs.getInt(    10 ) );
+				playerStatsView.setPenalties(           dbRs.getInt(    11 ) );
+				playerStatsView.setOffensive_penalties( dbRs.getInt(    12 ) );
+				playerStatsView.setPsa(                 dbRs.getInt(    13 ) );
+				playerStatsView.setPsm(                 dbRs.getInt(    14 ) );
+				playerStatsView.setOt_psa(              dbRs.getInt(    15 ) );
+				playerStatsView.setOt_psm(              dbRs.getInt(    16 ) );
+				playerStatsView.setAward(               dbRs.getInt(    17 ) );
+				playerStatsView.setAllstar_team_id(     dbRs.getInt(    18 ) );
+				playerStatsView.setTeam_id(             dbRs.getInt(    19 ) );
+				playerStatsView.setTeam_abbrev(         dbRs.getString( 20 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -852,19 +854,20 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setInt(      5,                    playerGame.getPlayer_id()             );
 			ps.setInt(      6,                    playerGame.getTeam_id()               );
 			ps.setBoolean(  7,                    playerGame.isInjured()                );
-			ps.setInt(      8,                    playerGame.getPlaying_time()          );
-			ps.setInt(      9,                    playerGame.getAttempts()              );
-			ps.setInt(     10,                    playerGame.getGoals()                 );
-			ps.setInt(     11,                    playerGame.getAssists()               );
-			ps.setInt(     12,                    playerGame.getTurnovers()             );
-			ps.setInt(     13,                    playerGame.getStops()                 );
-			ps.setInt(     14,                    playerGame.getSteals()                );
-			ps.setInt(     15,                    playerGame.getPenalties()             );
-			ps.setInt(     16,                    playerGame.getOffensive_penalties()   );
-			ps.setInt(     17,                    playerGame.getPsa()                   );
-			ps.setInt(     18,                    playerGame.getPsm()                   );
-			ps.setInt(     19,                    playerGame.getOt_psa()                );
-			ps.setInt(     20,                    playerGame.getOt_psm()                );
+			ps.setBoolean(  8,                    playerGame.isStarted()                );
+			ps.setInt(      9,                    playerGame.getPlaying_time()          );
+			ps.setInt(     10,                    playerGame.getAttempts()              );
+			ps.setInt(     11,                    playerGame.getGoals()                 );
+			ps.setInt(     12,                    playerGame.getAssists()               );
+			ps.setInt(     13,                    playerGame.getTurnovers()             );
+			ps.setInt(     14,                    playerGame.getStops()                 );
+			ps.setInt(     15,                    playerGame.getSteals()                );
+			ps.setInt(     16,                    playerGame.getPenalties()             );
+			ps.setInt(     17,                    playerGame.getOffensive_penalties()   );
+			ps.setInt(     18,                    playerGame.getPsa()                   );
+			ps.setInt(     19,                    playerGame.getPsm()                   );
+			ps.setInt(     20,                    playerGame.getOt_psa()                );
+			ps.setInt(     21,                    playerGame.getOt_psm()                );
 			
 			ps.executeUpdate();
 		}
@@ -901,6 +904,7 @@ public class PlayerServiceImpl implements PlayerService {
 		playerStats.setOt_psm(              playerGame.getOt_psm()              );
 		
 		if ( player.isPlayed_in_game() ) playerStats.setGames( 1 );
+		if ( player.isStarted()        ) playerStats.setGames_started( 1 );
 		
 		try {
 			
@@ -916,40 +920,43 @@ public class PlayerServiceImpl implements PlayerService {
 			
 				// Populate values from database
 				playerStats.setGames(               playerStats.getGames()               + dbRs1.getInt(  1 ) );
-				playerStats.setPlaying_time(        playerStats.getPlaying_time()        + dbRs1.getInt(  2 ) );
-				playerStats.setAttempts(            playerStats.getAttempts()            + dbRs1.getInt(  3 ) );
-				playerStats.setGoals(               playerStats.getGoals()               + dbRs1.getInt(  4 ) );
-				playerStats.setAssists(             playerStats.getAssists()             + dbRs1.getInt(  5 ) );
-				playerStats.setTurnovers(           playerStats.getTurnovers()           + dbRs1.getInt(  6 ) );
-				playerStats.setStops(               playerStats.getStops()               + dbRs1.getInt(  7 ) );
-				playerStats.setSteals(              playerStats.getSteals()              + dbRs1.getInt(  8 ) );
-				playerStats.setPenalties(           playerStats.getPenalties()           + dbRs1.getInt(  9 ) );
-				playerStats.setOffensive_penalties( playerStats.getOffensive_penalties() + dbRs1.getInt( 10 ) );
-				playerStats.setPsa(                 playerStats.getPsa()                 + dbRs1.getInt( 11 ) );
-				playerStats.setPsm(                 playerStats.getPsm()                 + dbRs1.getInt( 12 ) );
-				playerStats.setOt_psa(              playerStats.getOt_psa()              + dbRs1.getInt( 13 ) );
-				playerStats.setOt_psm(              playerStats.getOt_psm()              + dbRs1.getInt( 14 ) );
+				playerStats.setGames_started(       playerStats.getGames_started()       + dbRs1.getInt(  2 ) );
+				playerStats.setPlaying_time(        playerStats.getPlaying_time()        + dbRs1.getInt(  3 ) );
+				playerStats.setAttempts(            playerStats.getAttempts()            + dbRs1.getInt(  4 ) );
+				playerStats.setGoals(               playerStats.getGoals()               + dbRs1.getInt(  5 ) );
+				playerStats.setAssists(             playerStats.getAssists()             + dbRs1.getInt(  6 ) );
+				playerStats.setTurnovers(           playerStats.getTurnovers()           + dbRs1.getInt(  7 ) );
+				playerStats.setStops(               playerStats.getStops()               + dbRs1.getInt(  8 ) );
+				playerStats.setSteals(              playerStats.getSteals()              + dbRs1.getInt(  9 ) );
+				playerStats.setPenalties(           playerStats.getPenalties()           + dbRs1.getInt( 10 ) );
+				playerStats.setOffensive_penalties( playerStats.getOffensive_penalties() + dbRs1.getInt( 11 ) );
+				playerStats.setPsa(                 playerStats.getPsa()                 + dbRs1.getInt( 12 ) );
+				playerStats.setPsm(                 playerStats.getPsm()                 + dbRs1.getInt( 13 ) );
+				playerStats.setOt_psa(              playerStats.getOt_psa()              + dbRs1.getInt( 14 ) );
+				playerStats.setOt_psm(              playerStats.getOt_psm()              + dbRs1.getInt( 15 ) );
 				
 				// Update the database
 				ps2 = DatabaseImpl.getPlayerStatsUpdatePs( dbConn );
 
 				ps2.setInt(     1, playerStats.getGames()               );
-				ps2.setInt(     2, playerStats.getPlaying_time()        );
-				ps2.setInt(     3, playerStats.getAttempts()            );
-				ps2.setInt(     4, playerStats.getGoals()               );
-				ps2.setInt(     5, playerStats.getAssists()             );
-				ps2.setInt(     6, playerStats.getTurnovers()           );
-				ps2.setInt(     7, playerStats.getStops()               );
-				ps2.setInt(     8, playerStats.getSteals()              );
-				ps2.setInt(     9, playerStats.getPenalties()           );
-				ps2.setInt(    10, playerStats.getOffensive_penalties() );
-				ps2.setInt(    11, playerStats.getPsa()                 );
-				ps2.setInt(    12, playerStats.getPsm()                 );
-				ps2.setInt(    13, playerStats.getOt_psa()              );
-				ps2.setInt(    14, playerStats.getOt_psm()              );
-				ps2.setString( 15, playerStats.getYear()                );
-				ps2.setInt(    16, playerStats.getType()                );
-				ps2.setInt(    17, playerStats.getPlayer_id()           );
+				ps2.setInt(     2, playerStats.getGames_started()       );
+				ps2.setInt(     3, playerStats.getPlaying_time()        );
+				ps2.setInt(     4, playerStats.getAttempts()            );
+				ps2.setInt(     5, playerStats.getGoals()               );
+				ps2.setInt(     6, playerStats.getAssists()             );
+				ps2.setInt(     7, playerStats.getTurnovers()           );
+				ps2.setInt(     8, playerStats.getStops()               );
+				ps2.setInt(     9, playerStats.getSteals()              );
+				ps2.setInt(    10, playerStats.getPenalties()           );
+				ps2.setInt(    11, playerStats.getOffensive_penalties() );
+				ps2.setInt(    12, playerStats.getPsa()                 );
+				ps2.setInt(    13, playerStats.getPsm()                 );
+				ps2.setInt(    14, playerStats.getOt_psa()              );
+				ps2.setInt(    15, playerStats.getOt_psm()              );
+				
+				ps2.setString( 16, playerStats.getYear()                );
+				ps2.setInt(    17, playerStats.getType()                );
+				ps2.setInt(    18, playerStats.getPlayer_id()           );
 				
 				ps2.executeUpdate();
 				
@@ -966,19 +973,20 @@ public class PlayerServiceImpl implements PlayerService {
 			ps1.setInt(     2, playerStats.getType()                );
 			ps1.setInt(     3, playerStats.getPlayer_id()           );
 			ps1.setInt(     4, playerStats.getGames()               );
-			ps1.setInt(     5, playerStats.getPlaying_time()        );
-			ps1.setInt(     6, playerStats.getAttempts()            );
-			ps1.setInt(     7, playerStats.getGoals()               );
-			ps1.setInt(     8, playerStats.getAssists()             );
-			ps1.setInt(     9, playerStats.getTurnovers()           );
-			ps1.setInt(    10, playerStats.getStops()               );
-			ps1.setInt(    11, playerStats.getSteals()              );
-			ps1.setInt(    12, playerStats.getPenalties()           );
-			ps1.setInt(    13, playerStats.getOffensive_penalties() );
-			ps1.setInt(    14, playerStats.getPsa()                 );
-			ps1.setInt(    15, playerStats.getPsm()                 );
-			ps1.setInt(    16, playerStats.getOt_psa()              );
-			ps1.setInt(    17, playerStats.getOt_psm()              );
+			ps1.setInt(     5, playerStats.getGames_started()       );
+			ps1.setInt(     6, playerStats.getPlaying_time()        );
+			ps1.setInt(     7, playerStats.getAttempts()            );
+			ps1.setInt(     8, playerStats.getGoals()               );
+			ps1.setInt(     9, playerStats.getAssists()             );
+			ps1.setInt(    10, playerStats.getTurnovers()           );
+			ps1.setInt(    11, playerStats.getStops()               );
+			ps1.setInt(    12, playerStats.getSteals()              );
+			ps1.setInt(    13, playerStats.getPenalties()           );
+			ps1.setInt(    14, playerStats.getOffensive_penalties() );
+			ps1.setInt(    15, playerStats.getPsa()                 );
+			ps1.setInt(    16, playerStats.getPsm()                 );
+			ps1.setInt(    17, playerStats.getOt_psa()              );
+			ps1.setInt(    18, playerStats.getOt_psm()              );
 			
 			ps1.executeUpdate();
 		}
@@ -1012,19 +1020,20 @@ public class PlayerServiceImpl implements PlayerService {
 				
 				playerStatsView.setType(                dbRs.getInt(  1 ) );
 				playerStatsView.setGames(               dbRs.getInt(  2 ) );
-				playerStatsView.setPlaying_time(        dbRs.getInt(  3 ) );
-				playerStatsView.setAttempts(            dbRs.getInt(  4 ) );
-				playerStatsView.setGoals(               dbRs.getInt(  5 ) );
-				playerStatsView.setAssists(             dbRs.getInt(  6 ) );
-				playerStatsView.setTurnovers(           dbRs.getInt(  7 ) );
-				playerStatsView.setStops(               dbRs.getInt(  8 ) );
-				playerStatsView.setSteals(              dbRs.getInt(  9 ) );
-				playerStatsView.setPenalties(           dbRs.getInt( 10 ) );
-				playerStatsView.setOffensive_penalties( dbRs.getInt( 11 ) );
-				playerStatsView.setPsa(                 dbRs.getInt( 12 ) );
-				playerStatsView.setPsm(                 dbRs.getInt( 13 ) );
-				playerStatsView.setOt_psa(              dbRs.getInt( 14 ) );
-				playerStatsView.setOt_psm(              dbRs.getInt( 15 ) );
+				playerStatsView.setGames_started(       dbRs.getInt(  3 ) );
+				playerStatsView.setPlaying_time(        dbRs.getInt(  4 ) );
+				playerStatsView.setAttempts(            dbRs.getInt(  5 ) );
+				playerStatsView.setGoals(               dbRs.getInt(  6 ) );
+				playerStatsView.setAssists(             dbRs.getInt(  7 ) );
+				playerStatsView.setTurnovers(           dbRs.getInt(  8 ) );
+				playerStatsView.setStops(               dbRs.getInt(  9 ) );
+				playerStatsView.setSteals(              dbRs.getInt( 10 ) );
+				playerStatsView.setPenalties(           dbRs.getInt( 11 ) );
+				playerStatsView.setOffensive_penalties( dbRs.getInt( 12 ) );
+				playerStatsView.setPsa(                 dbRs.getInt( 13 ) );
+				playerStatsView.setPsm(                 dbRs.getInt( 14 ) );
+				playerStatsView.setOt_psa(              dbRs.getInt( 15 ) );
+				playerStatsView.setOt_psm(              dbRs.getInt( 16 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -1208,19 +1217,20 @@ public class PlayerServiceImpl implements PlayerService {
 				playerGameView.setLast_name(           dbRs.getString(   2 ) );
 				playerGameView.setPlayer_id(           dbRs.getInt(      3 ) );
 				playerGameView.setInjured(             dbRs.getBoolean(  4 ) );
-				playerGameView.setPlaying_time(        dbRs.getInt(      5 ) );
-				playerGameView.setAttempts(            dbRs.getInt(      6 ) );
-				playerGameView.setGoals(               dbRs.getInt(      7 ) );
-				playerGameView.setAssists(             dbRs.getInt(      8 ) );
-				playerGameView.setTurnovers(           dbRs.getInt(      9 ) );
-				playerGameView.setStops(               dbRs.getInt(     10 ) );
-				playerGameView.setSteals(              dbRs.getInt(     11 ) );
-				playerGameView.setPenalties(           dbRs.getInt(     12 ) );
-				playerGameView.setOffensive_penalties( dbRs.getInt(     13 ) );
-				playerGameView.setPsa(                 dbRs.getInt(     14 ) );
-				playerGameView.setPsm(                 dbRs.getInt(     15 ) );
-				playerGameView.setOt_psa(              dbRs.getInt(     16 ) );
-				playerGameView.setOt_psm(              dbRs.getInt(     17 ) );
+				playerGameView.setStarted(             dbRs.getBoolean(  5 ) );
+				playerGameView.setPlaying_time(        dbRs.getInt(      6 ) );
+				playerGameView.setAttempts(            dbRs.getInt(      7 ) );
+				playerGameView.setGoals(               dbRs.getInt(      8 ) );
+				playerGameView.setAssists(             dbRs.getInt(      9 ) );
+				playerGameView.setTurnovers(           dbRs.getInt(     10 ) );
+				playerGameView.setStops(               dbRs.getInt(     11 ) );
+				playerGameView.setSteals(              dbRs.getInt(     12 ) );
+				playerGameView.setPenalties(           dbRs.getInt(     13 ) );
+				playerGameView.setOffensive_penalties( dbRs.getInt(     14 ) );
+				playerGameView.setPsa(                 dbRs.getInt(     15 ) );
+				playerGameView.setPsm(                 dbRs.getInt(     16 ) );
+				playerGameView.setOt_psa(              dbRs.getInt(     17 ) );
+				playerGameView.setOt_psm(              dbRs.getInt(     18 ) );
 				
 				if ( playerGames == null ) playerGames = new ArrayList();
 				
@@ -1499,7 +1509,6 @@ public class PlayerServiceImpl implements PlayerService {
 		PreparedStatement ps   = null;
 		ResultSet         dbRs = null;
 		
-
 		try {
 			
 			ps = DatabaseImpl.getInjuriesByPlayerIdSelectPs( dbConn );
@@ -1513,11 +1522,12 @@ public class PlayerServiceImpl implements PlayerService {
 				
 				PlayerInjuryView playerInjuryView = new PlayerInjuryView();
 				
-				playerInjuryView.setOpponent(        dbRs.getInt(     1 ) );
-				playerInjuryView.setOpponent_abbrev( dbRs.getString(  2 ) );
-				playerInjuryView.setRoad_game(       dbRs.getBoolean( 3 ) );
-				playerInjuryView.setGame_id(         dbRs.getInt(     4 ) );
-				playerInjuryView.setDuration(        dbRs.getInt(     5 ) );
+				playerInjuryView.setDatestamp(       dbRs.getDate(    1 ) );
+				playerInjuryView.setOpponent(        dbRs.getInt(     2 ) );
+				playerInjuryView.setOpponent_abbrev( dbRs.getString(  3 ) );
+				playerInjuryView.setRoad_game(       dbRs.getBoolean( 4 ) );
+				playerInjuryView.setGame_id(         dbRs.getInt(     5 ) );
+				playerInjuryView.setDuration(        dbRs.getInt(     6 ) );
 				
 				if ( injuries == null ) injuries = new ArrayList();
 				
@@ -1533,4 +1543,40 @@ public class PlayerServiceImpl implements PlayerService {
 		return injuries;
 	}
 	
+	public RookieInfoView getRookieInfo( int player_id ) throws SQLException {
+		
+		RookieInfoView rookieInfoView = null;
+
+		PreparedStatement ps   = null;
+		ResultSet         dbRs = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getRookieInfoSelectPs( dbConn );
+			
+			ps.setInt(     1, player_id );
+			ps.setBoolean( 2, true      );
+			ps.setInt(     3, player_id );
+			ps.setBoolean( 4, true      );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+				
+				rookieInfoView = new RookieInfoView();
+				
+				rookieInfoView.setPick(        dbRs.getInt(    1 ) );
+				rookieInfoView.setTeam_id(     dbRs.getInt(    2 ) );
+				rookieInfoView.setTeam_abbrev( dbRs.getString( 3 ) );
+				rookieInfoView.setYear(        dbRs.getString( 4 ) );
+			}
+		}
+		finally {
+		
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}
+		
+		return rookieInfoView;
+	}
 }

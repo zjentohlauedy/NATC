@@ -113,11 +113,36 @@ public class TeamAction extends Action {
 				
 					switch( manager.getStyle() ) {
 					
-					case Manager.STYLE_OFFENSIVE:  teamPlayerView.setRating( player.getAdjustedOffensiveRating(   true, false, false ) );  break;
-					case Manager.STYLE_DEFENSIVE:  teamPlayerView.setRating( player.getAdjustedDefensiveRating(   true, false, false ) );  break;
-					case Manager.STYLE_INTANGIBLE: teamPlayerView.setRating( player.getAdjustedIntangibleRating(  true, false, false ) );  break;
-					case Manager.STYLE_PENALTY:    teamPlayerView.setRating( player.getAdjustedPenaltyRating(     true, false, false ) );  break;
-					case Manager.STYLE_BALANCED:   teamPlayerView.setRating( player.getAdjustedPerformanceRating( true, false, false ) );  break;
+					//                                                                         Age    Conf.  Fatigue
+					case Manager.STYLE_OFFENSIVE:
+						
+						teamPlayerView.setRating(         player.getAdjustedOffensiveRating(   false, false, false ) );
+						teamPlayerView.setAdjustedRating( player.getAdjustedOffensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_DEFENSIVE:
+						
+						teamPlayerView.setRating(         player.getAdjustedDefensiveRating(   false, false, false ) );
+						teamPlayerView.setAdjustedRating( player.getAdjustedDefensiveRating(   true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_INTANGIBLE:
+						
+						teamPlayerView.setRating(         player.getAdjustedIntangibleRating(  false, false, false ) );
+						teamPlayerView.setAdjustedRating( player.getAdjustedIntangibleRating(  true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_PENALTY:
+						
+						teamPlayerView.setRating(         player.getAdjustedPenaltyRating(     false, false, false ) );
+						teamPlayerView.setAdjustedRating( player.getAdjustedPenaltyRating(     true,  true,  false ) );
+						break;
+						
+					case Manager.STYLE_BALANCED:
+						
+						teamPlayerView.setRating(         player.getAdjustedPerformanceRating( false, false, false ) );
+						teamPlayerView.setAdjustedRating( player.getAdjustedPerformanceRating( true,  true,  false ) );
+						break;
 					}
 				}
 				

@@ -25,7 +25,7 @@ public class ManagerView {
 
 	public String getWinPctDsp() {
 	
-		DecimalFormat df = new DecimalFormat("#.###");
+		DecimalFormat df = new DecimalFormat(".000");
 		
 		return df.format( win_pct );
 	}

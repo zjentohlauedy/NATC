@@ -53,15 +53,30 @@
       </td>
     </tr>
   </logic:equal>
-  <logic:present name="team">
-  <tr class="sublabel">
+  <tr>
     <td colspan="2">
-      <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
-        <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
-      </html:link>
+      <logic:equal name="player" property="retired" value="true">
+        <bean:message key="player.label.retired" />
+      </logic:equal>
+      <logic:equal name="player" property="retired" value="false">
+        <logic:equal name="player" property="team_id" value="0">
+          <bean:message key="player.label.freeagent" />
+        </logic:equal>
+      </logic:equal>
+      <logic:present name="team">
+        <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+          <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
+        </html:link>
+      </logic:present>
+      <logic:present name="rookieInfoView">
+        ( Drafted #<bean:write name="rookieInfoView" property="pick"/> in <bean:write name="rookieInfoView" property="year"/> by 
+        <html:link page="/Team.do" paramId="team_id" paramName="rookieInfoView" paramProperty="team_id">
+          <bean:write name="rookieInfoView" property="team_abbrev"/>
+        </html:link>
+        )
+      </logic:present>
     </td>
   </tr>
-  </logic:present>
   <tr class="heading">
     <td><bean:message key="player.label.area"   /></td>
     <td><bean:message key="player.label.rating" /></td>
@@ -118,23 +133,22 @@
 
 <logic:present name="injuries">
   <table class="injuries">
-    <tr class="label"><td colspan="2"><bean:write name="player" property="year"/> <bean:message key="player.label.injuries" /></td></tr>
+    <tr class="label"><td colspan="3"><bean:write name="player" property="year"/> <bean:message key="player.label.injuries" /></td></tr>
     <tr class="heading">
-      <td><bean:message key="player.label.game"     /></td>
+      <td><bean:message key="player.label.date"     /></td>
+      <td><bean:message key="player.label.opponent" /></td>
       <td><bean:message key="player.label.duration" /></td>
     </tr>
     <logic:iterate id="playerInjuryView" name="injuries">
       <tr>
         <td>
+          <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
+            <bean:write name="playerInjuryView" property="datestamp"/>
+          </html:link>
+        </td>
+        <td>
           <logic:equal name="playerInjuryView" property="road_game" value="true">
-            <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
               <bean:message key="player.label.at" />
-            </html:link>
-          </logic:equal>
-          <logic:equal name="playerInjuryView" property="road_game" value="false">
-            <html:link page="/Game.do" paramId="game_id" paramName="playerInjuryView" paramProperty="game_id">
-              <bean:message key="player.label.vs" />
-            </html:link>
           </logic:equal>
           <html:link page="/Team.do" paramId="team_id" paramName="playerInjuryView" paramProperty="opponent">
             <bean:write name="playerInjuryView" property="opponent_abbrev"/>
@@ -153,6 +167,7 @@
     <td><bean:message key="player.label.team"          /></td>
     <td><bean:message key="player.label.type"          /></td>
     <td><bean:message key="player.label.games"         /></td>
+    <td><bean:message key="player.label.starts"        /></td>
     <td><bean:message key="player.label.time_per_game" /></td>
     <td><bean:message key="player.label.attempts"      /></td>
     <td><bean:message key="player.label.goals"         /></td>
@@ -195,6 +210,7 @@
         </logic:equal>
       </td>
       <td><bean:write name="playerStatsView" property="games"                /></td>
+      <td><bean:write name="playerStatsView" property="games_started"        /></td>
       <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
       <td><bean:write name="playerStatsView" property="attempts"             /></td>
       <td><bean:write name="playerStatsView" property="goals"                /></td>
@@ -237,6 +253,7 @@
       <td><bean:message key="player.label.team"          /></td>
       <td><bean:message key="player.label.year"          /></td>
       <td><bean:message key="player.label.games"         /></td>
+      <td><bean:message key="player.label.starts"        /></td>
       <td><bean:message key="player.label.time_per_game" /></td>
       <td><bean:message key="player.label.attempts"      /></td>
       <td><bean:message key="player.label.goals"         /></td>
@@ -269,6 +286,7 @@
         </td>
         <td><bean:write name="playerStatsView" property="year"                 /></td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
+        <td><bean:write name="playerStatsView" property="games_started"        /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>
         <td><bean:write name="playerStatsView" property="attempts"             /></td>
         <td><bean:write name="playerStatsView" property="goals"                /></td>
