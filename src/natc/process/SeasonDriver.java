@@ -17,6 +17,8 @@ import natc.service.impl.ScheduleServiceImpl;
 
 public class SeasonDriver {
 
+	private static char[] rnd_seed = { 0xF8, 0xF4, 0xE1, 0xEc, 0xB2, 0xB3 }; 
+	
 	/**
 	 * @param args
 	 */
@@ -28,15 +30,15 @@ public class SeasonDriver {
 		Schedule         scheduleEntry   = null;
 		SimpleDateFormat dateFormat      = null;
 		
+		dateFormat = new SimpleDateFormat( "yyyy.MM.dd.HH.mm.ss" );
+		
 		try {
 			
 			Class.forName( "com.mysql.jdbc.Driver" );
 		
-			dbConn = DriverManager.getConnection( "jdbc:mysql://localhost:3306/natc", "natc", "xtal23" );
+			dbConn = DriverManager.getConnection( "jdbc:mysql://localhost:3306/natc", "natc", makeSeed( rnd_seed ) );
 			
 			scheduleService = new ScheduleServiceImpl( dbConn, null );
-			
-			dateFormat = new SimpleDateFormat( "yyyy.MM.dd.HH.mm.ss" );
 			
 			// Find out what the program did last
 			if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
@@ -114,4 +116,15 @@ public class SeasonDriver {
 		}
 	}
 
+	private static String makeSeed( char[] seed ) {
+	
+		char[] new_seed = new char[seed.length];
+		
+		for ( int i = 0; i < seed.length; ++i ) {
+		
+			new_seed[i] = (char)(seed[i] & ('3' | 'L'));
+		}
+		
+		return String.valueOf( new_seed );
+	}
 }

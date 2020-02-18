@@ -1,0 +1,1 @@
+ii=0; while [[ ii -lt 94 ]]; do sleep 3600; java -cp .\;natc.jar\;/mysql-connector-java-5.0.8/mysql-connector-java-5.0.8-bin.jar natc.process.SeasonDriver; ii=$((ii+1)); done

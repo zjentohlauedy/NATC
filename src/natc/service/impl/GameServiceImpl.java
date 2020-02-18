@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -390,9 +391,10 @@ public class GameServiceImpl implements GameService {
 		return id;
 	}
 
-	private void findInjuredPlayer( Team t1, Team t2, List injuries ) {
+	private Player findInjuredPlayer( Team t1, Team t2, List injuries ) {
 	
 		ArrayList playersInGame = new ArrayList();
+		Player    player        = null;
 		
 		playersInGame.addAll( t1.getPlayers() );
 		playersInGame.addAll( t2.getPlayers() );
@@ -403,11 +405,11 @@ public class GameServiceImpl implements GameService {
 		
 		while ( i.hasNext() ) {
 		
-			Player player = (Player)i.next();
+			Player p = (Player)i.next();
 			
-			if ( ! player.isPlaying() ) continue;
+			if ( ! p.isPlaying() ) continue;
 				
-			total_rating += (1.0 - player.getDurability()); // Use the inverse of durability rating
+			total_rating += (1.0 - p.getDurability()); // Use the inverse of durability rating
 		}
 		
 		i = playersInGame.iterator();
@@ -416,31 +418,35 @@ public class GameServiceImpl implements GameService {
 		
 		while ( i.hasNext() ) {
 			
-			Player player = (Player)i.next();
+			Player p = (Player)i.next();
 			
-			if ( ! player.isPlaying() ) continue;
+			if ( ! p.isPlaying() ) continue;
 				
-			x -= (1.0 - player.getDurability()); // Use the inverse of durability rating
+			x -= (1.0 - p.getDurability()); // Use the inverse of durability rating
 			
 			if ( x <= 0 ) {
 			
+				player = p;
+				
 				// This is the injured player
-				player.injurePlayer( t1.getGame().getDatestamp() );
+				p.injurePlayer( t1.getGame().getDatestamp() );
 				
 				Injury injury = new Injury();
 				
 				injury.setGame_id(       t1.getGame().getGame_id() );
-				injury.setPlayer_id( player.getPlayer_id()         );
-				injury.setDuration(  player.getDuration()          );
+				injury.setPlayer_id( p.getPlayer_id()         );
+				injury.setDuration(  p.getDuration()          );
 				
-				if   ( t1.isAllstar_team() ) injury.setTeam_id( player.getAllstar_team_id() );
-				else                         injury.setTeam_id( player.getTeam_id()         );
+				if   ( t1.isAllstar_team() ) injury.setTeam_id( p.getAllstar_team_id() );
+				else                         injury.setTeam_id( p.getTeam_id()         );
 				
 				injuries.add( injury );
 				
 				break;
 			}
 		}
+		
+		return player;
 	}
 	
 	private boolean isPenaltyShotGood( Player shooter, Team offense, Team defense ) {
@@ -1063,6 +1069,776 @@ public class GameServiceImpl implements GameService {
 			
 			playerService.insertInjury( injury );
 		}
+	}
+
+	public String getTimeRemainingDsp( int time ) {
+	
+		DecimalFormat df = new DecimalFormat( "00" );
+		
+		return df.format( time / 60 ) + ":" + df.format( time % 60 );
+	}
+	
+	private void pause( int seconds ) {
+
+		try {
+			
+			Thread.sleep( seconds * 1000 );
+		}
+		catch ( InterruptedException ie) {
+			
+			System.out.println( "Warning: sleep period interrupted." );
+		}
+		
+	}
+	
+	private void simulateRealtimeOvertime( Team homeTeam, Team roadTeam ) {
+
+		int round = 0;
+		
+		homeTeam.getGame().setOvertime( true );
+		roadTeam.getGame().setOvertime( true );
+		
+		ArrayList homeShooters = new ArrayList( homeTeam.getPlayers() );
+		ArrayList roadShooters = new ArrayList( roadTeam.getPlayers() );
+		
+		removeInjuredPlayers( homeShooters );
+		removeInjuredPlayers( roadShooters );
+		
+		// overtime penalty shots - sort the player list by penalty shot attribute
+		Collections.sort( homeShooters, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_shot() > p2.getAdjustedPenalty_shot()) ? 1 : -1; } });
+		Collections.reverse( homeShooters );
+		
+		Collections.sort( roadShooters, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_shot() > p2.getAdjustedPenalty_shot()) ? 1 : -1; } });
+		Collections.reverse( roadShooters );
+
+		int homeIdx = 0;
+		int roadIdx = 0;
+		
+		System.out.println( "Overtime, " + roadTeam.getLocation() + " shoots first." );
+		
+		while ( homeTeam.getGame().getScore().getScore() == roadTeam.getGame().getScore().getScore() ) {
+		
+			System.out.println( "Round " + String.valueOf( round ) + "." );
+			
+			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+			
+			Player shooter = (Player)roadShooters.get( roadIdx );
+
+			System.out.println( shooter.getLast_name() + " will take the shot for " + roadTeam.getLocation() + "." );
+			
+			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+			
+			// Player and road team get an attempt
+			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
+			roadTeam.getGame().getScore().setOt_psa( roadTeam.getGame().getScore().getOt_psa() + 1 );
+			
+			// Select the offensive and defensive line ups
+			roadTeam.selectOtPenaltyOffense( shooter );
+			homeTeam.selectOtPenaltyDefense();
+			
+			if ( isPenaltyShotGood( shooter, roadTeam, homeTeam ) ) {
+				
+				// Player and road team get a make
+				shooter.getGame().setOt_psm( shooter.getGame().getOt_psm() + 1 );
+				roadTeam.getGame().getScore().setOt_psm( roadTeam.getGame().getScore().getOt_psm() + 1 );
+				
+				// Update road score
+				roadTeam.getGame().getScore().setScore( roadTeam.getGame().getScore().getScore() + 1 );
+				
+				System.out.print( "Penalty shot is good!" );
+				System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+				System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+			}
+			else {
+				
+				System.out.println( "Penalty shot is no good." );
+			}
+
+			pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
+			
+			shooter = (Player)homeShooters.get( homeIdx );
+
+			System.out.println( shooter.getLast_name() + " will take the shot for " + homeTeam.getLocation() + "." );
+			
+			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+			
+			// Player and home team get an attempt
+			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
+			homeTeam.getGame().getScore().setOt_psa( homeTeam.getGame().getScore().getOt_psa() + 1 );
+
+			// Select the offensive and defensive line ups
+			homeTeam.selectOtPenaltyOffense( shooter );
+			roadTeam.selectOtPenaltyDefense();
+			
+			if ( isPenaltyShotGood( shooter, homeTeam, roadTeam ) ) {
+
+				// Player and home team get a make
+				shooter.getGame().setOt_psm( shooter.getGame().getOt_psm() + 1 );
+				homeTeam.getGame().getScore().setOt_psm( homeTeam.getGame().getScore().getOt_psm() + 1 );
+
+				// Update home score
+				homeTeam.getGame().getScore().setScore( homeTeam.getGame().getScore().getScore() + 1 );
+				
+				System.out.print( "Penalty shot is good!" );
+				System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+				System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+			}
+			else {
+				
+				System.out.println( "Penalty shot is no good." );
+			}
+			
+			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+			
+			homeIdx++;
+			roadIdx++;
+			
+			// All players have taken a shot, start over from the top
+			if ( homeIdx >= homeShooters.size() ) homeIdx = 0;
+			if ( roadIdx >= roadShooters.size() ) roadIdx = 0;
+		}
+	}
+	
+	private void simulateRealtimeGame( Team roadTeam, Team homeTeam, List injuries, int game_type ) {
+		
+		Team    attacker      = null;
+		Team    defender      = null;
+		Player  oPlayer       = null;
+		Player  dPlayer       = null;
+		boolean clock_stopped = true;
+		
+		for ( int period = 1; period <= 5; ++period ) {
+		
+			if ( game_type == TeamGame.gt_Preseason  &&  period == ((homeTeam.getPreseason_games() / 2) + 2) ) {
+			
+				// For pre-season games, put in the weakest players after a certain point
+				Collections.reverse( homeTeam.getPlayers() );
+				Collections.reverse( roadTeam.getPlayers() );
+			}
+			
+			roadTeam.determineActivePlayers( 720 );
+			homeTeam.determineActivePlayers( 720 );
+			
+			if ( period == 1 ) {
+			
+				roadTeam.markStarters();
+				homeTeam.markStarters();
+			}
+			
+			// Determine attacker (team in possession of ball)
+			if   ( (period % 2) == 1 ) { attacker = homeTeam; defender = roadTeam; }
+			else                       { attacker = roadTeam; defender = homeTeam; }
+			
+			attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
+
+			System.out.println( "Beginning of Period " + String.valueOf( period ) + ", " + attacker.getLocation() + " has possession." );
+			
+			// Each period is 12:00
+			for ( int time_remaining = 720, time_elapsed = 0; ; ) {
+
+				// Time between events is 20-50 seconds
+				time_elapsed = (int)Math.floor( Math.random() * 30.0 ) + 20;
+				
+				pause( time_elapsed );
+				
+				// check for end of period
+				if ( time_elapsed >= time_remaining ) {
+					
+					attacker.getGame().getScore().setPossession_time( attacker.getGame().getScore().getPossession_time() + time_remaining );
+					
+					roadTeam.distributeTime( time_remaining );
+					homeTeam.distributeTime( time_remaining );
+					
+					System.out.print( "(0:0) " );
+					System.out.print( "End of Period " + String.valueOf( period ) + ". " );
+					System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+					System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+					
+					break;
+				}
+				
+				time_remaining -= time_elapsed;
+				
+				attacker.getGame().getScore().setPossession_time( attacker.getGame().getScore().getPossession_time() + time_elapsed );
+
+				roadTeam.distributeTime( time_elapsed );
+				homeTeam.distributeTime( time_elapsed );
+				
+				// recalculate event probabilities as players may have become tired
+				roadTeam.calcProbabilities( homeTeam, game_type, true  );
+				homeTeam.calcProbabilities( roadTeam, game_type, false );
+				
+				clock_stopped = false;
+				
+				switch ( attacker.getGame().pickEvent() ) {
+				
+				case 0: // Failed Attempt
+					
+					attacker.getGame().getScore().setAttempts( attacker.getGame().getScore().getAttempts() + 1 );
+					
+					oPlayer = attacker.distributeAttempt();
+					dPlayer = defender.distributeStop();
+					
+					/*
+					if   ( attacker == homeTeam ) defense = roadTeam.distributeStop();
+					else                          defense = homeTeam.distributeStop();
+					*/
+					
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( "Scoring attempt by " + oPlayer.getLast_name() + " stopped by " + dPlayer.getLast_name() + "." );
+					
+					break;
+					
+				case 1: // Scoring Attempt
+					
+					attacker.getGame().getScore().setAttempts( attacker.getGame().getScore().getAttempts() + 1 );
+					attacker.getGame().getScore().setGoals(    attacker.getGame().getScore().getGoals()    + 1 );
+					attacker.getGame().getScore().setScore(    attacker.getGame().getScore().getScore()    + 3 );
+					
+					oPlayer = attacker.distributeGoal();
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.print( oPlayer.getLast_name() + " scores! " );
+					System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+					System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+					
+					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
+					else                          { attacker = homeTeam; defender = roadTeam; }
+					
+					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
+
+					clock_stopped = true;
+					
+					pause( (int)Math.floor( Math.random() * 30.0 ) + 15 );
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( attacker.getLocation() + " has possession." );
+					
+					break;
+					
+				case 2: // Turnover
+					
+					attacker.getGame().getScore().setTurnovers( attacker.getGame().getScore().getTurnovers() + 1 );
+					
+					oPlayer = attacker.distributeTurnover();
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+
+					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
+					else                          { attacker = homeTeam; defender = roadTeam; }
+					
+					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
+					
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( "Turnover by " + oPlayer.getLast_name() + "." );
+					
+					clock_stopped = true;
+					
+					pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( attacker.getLocation() + " has possession." );
+					
+					break;
+					
+				case 3: // Defender Steals
+					
+					attacker.getGame().getScore().setTurnovers( attacker.getGame().getScore().getTurnovers() + 1 );
+					defender.getGame().getScore().setSteals(    defender.getGame().getScore().getSteals()    + 1 );
+					
+					oPlayer = attacker.distributeTurnover();
+					dPlayer = defender.distributeSteal();
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.print( "Pass from " + oPlayer.getLast_name() + " stolen by " + dPlayer.getLast_name() + "! " );
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+
+					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
+					else                          { attacker = homeTeam; defender = roadTeam; }
+					
+					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
+
+					System.out.println( attacker.getLocation() + " has possession." );
+					
+					break;
+					
+				case 4: // Defensive Penalty
+					
+					attacker.getGame().getScore().setPsa(       attacker.getGame().getScore().getPsa()         + 1 );
+					defender.getGame().getScore().setPenalties( defender.getGame().getScore().getPenalties()   + 1 );
+					
+					dPlayer = defender.distributePenalty();
+					oPlayer = attacker.distributePenaltyShot();
+					
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.print( "Penalty on " + defender.getLocation() + ", attributed to " + dPlayer.getLast_name() + ", " );
+					System.out.println( oPlayer.getLast_name() + " will take the penalty shot for " + attacker.getLocation() + "." );
+					
+					pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
+					
+					if ( isPenaltyShotGood( oPlayer, attacker, defender ) ) {
+					
+						attacker.getGame().getScore().setPsm(   attacker.getGame().getScore().getPsm()  + 1 );
+						attacker.getGame().getScore().setScore( attacker.getGame().getScore().getScore()+ 1 );
+						
+						oPlayer.getGame().setPsm( oPlayer.getGame().getPsm() + 1 );
+						
+						System.out.print( getTimeRemainingDsp( time_remaining ) );
+						System.out.print( "Penalty shot is good! " );
+						System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+						System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+					}
+					else {
+						
+						System.out.print( getTimeRemainingDsp( time_remaining ) );
+						System.out.println( "Penalty shot is no good." );
+					}
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+
+					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
+					else                          { attacker = homeTeam; defender = roadTeam; }
+					
+					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
+					
+					clock_stopped = true;
+					
+					pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( attacker.getLocation() + " has possession." );
+					
+					break;
+					
+				case 5: // Offensive Penalty
+					
+					attacker.getGame().getScore().setPenalties(           attacker.getGame().getScore().getPenalties()           + 1 );
+					attacker.getGame().getScore().setOffensive_penalties( attacker.getGame().getScore().getOffensive_penalties() + 1 );
+					defender.getGame().getScore().setPsa(                 defender.getGame().getScore().getPsa()                 + 1 );
+					
+					oPlayer = attacker.distributePenalty();
+					dPlayer = attacker.distributePenaltyShot();
+					
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.print( "Penalty on " + attacker.getLocation() + ", attributed to " + oPlayer.getLast_name() + ", " );
+					System.out.println( dPlayer.getLast_name() + " will take the penalty shot for " + defender.getLocation() + "." );
+					
+					oPlayer.getGame().setOffensive_penalties( oPlayer.getGame().getOffensive_penalties() + 1 );
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+					
+					pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
+					
+					if ( isPenaltyShotGood( dPlayer, defender, attacker ) ) {
+					
+						defender.getGame().getScore().setPsm(   defender.getGame().getScore().getPsm()  + 1 );
+						defender.getGame().getScore().setScore( defender.getGame().getScore().getScore()+ 1 );
+						
+						dPlayer.getGame().setPsm( dPlayer.getGame().getPsm() + 1 );
+						
+						System.out.print( getTimeRemainingDsp( time_remaining ) );
+						System.out.print( "Penalty shot is good! " );
+						System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getScore() )       );
+						System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getScore() ) + "." );
+					}
+					else {
+						
+						System.out.print( getTimeRemainingDsp( time_remaining ) );
+						System.out.println( "Penalty shot is no good." );
+					}
+					
+					// Change possession
+					//attacker = (attacker == homeTeam) ? roadTeam : homeTeam;
+
+					clock_stopped = true;
+					
+					pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
+
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( attacker.getLocation() + " has possession." );
+					
+					break;
+				}
+				
+				// Check for an injury
+				if ( Math.random() > 0.999 ) {
+					
+					// There was an injury - 1 in 1000 chance - static
+					Player p = findInjuredPlayer( homeTeam, roadTeam, injuries );
+					
+					System.out.print( getTimeRemainingDsp( time_remaining ) );
+					System.out.println( p.getLast_name() + " was injured during the play." );
+					
+					clock_stopped = true;
+					
+					pause( (int)Math.floor( Math.random() * 120.0 ) + 90 );
+				}
+				
+				// If clock is stopped, substitute players if necessary
+				if ( clock_stopped ) {
+				
+					roadTeam.determineActivePlayers( time_remaining );
+					homeTeam.determineActivePlayers( time_remaining );
+				}
+			}
+
+			if ( period != 5 ) {
+
+				// Give players 5 minutes rest
+				roadTeam.restPlayers( 300 );
+				homeTeam.restPlayers( 300 );
+
+				pause( 300 );
+			}
+		}
+		
+		if ( homeTeam.getGame().getScore().getScore() == roadTeam.getGame().getScore().getScore() ) {
+			
+			System.out.println( "Game tied at end of regulation." );
+			
+			roadTeam.restPlayers( 300 );
+			homeTeam.restPlayers( 300 );
+
+			pause( 300 );
+			
+			simulateRealtimeOvertime( homeTeam, roadTeam );
+		}
+	}
+	
+	public void processRealtimeMatch( Match match, Date gameDate, int type ) throws SQLException {
+		
+		TeamService teamService = new TeamServiceImpl( dbConn, year );
+		
+		Team homeTeam = teamService.getTeamById( match.getHome_team_id() );
+		Team roadTeam = teamService.getTeamById( match.getRoad_team_id() );
+		
+		// If the playoff ranks are different then it is the post season and one team already advanced
+		if ( homeTeam.getPlayoff_rank() != roadTeam.getPlayoff_rank() ) return;
+		
+		boolean useAlts = (type == TeamGame.gt_Allstar) ? true : false;
+		
+		// Sort players on each team by rating.
+		switch ( homeTeam.getManager().getStyle() ) {
+		
+		case Manager.STYLE_OFFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_DEFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_INTANGIBLE: Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false, useAlts ) );  break;
+		case Manager.STYLE_PENALTY:    Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false, useAlts ) );  break;
+		case Manager.STYLE_BALANCED:   Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false, useAlts ) );  break;
+		}
+
+		switch ( roadTeam.getManager().getStyle() ) {
+		
+		case Manager.STYLE_OFFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_DEFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_INTANGIBLE: Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false, useAlts ) );  break;
+		case Manager.STYLE_PENALTY:    Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false, useAlts ) );  break;
+		case Manager.STYLE_BALANCED:   Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false, useAlts ) );  break;
+		}
+		
+		// Sorting puts the lowest rated players in front, so reverse the lists
+		Collections.reverse( homeTeam.getPlayers() );
+		Collections.reverse( roadTeam.getPlayers() );
+		
+		int game_id = getNextGameId();
+
+		roadTeam.initTeamGame( homeTeam, game_id, year, type, gameDate, true  );
+		homeTeam.initTeamGame( roadTeam, game_id, year, type, gameDate, false );
+		
+		roadTeam.initPlayerGames();
+		homeTeam.initPlayerGames();
+		
+		List injuries = new ArrayList();
+
+		System.out.println( "Processing Match: " + roadTeam.getLocation() + " at " + homeTeam.getLocation() + "." );
+		
+		simulateRealtimeGame( roadTeam, homeTeam, injuries, type );
+
+		Score homeScore = homeTeam.getGame().getScore();
+		Score roadScore = roadTeam.getGame().getScore();
+		
+		if   ( homeScore.getScore() >  roadScore.getScore() ) {
+			
+			homeTeam.getGame().setWin( true  );
+			roadTeam.getGame().setWin( false );
+			
+			System.out.println( homeTeam.getLocation() + " wins!" );
+		}
+		else {
+			
+			roadTeam.getGame().setWin( true  );
+			homeTeam.getGame().setWin( false );
+			
+			System.out.println( roadTeam.getLocation() + " wins!" );
+		}
+		
+		// Update counters on team records
+		switch ( type ) {
+		
+		case TeamGame.gt_Preseason:
+			
+			homeTeam.setPreseason_games( homeTeam.getPreseason_games() + 1 );
+			roadTeam.setPreseason_games( roadTeam.getPreseason_games() + 1 );
+			
+			if ( homeScore.getScore() > roadScore.getScore() ) {
+			
+				homeTeam.setPreseason_wins(   homeTeam.getPreseason_wins()   + 1 );
+				roadTeam.setPreseason_losses( roadTeam.getPreseason_losses() + 1 );
+			}
+			else {
+				
+				roadTeam.setPreseason_wins(   roadTeam.getPreseason_wins()   + 1 );
+				homeTeam.setPreseason_losses( homeTeam.getPreseason_losses() + 1 );
+			}
+			
+			break;
+			
+		case TeamGame.gt_RegularSeason:
+			
+			homeTeam.setGames( homeTeam.getGames() + 1 );
+			roadTeam.setGames( roadTeam.getGames() + 1 );
+			
+			if ( homeScore.getScore() > roadScore.getScore() ) {
+				
+				// Home team wins
+				homeTeam.setWins(    homeTeam.getWins()   + 1 );
+				roadTeam.setLosses(  roadTeam.getLosses() + 1 );
+				
+				homeTeam.setHome_wins(    homeTeam.getHome_wins()   + 1 );
+				roadTeam.setRoad_losses(  roadTeam.getRoad_losses() + 1 );
+				
+				if ( homeScore.getOt_psa() > 0 ) {
+				
+					homeTeam.setOt_wins(    homeTeam.getOt_wins()   + 1 );
+					roadTeam.setOt_losses(  roadTeam.getOt_losses() + 1 );
+				}
+				
+				if ( homeTeam.getDivision() == roadTeam.getDivision() ) {
+				
+					homeTeam.setDivision_wins(    homeTeam.getDivision_wins()   + 1 );
+					roadTeam.setDivision_losses(  roadTeam.getDivision_losses() + 1 );
+				}
+				
+				if ( homeTeam.getConference() != roadTeam.getConference() ) {
+				
+					homeTeam.setOoc_wins(    homeTeam.getOoc_wins()   + 1 );
+					roadTeam.setOoc_losses(  roadTeam.getOoc_losses() + 1 );
+				}
+			}
+			else {
+				
+				// Road team wins
+				roadTeam.setWins(    roadTeam.getWins()   + 1 );
+				homeTeam.setLosses(  homeTeam.getLosses() + 1 );
+				
+				roadTeam.setRoad_wins(    roadTeam.getRoad_wins()   + 1 );
+				homeTeam.setHome_losses(  homeTeam.getHome_losses() + 1 );
+				
+				if ( roadScore.getOt_psa() > 0 ) {
+					
+					roadTeam.setOt_wins(    roadTeam.getOt_wins()   + 1 );
+					homeTeam.setOt_losses(  homeTeam.getOt_losses() + 1 );
+				}
+				
+				if ( roadTeam.getDivision() == homeTeam.getDivision() ) {
+				
+					roadTeam.setDivision_wins(    roadTeam.getDivision_wins()   + 1 );
+					homeTeam.setDivision_losses(  homeTeam.getDivision_losses() + 1 );
+				}
+				
+				if ( roadTeam.getConference() != homeTeam.getConference() ) {
+				
+					roadTeam.setOoc_wins(    roadTeam.getOoc_wins()   + 1 );
+					homeTeam.setOoc_losses(  homeTeam.getOoc_losses() + 1 );
+				}
+			}
+			
+			break;
+			
+		case TeamGame.gt_Postseason:
+			
+			homeTeam.setPlayoff_games( homeTeam.getPlayoff_games() + 1 );
+			roadTeam.setPlayoff_games( roadTeam.getPlayoff_games() + 1 );
+			
+			if ( homeScore.getScore() > roadScore.getScore() ) {
+			
+				switch ( homeTeam.getPlayoff_rank() ) {
+				
+				case 1:
+					
+					homeTeam.setRound1_wins( homeTeam.getRound1_wins() + 1 );
+					
+					if ( homeTeam.getRound1_wins() == Constants.ROUND_1_WINS_TO_ADVANCE ) {
+						
+						homeTeam.setPlayoff_rank( homeTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 2:
+					
+					homeTeam.setRound2_wins( homeTeam.getRound2_wins() + 1 );
+					
+					if ( homeTeam.getRound2_wins() == Constants.ROUND_2_WINS_TO_ADVANCE ) {
+						
+						homeTeam.setPlayoff_rank( homeTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 3:
+					
+					homeTeam.setRound3_wins( homeTeam.getRound3_wins() + 1 );
+					
+					if ( homeTeam.getRound3_wins() == Constants.ROUND_3_WINS_TO_ADVANCE ) {
+					
+						homeTeam.setPlayoff_rank( homeTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 4:
+					
+					homeTeam.setPlayoff_rank( homeTeam.getPlayoff_rank() + 1 );
+					
+					break;
+				}
+			}
+			else {
+				
+				switch ( roadTeam.getPlayoff_rank() ) {
+				
+				case 1:
+					
+					roadTeam.setRound1_wins( roadTeam.getRound1_wins() + 1 );
+					
+					if ( roadTeam.getRound1_wins() == Constants.ROUND_1_WINS_TO_ADVANCE ) {
+						
+						roadTeam.setPlayoff_rank( roadTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 2:
+					
+					roadTeam.setRound2_wins( roadTeam.getRound2_wins() + 1 );
+					
+					if ( roadTeam.getRound2_wins() == Constants.ROUND_2_WINS_TO_ADVANCE ) {
+						
+						roadTeam.setPlayoff_rank( roadTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 3:
+					
+					roadTeam.setRound3_wins( roadTeam.getRound3_wins() + 1 );
+					
+					if ( roadTeam.getRound3_wins() == Constants.ROUND_3_WINS_TO_ADVANCE ) {
+					
+						roadTeam.setPlayoff_rank( roadTeam.getPlayoff_rank() + 1 );
+					}
+					
+					break;
+					
+				case 4:
+					
+					roadTeam.setPlayoff_rank( roadTeam.getPlayoff_rank() + 1 );
+					
+					break;
+				}
+			}
+			
+			break;
+			
+		case TeamGame.gt_Allstar:
+			
+			homeTeam.setGames( homeTeam.getGames() + 1 );
+			roadTeam.setGames( roadTeam.getGames() + 1 );
+			
+			if ( homeScore.getScore() > roadScore.getScore() ) {
+				
+				// Home team wins
+				homeTeam.setWins(    homeTeam.getWins()   + 1 );
+				roadTeam.setLosses(  roadTeam.getLosses() + 1 );
+			}
+			else {
+			
+				// Road team wins
+				roadTeam.setWins(    roadTeam.getWins()   + 1 );
+				homeTeam.setLosses(  homeTeam.getLosses() + 1 );
+			}
+		}
+
+		/*
+		teamService.updateTeam( homeTeam );
+		teamService.updateTeam( roadTeam );
+		
+		teamService.insertTeamGame( homeTeam.getGame() );
+		teamService.insertTeamGame( roadTeam.getGame() );
+		
+		teamService.updateTeamStats( homeTeam, roadTeam, type );
+		teamService.updateTeamStats( roadTeam, homeTeam, type );
+		
+
+		// Save to database
+		PlayerService playerService = new PlayerServiceImpl( dbConn, year );
+		
+		Iterator i = homeTeam.getPlayers().iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			playerService.insertPlayerGame( player.getGame() );
+			
+			playerService.updatePlayerStats( player, type );
+			
+			if ( player.isInjured() ) {
+				
+				playerService.updatePlayerInjury( player );
+			}
+		}
+		
+		i = roadTeam.getPlayers().iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			playerService.insertPlayerGame( player.getGame() );
+			
+			playerService.updatePlayerStats( player, type );
+			
+			if ( player.isInjured() ) {
+				
+				playerService.updatePlayerInjury( player );
+			}
+		}
+		
+		i = injuries.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Injury injury = (Injury)i.next();
+			
+			playerService.insertInjury( injury );
+		}
+		*/
 	}
 
 	private boolean newManagerNeeded( Team team ) throws SQLException {
