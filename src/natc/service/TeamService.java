@@ -14,6 +14,7 @@ public interface TeamService {
 	public void         updateTeamsForNewSeason( String last_year ) throws SQLException;
 	public void         updateTeam( Team team ) throws SQLException;
 	public void         insertTeamGame( TeamGame teamGame ) throws SQLException;
+	public void         updateTeamGame( TeamGame teamGame ) throws SQLException;
 	public void         updateTeamStats( Team team, Team opponent, int type ) throws SQLException;
 	public List         getTeamList() throws SQLException;
 	public List         getAllstarTeamList() throws SQLException;

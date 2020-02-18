@@ -110,6 +110,19 @@ CREATE INDEX Player_Year      ON Players_T ( Year      );
 CREATE INDEX Player_Player_Id ON Players_T ( Player_Id );
 CREATE INDEX Player_Team_Id   ON Players_T ( Team_Id   );
 
+CREATE TABLE GameState_T
+(
+    Game_Id             INTEGER,
+    Period              INTEGER,
+    Overtime            INTEGER,
+    Time_Remaining      INTEGER,
+    Clock_Stopped       INTEGER,
+    Possession          INTEGER,
+    Last_Event          VARCHAR(200)
+);
+
+CREATE INDEX GameState_Game_Id ON GameState_T ( Game_Id   );
+
 CREATE TABLE TeamGames_T
 (
     Game_Id             INTEGER,
@@ -134,7 +147,13 @@ CREATE TABLE TeamGames_T
     Psm                 INTEGER,
     Ot_Psa              INTEGER,
     Ot_Psm              INTEGER,
-    Score               INTEGER
+    Period1_Score       INTEGER,
+    Period2_Score       INTEGER,
+    Period3_Score       INTEGER,
+    Period4_Score       INTEGER,
+    Period5_Score       INTEGER,
+    Overtime_Score      INTEGER,
+    Total_Score         INTEGER
 );
 
 CREATE INDEX TeamGames_Game_Id   ON TeamGames_T ( Game_Id   );

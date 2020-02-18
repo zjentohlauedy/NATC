@@ -16,6 +16,7 @@ public interface PlayerService {
 	public void           updatePlayersForNewSeason( String last_year ) throws SQLException;
 	public void           updatePlayer( Player player ) throws SQLException;
 	public void           insertPlayerGame( PlayerGame playerGame ) throws SQLException;
+	public void           updatePlayerGame( PlayerGame playerGame ) throws SQLException;
 	public void           updatePlayerStats( Player player, int type ) throws SQLException;
 	public void           updatePlayerInjury( Player player ) throws SQLException;
 	public void           insertInjury( Injury injury ) throws SQLException;

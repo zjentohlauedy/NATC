@@ -860,6 +860,41 @@ public class PlayerServiceImpl implements PlayerService {
 		}
 	}
 
+	public void updatePlayerGame( PlayerGame playerGame ) throws SQLException {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getPlayerGameUpdatePs( dbConn );
+			
+			ps.setBoolean(  1,                    playerGame.isInjured()                );
+			ps.setBoolean(  2,                    playerGame.isStarted()                );
+			ps.setInt(      3,                    playerGame.getPlaying_time()          );
+			ps.setInt(      4,                    playerGame.getAttempts()              );
+			ps.setInt(      5,                    playerGame.getGoals()                 );
+			ps.setInt(      6,                    playerGame.getAssists()               );
+			ps.setInt(      7,                    playerGame.getTurnovers()             );
+			ps.setInt(      8,                    playerGame.getStops()                 );
+			ps.setInt(      9,                    playerGame.getSteals()                );
+			ps.setInt(     10,                    playerGame.getPenalties()             );
+			ps.setInt(     11,                    playerGame.getOffensive_penalties()   );
+			ps.setInt(     12,                    playerGame.getPsa()                   );
+			ps.setInt(     13,                    playerGame.getPsm()                   );
+			ps.setInt(     14,                    playerGame.getOt_psa()                );
+			ps.setInt(     15,                    playerGame.getOt_psm()                );
+			
+			ps.setInt(     16,                    playerGame.getGame_id()               );
+			ps.setInt(     17,                    playerGame.getPlayer_id()             );
+			
+			ps.executeUpdate();
+		}
+		finally {
+		
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+
 	public void updatePlayerStats( Player player, int type ) throws SQLException {
 		
 		PlayerStats       playerStats = new PlayerStats();

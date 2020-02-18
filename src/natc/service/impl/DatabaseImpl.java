@@ -2089,7 +2089,7 @@ public class DatabaseImpl {
 	
 	public static PreparedStatement getGamesByDateSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t"
 			/**/   + " WHERE tg.Team_Id   = t.Team_Id "
 			/**/   + "   AND tg.Year      = t.Year "
@@ -2101,7 +2101,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getGamesByTeamIdSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t"
 			/**/   + " WHERE   tg.Team_Id   = t.Team_Id "
 			/**/   + "   AND   tg.Year      = t.Year "
@@ -2115,7 +2115,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getGamesByTeamIdAndTypeSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t"
 			/**/   + " WHERE   tg.Team_Id   = t.Team_Id "
 			/**/   + "   AND   tg.Year      = t.Year "
@@ -2130,7 +2130,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getChampionshipGameByYearSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Location, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Location, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t"
 			/**/   + " WHERE   tg.Team_Id       = t.Team_Id "
 			/**/   + "   AND   tg.Year          = t.Year "
@@ -2144,7 +2144,7 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getChampionshipGamesSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Location, t.Name, tg.Road, tg.Overtime, tg.Win, tg.Score "
+		String sql = "SELECT tg.Game_Id, tg.Datestamp, t.Team_Id, t.Location, t.Name, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
 			/**/   + "  FROM Teamgames_T tg, Teams_T t "
 			/**/   + " WHERE tg.Team_Id       = t.Team_Id "
 			/**/   + "   AND tg.Year          = t.Year    "
@@ -2275,7 +2275,13 @@ public class DatabaseImpl {
 			/**/   + "      tg.Psm,                 "
 			/**/   + "      tg.Ot_Psa,              "
 			/**/   + "      tg.Ot_Psm,              "
-			/**/   + "      tg.Score,               "
+			/**/   + "      tg.Period1_Score,       "
+			/**/   + "      tg.Period2_Score,       "
+			/**/   + "      tg.Period3_Score,       "
+			/**/   + "      tg.Period4_Score,       "
+			/**/   + "      tg.Period5_Score,       "
+			/**/   + "      tg.Overtime_Score,      "
+			/**/   + "      tg.Total_Score,         "
 			/**/   + "      tg.Win                  "
 			/**/
 			/**/   + "  FROM Teams_T t, Teamgames_T tg "
@@ -2644,9 +2650,47 @@ public class DatabaseImpl {
 			/**/   + "                          Psm,                 "
 			/**/   + "                          Ot_Psa,              "
 			/**/   + "                          Ot_Psm,              "
-			/**/   + "                          Score )              "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			/**/   + "                          Period1_Score,       "
+			/**/   + "                          Period2_Score,       "
+			/**/   + "                          Period3_Score,       "
+			/**/   + "                          Period4_Score,       "
+			/**/   + "                          Period5_Score,       "
+			/**/   + "                          Overtime_Score,      "
+			/**/   + "                          Total_Score )        "
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getTeamGameUpdatePs( Connection dbConn ) throws SQLException {
+
+		String sql = "UPDATE TeamGames_T "
+		    /**/
+		    /**/   + "   SET Overtime            = ?, "
+		    /**/   + "       Win                 = ?, "
+		    /**/   + "       Possessions         = ?, "
+		    /**/   + "       Possession_Time     = ?, "
+		    /**/   + "       Attempts            = ?, "
+		    /**/   + "       Goals               = ?, "
+		    /**/   + "       Turnovers           = ?, "
+		    /**/   + "       Steals              = ?, "
+		    /**/   + "       Penalties           = ?, "
+		    /**/   + "       Offensive_Penalties = ?, "
+		    /**/   + "       Psa                 = ?, "
+		    /**/   + "       Psm                 = ?, "
+		    /**/   + "       Ot_Psa              = ?, "
+		    /**/   + "       Ot_Psm              = ?, "
+		    /**/   + "       Period1_Score       = ?, "
+		    /**/   + "       Period2_Score       = ?, "
+		    /**/   + "       Period3_Score       = ?, "
+		    /**/   + "       Period4_Score       = ?, "
+		    /**/   + "       Period5_Score       = ?, "
+		    /**/   + "       Overtime_Score      = ?, "
+		    /**/   + "       Total_Score         = ?  "
+		    /**/
+		    /**/   + " WHERE Game_Id = ? "
+		    /**/   + "   AND Team_Id = ? ";
+
 		return dbConn.prepareStatement( sql );
 	}
 	
@@ -2675,6 +2719,32 @@ public class DatabaseImpl {
 			/**/   + "                            Ot_Psm )             "
 			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getPlayerGameUpdatePs( Connection dbConn ) throws SQLException {
+
+		String sql = "UPDATE PlayerGames_T "
+		    /**/
+		    /**/   + "   SET Injured             = ?, "
+		    /**/   + "       Started             = ?, "
+		    /**/   + "       Playing_Time        = ?, "
+		    /**/   + "       Attempts            = ?, "
+		    /**/   + "       Goals               = ?, "
+		    /**/   + "       Assists             = ?, "
+		    /**/   + "       Turnovers           = ?, "
+		    /**/   + "       Stops               = ?, "
+		    /**/   + "       Steals              = ?, "
+		    /**/   + "       Penalties           = ?, "
+		    /**/   + "       Offensive_Penalties = ?, "
+		    /**/   + "       Psa                 = ?, "
+		    /**/   + "       Psm                 = ?, "
+		    /**/   + "       Ot_Psa              = ?, "
+		    /**/   + "       Ot_Psm              = ?  "
+		    /**/
+		    /**/   + " WHERE Game_Id   = ? "
+		    /**/   + "   AND Player_Id = ? ";
+
 		return dbConn.prepareStatement( sql );
 	}
 

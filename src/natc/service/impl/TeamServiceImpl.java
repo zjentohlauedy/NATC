@@ -505,7 +505,54 @@ public class TeamServiceImpl implements TeamService {
 			ps.setInt(     20,                    teamGame.getScore().getPsm()                 );
 			ps.setInt(     21,                    teamGame.getScore().getOt_psa()              );
 			ps.setInt(     22,                    teamGame.getScore().getOt_psm()              );
-			ps.setInt(     23,                    teamGame.getScore().getScore()               );
+			ps.setInt(     23,                    teamGame.getScore().getPeriod1_score()       );
+			ps.setInt(     24,                    teamGame.getScore().getPeriod2_score()       );
+			ps.setInt(     25,                    teamGame.getScore().getPeriod3_score()       );
+			ps.setInt(     26,                    teamGame.getScore().getPeriod4_score()       );
+			ps.setInt(     27,                    teamGame.getScore().getPeriod5_score()       );
+			ps.setInt(     28,                    teamGame.getScore().getOvertime_score()      );
+			ps.setInt(     29,                    teamGame.getScore().getTotal_score()         );
+			
+			ps.executeUpdate();
+		}
+		finally {
+		
+			DatabaseImpl.closeDbStmt( ps );
+		}
+	}
+
+	public void updateTeamGame( TeamGame teamGame ) throws SQLException {
+		
+		PreparedStatement ps = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getTeamGameUpdatePs( dbConn );
+			
+			ps.setBoolean(  1,                    teamGame.isOvertime()                        );
+			ps.setBoolean(  2,                    teamGame.isWin()                             );
+			ps.setInt(      3,                    teamGame.getScore().getPossessions()         );
+			ps.setInt(      4,                    teamGame.getScore().getPossession_time()     );
+			ps.setInt(      5,                    teamGame.getScore().getAttempts()            );
+			ps.setInt(      6,                    teamGame.getScore().getGoals()               );
+			ps.setInt(      7,                    teamGame.getScore().getTurnovers()           );
+			ps.setInt(      8,                    teamGame.getScore().getSteals()              );
+			ps.setInt(      9,                    teamGame.getScore().getPenalties()           );
+			ps.setInt(     10,                    teamGame.getScore().getOffensive_penalties() );
+			ps.setInt(     11,                    teamGame.getScore().getPsa()                 );
+			ps.setInt(     12,                    teamGame.getScore().getPsm()                 );
+			ps.setInt(     13,                    teamGame.getScore().getOt_psa()              );
+			ps.setInt(     14,                    teamGame.getScore().getOt_psm()              );
+			ps.setInt(     15,                    teamGame.getScore().getPeriod1_score()       );
+			ps.setInt(     16,                    teamGame.getScore().getPeriod2_score()       );
+			ps.setInt(     17,                    teamGame.getScore().getPeriod3_score()       );
+			ps.setInt(     18,                    teamGame.getScore().getPeriod4_score()       );
+			ps.setInt(     19,                    teamGame.getScore().getPeriod5_score()       );
+			ps.setInt(     20,                    teamGame.getScore().getOvertime_score()      );
+			ps.setInt(     21,                    teamGame.getScore().getTotal_score()         );
+			
+			ps.setInt(     22,                    teamGame.getGame_id()                        );
+			ps.setInt(     23,                    teamGame.getTeam_id()                        );
 			
 			ps.executeUpdate();
 		}
@@ -542,7 +589,7 @@ public class TeamServiceImpl implements TeamService {
 		teamOffense.setPsm(                 teamScore.getPsm()                 );
 		teamOffense.setOt_psa(              teamScore.getOt_psa()              );
 		teamOffense.setOt_psm(              teamScore.getOt_psm()              );
-		teamOffense.setScore(               teamScore.getScore()               );
+		teamOffense.setScore(               teamScore.getTotal_score()               );
 
 		// Defense
 		TeamDefense teamDefense   = new TeamDefense();
@@ -564,7 +611,7 @@ public class TeamServiceImpl implements TeamService {
 		teamDefense.setPsm(                 opponentScore.getPsm()                 );
 		teamDefense.setOt_psa(              opponentScore.getOt_psa()              );
 		teamDefense.setOt_psm(              opponentScore.getOt_psm()              );
-		teamDefense.setScore(               opponentScore.getScore()               );
+		teamDefense.setScore(               opponentScore.getTotal_score()               );
 
 		try {
 
@@ -944,8 +991,14 @@ public class TeamServiceImpl implements TeamService {
 				teamGameView.setPsm(                 dbRs.getInt(     14 ) );
 				teamGameView.setOt_psa(              dbRs.getInt(     15 ) );
 				teamGameView.setOt_psm(              dbRs.getInt(     16 ) );
-				teamGameView.setScore(               dbRs.getInt(     17 ) );
-				teamGameView.setWin(                 dbRs.getBoolean( 18 ) );
+				teamGameView.setPeriod1_score(       dbRs.getInt(     17 ) );
+				teamGameView.setPeriod2_score(       dbRs.getInt(     18 ) );
+				teamGameView.setPeriod3_score(       dbRs.getInt(     19 ) );
+				teamGameView.setPeriod4_score(       dbRs.getInt(     20 ) );
+				teamGameView.setPeriod5_score(       dbRs.getInt(     21 ) );
+				teamGameView.setOvertime_score(      dbRs.getInt(     22 ) );
+				teamGameView.setTotal_score(         dbRs.getInt(     23 ) );
+				teamGameView.setWin(                 dbRs.getBoolean( 24 ) );
 			}
 		}
 		finally {
@@ -992,8 +1045,14 @@ public class TeamServiceImpl implements TeamService {
 				teamGameView.setPsm(                 dbRs.getInt(     14 ) );
 				teamGameView.setOt_psa(              dbRs.getInt(     15 ) );
 				teamGameView.setOt_psm(              dbRs.getInt(     16 ) );
-				teamGameView.setScore(               dbRs.getInt(     17 ) );
-				teamGameView.setWin(                 dbRs.getBoolean( 18 ) );
+				teamGameView.setPeriod1_score(       dbRs.getInt(     17 ) );
+				teamGameView.setPeriod2_score(       dbRs.getInt(     18 ) );
+				teamGameView.setPeriod3_score(       dbRs.getInt(     19 ) );
+				teamGameView.setPeriod4_score(       dbRs.getInt(     20 ) );
+				teamGameView.setPeriod5_score(       dbRs.getInt(     21 ) );
+				teamGameView.setOvertime_score(      dbRs.getInt(     22 ) );
+				teamGameView.setTotal_score(         dbRs.getInt(     23 ) );
+				teamGameView.setWin(                 dbRs.getBoolean( 24 ) );
 			}
 		}
 		finally {

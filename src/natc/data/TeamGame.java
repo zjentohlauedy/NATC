@@ -55,6 +55,29 @@ public class TeamGame {
 		return -1;
 	}
 	
+	public void updateScores( int points, int period, boolean overtime ) {
+	
+		if ( score == null ) return;
+		
+		score.setTotal_score( score.getTotal_score() + points );
+		
+		if ( overtime ) {
+		
+			score.setOvertime_score( score.getOvertime_score() + points );
+		}
+		else {
+			
+			switch ( period ) {
+			
+			case 1: score.setPeriod1_score( score.getPeriod1_score() + points ); break;
+			case 2: score.setPeriod2_score( score.getPeriod2_score() + points ); break;
+			case 3: score.setPeriod3_score( score.getPeriod3_score() + points ); break;
+			case 4: score.setPeriod4_score( score.getPeriod4_score() + points ); break;
+			case 5: score.setPeriod5_score( score.getPeriod5_score() + points ); break;
+			}
+		}
+	}
+	
 	public Date getDatestamp() {
 		return datestamp;
 	}

@@ -12,8 +12,8 @@ public interface GameService {
 
 	public void     initializeDatabase() throws SQLException;
 	public void     startNewSeason( String lastYear ) throws SQLException;
+	public void     processMatch( Match match, Date gameDate, int type ) throws SQLException;
 	public void     processScheduleEvent( Schedule event ) throws SQLException;
-	public void     processRealtimeMatch( Match match, Date gameDate, int type ) throws SQLException;
 	public List     getGamesByDate( Date datestamp ) throws SQLException;
 	public List     getGamesByTeamId( int team_id ) throws SQLException;
 	public List     getGamesByTeamIdAndType( int team_id, int type ) throws SQLException;

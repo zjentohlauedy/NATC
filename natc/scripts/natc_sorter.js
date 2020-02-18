@@ -2,6 +2,13 @@ var direction     = 0;
 var lastColumn    = 0;
 var lastElementId = "";
 
+function resetDirection( dir ) {
+	
+	lastColumn    = 0;
+	lastElementId = "";
+	direction     = dir;
+}
+
 function normalizeString( str ) {
 
 	str = str.replace( new RegExp("^\\s*|\\s*$", "g"), " " ); // replace multiple whitespace with single space

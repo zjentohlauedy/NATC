@@ -219,7 +219,7 @@ public class GamesAction extends Action {
 				// Start a new season
 				gameService.startNewSeason( scheduleEntry.getYear() );
 				*/
-				return mapping.findForward( "games" );
+				//return mapping.findForward( "games" );
 			}
 			/*
 			// Get the next scheduled event
@@ -305,9 +305,10 @@ public class GamesAction extends Action {
 			default: gameService.processScheduleEvent( scheduleEntry ); break;
 			}
 			*/
-			Collection data    = null;
-			List       teams   = null;
-			Comparator precomp = new Comparator() {
+			Collection data     = null;
+			List       teams    = null;
+			GameView   gameView = null;
+			Comparator precomp  = new Comparator() {
 
 				public int compare( Object arg0, Object arg1 ) {
 
@@ -567,7 +568,7 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.END_OF_POSTSEASON:
 
-				GameView gameView = null;
+				gameView = null;
 				
 				if ( (gameView = gameService.getChampionshipGame()) != null ) {
 
@@ -631,7 +632,33 @@ public class GamesAction extends Action {
 				
 				break;
 				
-			case ScheduleType.END_OF_SEASON:           nextPage = "end";                break;
+			case ScheduleType.END_OF_SEASON:
+
+				data = gameService.getRankedTeamsByDivision( 0 ); request.setAttribute( "div0teams", data );
+				data = gameService.getRankedTeamsByDivision( 1 ); request.setAttribute( "div1teams", data );
+				data = gameService.getRankedTeamsByDivision( 2 ); request.setAttribute( "div2teams", data );
+				data = gameService.getRankedTeamsByDivision( 3 ); request.setAttribute( "div3teams", data );
+
+				gameView = null;
+				
+				if ( (gameView = gameService.getChampionshipGame()) != null ) {
+
+					Team champion = null;
+					int  winner   = 0;
+					
+					request.setAttribute( "championship", gameView );
+					
+					if   ( gameView.getRoad_win().booleanValue() ) winner = gameView.getRoad_team_id().intValue();
+					else                                           winner = gameView.getHome_team_id().intValue();
+					
+					if ( (champion = teamService.getTeamById( winner )) != null ) request.setAttribute( "champion", champion );
+				}
+
+				data = gameService.getRankedAllstarTeams(); request.setAttribute( "allstarTeams", data );
+				
+				nextPage = "end";
+				
+				break;
 			}
 			
 			request.setAttribute( "schedule", scheduleEntry );

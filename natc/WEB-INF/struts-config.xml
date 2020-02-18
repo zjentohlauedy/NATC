@@ -81,6 +81,10 @@
     <action path="/Game"    type="natc.action.GameAction"     >
       <forward   name="success"    path="/game.jsp"/>
     </action>
+    <action path="/Watch"   type="natc.action.WatchAction"    >
+      <forward   name="success"    path="/watch.jsp"/>
+      <forward   name="complete"   path="/game.jsp"/>
+    </action>
     <action path="/Games"   type="natc.action.GamesAction" name="gamesForm" scope="request" input="/games.jsp">
       <forward   name="errors"          path="/games.jsp"           />
       <forward   name="beginning"       path="/beginning.jsp"       />
