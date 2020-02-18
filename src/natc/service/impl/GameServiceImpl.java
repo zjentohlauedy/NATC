@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import natc.data.Constants;
+import natc.data.GameState;
 import natc.data.Injury;
 import natc.data.Manager;
 import natc.data.Match;
@@ -2191,17 +2192,17 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setRoad_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setRoad_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setHome_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setHome_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setHome_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				
 				gameView.setGame_id(  new Integer( game_id                       ) );
@@ -2264,17 +2265,17 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setRoad_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setRoad_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setHome_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setHome_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setHome_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				
 				gameView.setGame_id(  new Integer( game_id                        ) );
@@ -2339,17 +2340,17 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setRoad_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setRoad_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id" ) ) );
-					gameView.setHome_team(               dbRs.getString( "Abbrev" )   );
-					gameView.setHome_score( new Integer( dbRs.getInt(     "Score" ) ) );
-					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"   ) ) );
+					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
+					gameView.setHome_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				
 				gameView.setGame_id(  new Integer( game_id                        ) );
@@ -2452,17 +2453,17 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt(   "Team_Id"  ) ) );
-					gameView.setRoad_team(               dbRs.getString(  "Location" )   );
-					gameView.setRoad_score( new Integer( dbRs.getInt(     "Score"    ) ) );
-					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"      ) ) );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt(   "Team_Id"     ) ) );
+					gameView.setRoad_team(               dbRs.getString(  "Location"    )   );
+					gameView.setRoad_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt(   "Team_Id"  ) ) );
-					gameView.setHome_team(               dbRs.getString(  "Location" )   );
-					gameView.setHome_score( new Integer( dbRs.getInt(     "Score"    ) ) );
-					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"      ) ) );
+					gameView.setHome_team_id( new Integer( dbRs.getInt(   "Team_Id"     ) ) );
+					gameView.setHome_team(               dbRs.getString(  "Location"    )   );
+					gameView.setHome_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				
 				gameView.setGame_id(  new Integer( dbRs.getInt(     "Game_Id"  ) ) );
@@ -2657,19 +2658,19 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt(     "Team_Id"  ) ) );
-					gameView.setRoad_team(                 dbRs.getString(  "Location" )   );
-					gameView.setRoad_team_name(            dbRs.getString(  "Name"     )   );
-					gameView.setRoad_score( new Integer(   dbRs.getInt(     "Score"    ) ) );
-					gameView.setRoad_win(   new Boolean(   dbRs.getBoolean( "Win"      ) ) );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt(     "Team_Id"     ) ) );
+					gameView.setRoad_team(                 dbRs.getString(  "Location"    )   );
+					gameView.setRoad_team_name(            dbRs.getString(  "Name"        )   );
+					gameView.setRoad_score( new Integer(   dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setRoad_win(   new Boolean(   dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt(     "Team_Id"  ) ) );
-					gameView.setHome_team(                 dbRs.getString(  "Location" )   );
-					gameView.setHome_team_name(            dbRs.getString(  "Name"     )   );
-					gameView.setHome_score( new Integer(   dbRs.getInt(     "Score"    ) ) );
-					gameView.setHome_win(   new Boolean(   dbRs.getBoolean( "Win"      ) ) );
+					gameView.setHome_team_id( new Integer( dbRs.getInt(     "Team_Id"     ) ) );
+					gameView.setHome_team(                 dbRs.getString(  "Location"    )   );
+					gameView.setHome_team_name(            dbRs.getString(  "Name"        )   );
+					gameView.setHome_score( new Integer(   dbRs.getInt(     "Total_Score" ) ) );
+					gameView.setHome_win(   new Boolean(   dbRs.getBoolean( "Win"         ) ) );
 				}
 				
 				gameView.setGame_id(  new Integer( game_id                       ) );
@@ -2746,4 +2747,41 @@ public class GameServiceImpl implements GameService {
 		return playoffGames;
 	}
 
+	public GameState getGameState( int game_id ) throws SQLException {
+
+		PreparedStatement ps        = null;
+		ResultSet         dbRs      = null;
+		GameState         gameState = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGameStateSelectPs( dbConn );
+			
+			ps.setInt( 1, game_id );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+				
+				gameState = new GameState( game_id );
+				
+				gameState.setPeriod(         dbRs.getInt(     1 ) );
+				gameState.setSequence(       dbRs.getInt(     2 ) );
+				gameState.setOvertime(       dbRs.getBoolean( 3 ) );
+				gameState.setTime_remaining( dbRs.getInt(     4 ) );
+				gameState.setClock_stopped(  dbRs.getBoolean( 5 ) );
+				gameState.setPossession(     dbRs.getInt(     6 ) );
+				gameState.setLast_event(     dbRs.getString(  7 ) );
+			}
+			
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}	
+		
+		return gameState;
+	}
+	
 }

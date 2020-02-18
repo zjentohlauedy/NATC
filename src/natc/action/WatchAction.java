@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import natc.data.GameState;
+import natc.service.GameService;
 import natc.service.PlayerService;
 import natc.service.TeamService;
+import natc.service.impl.GameServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.TeamServiceImpl;
 import natc.view.StringView;
@@ -32,6 +35,7 @@ public class WatchAction extends Action {
 		Connection      dbConn          = null;
 		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
+		GameService     gameService     = null;
 		String          game_id_str     = null;
 		int             game_id;
 		
@@ -54,19 +58,18 @@ public class WatchAction extends Action {
 				throw new Exception( "Cannot get db connection." );
 			}
 			
-			teamService   = new TeamServiceImpl( dbConn, null );
+			teamService   = new TeamServiceImpl(   dbConn, null );
 			playerService = new PlayerServiceImpl( dbConn, null );
+			gameService   = new GameServiceImpl(   dbConn, null );
 
 			TeamGameView homeGame;
 			TeamGameView roadGame;
 			Collection   homePlayers;
 			Collection   roadPlayers;
 
-			StringView gameIdView = new StringView();
+			GameState gameState = gameService.getGameState( game_id );
 			
-			gameIdView.setValue( String.valueOf( game_id ) );
-			
-			request.setAttribute( "gameId", gameIdView );
+			request.setAttribute( "gameState", gameState );
 			
 			if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
 

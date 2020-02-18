@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import natc.data.GameState;
+import natc.service.GameService;
 import natc.service.PlayerService;
 import natc.service.TeamService;
+import natc.service.impl.GameServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.TeamServiceImpl;
 import natc.view.PlayerGameView;
@@ -33,6 +36,7 @@ public class GameAction extends Action {
 		Connection      dbConn          = null;
 		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
+		GameService     gameService     = null;
 		String          game_id_str     = null;
 		int             game_id;
 		boolean         ajax_request    = false;
@@ -60,9 +64,11 @@ public class GameAction extends Action {
 				throw new Exception( "Cannot get db connection." );
 			}
 			
-			teamService   = new TeamServiceImpl( dbConn, null );
+			teamService   = new TeamServiceImpl(   dbConn, null );
 			playerService = new PlayerServiceImpl( dbConn, null );
-			
+			gameService   = new GameServiceImpl(   dbConn, null );
+
+			GameState    gameState;
 			TeamGameView homeGame;
 			TeamGameView roadGame;
 			Collection   homePlayers;
@@ -74,6 +80,13 @@ public class GameAction extends Action {
 				StringBuffer stringBuffer = new StringBuffer();
 
 				stringBuffer.append( "<response>" );
+				
+				if ( (gameState = gameService.getGameState( game_id )) != null ) {
+					
+					stringBuffer.append( "<gameState>" );
+					stringBuffer.append( gameState.toXML() );
+					stringBuffer.append( "</gameState>" );
+				}
 				
 				if ( (homeGame = teamService.getHomeGame( game_id )) != null ) {
 					

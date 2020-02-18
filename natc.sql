@@ -113,6 +113,7 @@ CREATE INDEX Player_Team_Id   ON Players_T ( Team_Id   );
 CREATE TABLE GameState_T
 (
     Game_Id             INTEGER,
+    Sequence            INTEGER,
     Period              INTEGER,
     Overtime            INTEGER,
     Time_Remaining      INTEGER,

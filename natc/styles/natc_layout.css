@@ -91,8 +91,50 @@ h2 {
 
 .game_long td {
 	width: 50%;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+.gamebyperiod {
+	float: left;
+	width: 40%;
+	margin: 20px;
+	margin-bottom: 0px;
+}
+
+.gamebyperiod td {
 	text-align: center;
 	vertical-align: bottom;
+}
+
+.gamebyperiod th {
+	text-align: left;
+}
+
+.posind {
+	width: 10px;
+}
+
+.period {
+	width: 45px;
+	text-align: center;
+	vertical-align: bottom;
+}
+
+.gamestate {
+	width: 40%;
+	margin-top: 50px;
+}
+
+.gamestate td {
+	padding-right: 10px;
+}
+
+.events {
+	float: left;
+	width: 100%;
+	margin: 5px;
+	margin-left: 35px;
 }
 
 .gameday {

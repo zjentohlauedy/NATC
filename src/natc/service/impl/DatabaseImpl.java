@@ -2022,6 +2022,53 @@ public class DatabaseImpl {
 	/*
 	 * MISC QUERIES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
+
+	public static PreparedStatement getGameStateInsertPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "INSERT INTO GameState_T ( Game_Id,             "
+			/**/   + "                          Sequence,            "
+			/**/   + "                          Period,              "
+			/**/   + "                          Overtime,            "
+			/**/   + "                          Time_Remaining,      "
+			/**/   + "                          Clock_Stopped,       "
+			/**/   + "                          Possession,          "
+			/**/   + "                          Last_Event )         "
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getGameStateUpdatePs( Connection dbConn ) throws SQLException {
+
+		String sql = "UPDATE GameState_T "
+		    /**/
+		    /**/   + "   SET Period              = ?, "
+		    /**/   + "       Sequence            = ?, "
+		    /**/   + "       Overtime            = ?, "
+		    /**/   + "       Time_Remaining      = ?, "
+		    /**/   + "       Clock_Stopped       = ?, "
+		    /**/   + "       Possession          = ?, "
+		    /**/   + "       Last_Event          = ?  "
+		    /**/
+		    /**/   + " WHERE Game_Id = ? ";
+
+		return dbConn.prepareStatement( sql );
+	}
+
+	public static PreparedStatement getGameStateSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT Period,              "
+			/**/   +        "Sequence,            "
+			/**/   +        "Overtime,            "
+			/**/   +        "Time_Remaining,      "
+			/**/   +        "Clock_Stopped,       "
+			/**/   +        "Possession,          "
+			/**/   +        "Last_Event           "
+			/**/   + "  FROM GameState_T          "
+			/**/   + " WHERE Game_Id = ? ";
+		
+		return dbConn.prepareStatement( sql );
+	}
 	
 	public static PreparedStatement getNextGameIdSelectPs( Connection dbConn ) throws SQLException {
 	

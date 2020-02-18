@@ -86,6 +86,33 @@ a:hover {
 	color: #ffff00;
 }
 
+.gamebyperiod {
+	font-size: medium;
+	font-weight: bold;
+}
+
+.gamebyperiod em {
+	font-style: normal;
+	color: #ffff00;
+}
+
+.gamebyperiod #roadPoss {
+	font-size: medium;
+	font-weight: bold;
+	color: #ff0000;
+}
+
+.gamebyperiod #homePoss {
+	font-size: medium;
+	font-weight: bold;
+	color: #ff0000;
+}
+
+.gamestate {
+	font-size: small;
+	font-weight: bold;
+}
+
 .awards {
 	font-size: small;
 	font-weight: bold;

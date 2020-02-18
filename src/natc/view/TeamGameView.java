@@ -63,35 +63,35 @@ public class TeamGameView {
 	public String toXML() {
 
 		StringBuffer sb = new StringBuffer();
-		
-		sb.append( "<location>" + String.valueOf( location ) + "</location>" );
-		sb.append( "<name>" + String.valueOf( name ) + "</name>" );
-		sb.append( "<abbrev>" + String.valueOf( abbrev ) + "</abbrev>" );
-		sb.append( "<team_id>" + String.valueOf( team_id ) + "</team_id>" );
-		sb.append( "<possessions>" + String.valueOf( possessions ) + "</possessions>" );
-		sb.append( "<possession_time>" + getGameTimeDsp() + "</possession_time>" );
-		sb.append( "<attempts>" + String.valueOf( attempts ) + "</attempts>" );
-		sb.append( "<goals>" + String.valueOf( goals ) + "</goals>" );
-		sb.append( "<efficiency>" + getScoringEfficiencyDsp() + "</efficiency>" );
-		sb.append( "<turnovers>" + String.valueOf( turnovers ) + "</turnovers>" );
-		sb.append( "<steals>" + String.valueOf( steals ) + "</steals>" );
-		sb.append( "<penalties>" + String.valueOf( penalties ) + "</penalties>" );
+
+		sb.append( "<location>"            + String.valueOf( location            ) + "</location>"            );
+		sb.append( "<name>"                + String.valueOf( name                ) + "</name>"                );
+		sb.append( "<abbrev>"              + String.valueOf( abbrev              ) + "</abbrev>"              );
+		sb.append( "<team_id>"             + String.valueOf( team_id             ) + "</team_id>"             );
+		sb.append( "<possessions>"         + String.valueOf( possessions         ) + "</possessions>"         );
+		sb.append( "<possession_time>"     + getGameTimeDsp(                     ) + "</possession_time>"     );
+		sb.append( "<attempts>"            + String.valueOf( attempts            ) + "</attempts>"            );
+		sb.append( "<goals>"               + String.valueOf( goals               ) + "</goals>"               );
+		sb.append( "<efficiency>"          + getScoringEfficiencyDsp(            ) + "</efficiency>"          );
+		sb.append( "<turnovers>"           + String.valueOf( turnovers           ) + "</turnovers>"           );
+		sb.append( "<steals>"              + String.valueOf( steals              ) + "</steals>"              );
+		sb.append( "<penalties>"           + String.valueOf( penalties           ) + "</penalties>"           );
 		sb.append( "<offensive_penalties>" + String.valueOf( offensive_penalties ) + "</offensive_penalties>" );
-		sb.append( "<psa>" + String.valueOf( psa ) + "</psa>" );
-		sb.append( "<psm>" + String.valueOf( psm ) + "</psm>" );
-		sb.append( "<psefficiency>" + getPsEfficiencyDsp() + "</psefficiency>" );
-		sb.append( "<ot_psa>" + String.valueOf( ot_psa ) + "</ot_psa>" );
-		sb.append( "<ot_psm>" + String.valueOf( ot_psm ) + "</ot_psm>" );
-		sb.append( "<otpsefficiency>" + getOtPsEfficiencyDsp() + "</otpsefficiency>" );
-		sb.append( "<period1_score>" + String.valueOf( period1_score ) + "</period1_score>" );
-		sb.append( "<period2_score>" + String.valueOf( period2_score ) + "</period2_score>" );
-		sb.append( "<period3_score>" + String.valueOf( period3_score ) + "</period3_score>" );
-		sb.append( "<period4_score>" + String.valueOf( period4_score ) + "</period4_score>" );
-		sb.append( "<period5_score>" + String.valueOf( period5_score ) + "</period5_score>" );
-		sb.append( "<overtime_score>" + String.valueOf( overtime_score ) + "</overtime_score>" );
-		sb.append( "<total_score>" + String.valueOf( total_score ) + "</total_score>" );
-		sb.append( "<win>" + String.valueOf( win ) + "</win>" );
-		
+		sb.append( "<psa>"                 + String.valueOf( psa                 ) + "</psa>"                 );
+		sb.append( "<psm>"                 + String.valueOf( psm                 ) + "</psm>"                 );
+		sb.append( "<psefficiency>"        + getPsEfficiencyDsp(                 ) + "</psefficiency>"        );
+		sb.append( "<ot_psa>"              + String.valueOf( ot_psa              ) + "</ot_psa>"              );
+		sb.append( "<ot_psm>"              + String.valueOf( ot_psm              ) + "</ot_psm>"              );
+		sb.append( "<otpsefficiency>"      + getOtPsEfficiencyDsp(               ) + "</otpsefficiency>"      );
+		sb.append( "<period1_score>"       + String.valueOf( period1_score       ) + "</period1_score>"       );
+		sb.append( "<period2_score>"       + String.valueOf( period2_score       ) + "</period2_score>"       );
+		sb.append( "<period3_score>"       + String.valueOf( period3_score       ) + "</period3_score>"       );
+		sb.append( "<period4_score>"       + String.valueOf( period4_score       ) + "</period4_score>"       );
+		sb.append( "<period5_score>"       + String.valueOf( period5_score       ) + "</period5_score>"       );
+		sb.append( "<overtime_score>"      + String.valueOf( overtime_score      ) + "</overtime_score>"      );
+		sb.append( "<total_score>"         + String.valueOf( total_score         ) + "</total_score>"         );
+		sb.append( "<win>"                 + String.valueOf( win                 ) + "</win>"                 );
+
 		return sb.toString();
 	}
 	

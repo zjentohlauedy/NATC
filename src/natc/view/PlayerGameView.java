@@ -66,35 +66,35 @@ public class PlayerGameView {
 	public String toXML() {
 
 		StringBuffer sb = new StringBuffer();
-		
-		sb.append( "<first_name>" + String.valueOf( first_name ) + "</first_name>" );
-		sb.append( "<last_name>" + String.valueOf( last_name ) + "</last_name>" );
-		sb.append( "<player_id>" + String.valueOf( player_id ) + "</player_id>" );
-		sb.append( "<opponent>" + String.valueOf( opponent ) + "</opponent>" );
-		sb.append( "<opponent_abbrev>" + String.valueOf( opponent_abbrev ) + "</opponent_abbrev>" );
-		sb.append( "<road>" + String.valueOf( road ) + "</road>" );
-		sb.append( "<datestamp>" + String.valueOf( datestamp ) + "</datestamp>" );
-		sb.append( "<game_id>" + String.valueOf( game_id ) + "</game_id>" );
-		sb.append( "<injured>" + String.valueOf( injured ) + "</injured>" );
-		sb.append( "<started>" + String.valueOf( started ) + "</started>" );
-		sb.append( "<playing_time>" + getGameTimeDsp() + "</playing_time>" );
-		sb.append( "<points>" + String.valueOf( points ) + "</points>" );
-		sb.append( "<attempts>" + String.valueOf( attempts ) + "</attempts>" );
-		sb.append( "<goals>" + String.valueOf( goals ) + "</goals>" );
-		sb.append( "<efficiency>" + getScoringEfficiencyDsp() + "</efficiency>" );
-		sb.append( "<assists>" + String.valueOf( assists ) + "</assists>" );
-		sb.append( "<turnovers>" + String.valueOf( turnovers ) + "</turnovers>" );
-		sb.append( "<stops>" + String.valueOf( stops ) + "</stops>" );
-		sb.append( "<steals>" + String.valueOf( steals ) + "</steals>" );
-		sb.append( "<penalties>" + String.valueOf( penalties ) + "</penalties>" );
+
+		sb.append( "<first_name>"          + String.valueOf( first_name          ) + "</first_name>"          );
+		sb.append( "<last_name>"           + String.valueOf( last_name           ) + "</last_name>"           );
+		sb.append( "<player_id>"           + String.valueOf( player_id           ) + "</player_id>"           );
+		sb.append( "<opponent>"            + String.valueOf( opponent            ) + "</opponent>"            );
+		sb.append( "<opponent_abbrev>"     + String.valueOf( opponent_abbrev     ) + "</opponent_abbrev>"     );
+		sb.append( "<road>"                + String.valueOf( road                ) + "</road>"                );
+		sb.append( "<datestamp>"           + String.valueOf( datestamp           ) + "</datestamp>"           );
+		sb.append( "<game_id>"             + String.valueOf( game_id             ) + "</game_id>"             );
+		sb.append( "<injured>"             + String.valueOf( injured             ) + "</injured>"             );
+		sb.append( "<started>"             + String.valueOf( started             ) + "</started>"             );
+		sb.append( "<playing_time>"        + getGameTimeDsp(                     ) + "</playing_time>"        );
+		sb.append( "<points>"              + String.valueOf( points              ) + "</points>"              );
+		sb.append( "<attempts>"            + String.valueOf( attempts            ) + "</attempts>"            );
+		sb.append( "<goals>"               + String.valueOf( goals               ) + "</goals>"               );
+		sb.append( "<efficiency>"          + getScoringEfficiencyDsp(            ) + "</efficiency>"          );
+		sb.append( "<assists>"             + String.valueOf( assists             ) + "</assists>"             );
+		sb.append( "<turnovers>"           + String.valueOf( turnovers           ) + "</turnovers>"           );
+		sb.append( "<stops>"               + String.valueOf( stops               ) + "</stops>"               );
+		sb.append( "<steals>"              + String.valueOf( steals              ) + "</steals>"              );
+		sb.append( "<penalties>"           + String.valueOf( penalties           ) + "</penalties>"           );
 		sb.append( "<offensive_penalties>" + String.valueOf( offensive_penalties ) + "</offensive_penalties>" );
-		sb.append( "<psa>" + String.valueOf( psa ) + "</psa>" );
-		sb.append( "<psm>" + String.valueOf( psm ) + "</psm>" );
-		sb.append( "<psefficiency>" + getPsEfficiencyDsp() + "</psefficiency>" );
-		sb.append( "<ot_psa>" + String.valueOf( ot_psa ) + "</ot_psa>" );
-		sb.append( "<ot_psm>" + String.valueOf( ot_psm ) + "</ot_psm>" );
-		sb.append( "<otpsefficiency>" + getOtPsEfficiencyDsp() + "</otpsefficiency>" );
-		
+		sb.append( "<psa>"                 + String.valueOf( psa                 ) + "</psa>"                 );
+		sb.append( "<psm>"                 + String.valueOf( psm                 ) + "</psm>"                 );
+		sb.append( "<psefficiency>"        + getPsEfficiencyDsp(                 ) + "</psefficiency>"        );
+		sb.append( "<ot_psa>"              + String.valueOf( ot_psa              ) + "</ot_psa>"              );
+		sb.append( "<ot_psm>"              + String.valueOf( ot_psm              ) + "</ot_psm>"              );
+		sb.append( "<otpsefficiency>"      + getOtPsEfficiencyDsp(               ) + "</otpsefficiency>"      );
+
 		return sb.toString();
 	}
 	

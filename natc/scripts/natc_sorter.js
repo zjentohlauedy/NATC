@@ -79,7 +79,7 @@ function sortTable( tbodyId, element ) {
 	column = element.parentNode.cellIndex
 
 	if ( lastElementId == elementId  &&  lastColumn == column ) direction = (direction == 0) ? 1 : 0;
-	else                                                        direction = 0;
+	else                                                        direction = 1;
 
 	var plist = document.getElementById( elementId );
 

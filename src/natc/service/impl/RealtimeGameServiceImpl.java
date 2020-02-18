@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import natc.data.Constants;
+import natc.data.GameState;
 import natc.data.Injury;
 import natc.data.Manager;
 import natc.data.Match;
@@ -714,8 +715,9 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	private void updateGameRecords( Team homeTeam, Team roadTeam ) throws SQLException {
+	private void updateGameRecords( GameState gameState, Team homeTeam, Team roadTeam ) throws SQLException {
 	
+		updateGameState( gameState );
 
 		teamService.updateTeamGame( homeTeam.getGame() );
 		teamService.updateTeamGame( roadTeam.getGame() );
@@ -739,8 +741,9 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	private void insertGameRecords( Team homeTeam, Team roadTeam ) throws SQLException {
+	private void insertGameRecords( GameState gameState, Team homeTeam, Team roadTeam ) throws SQLException {
 	
+		insertGameState( gameState );
 
 		teamService.insertTeamGame( homeTeam.getGame() );
 		teamService.insertTeamGame( roadTeam.getGame() );
@@ -764,7 +767,7 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	private void simulateOvertime( Team homeTeam, Team roadTeam ) throws SQLException {
+	private void simulateOvertime( GameState gameState, Team homeTeam, Team roadTeam ) throws SQLException {
 
 		int round = 0;
 		
@@ -793,11 +796,22 @@ public class RealtimeGameServiceImpl implements GameService {
 		int homeIdx = 0;
 		int roadIdx = 0;
 		
-		System.out.println( "Overtime, " + roadTeam.getLocation() + " shoots first." );
+		//System.out.println( "Overtime, " + roadTeam.getLocation() + " shoots first." );
+		
+		pause( 30 );
 		
 		while ( homeTeam.getGame().getScore().getTotal_score() == roadTeam.getGame().getScore().getTotal_score() ) {
-		
-			System.out.println( "Round " + String.valueOf( round ) + "." );
+
+			round++;
+
+			gameState.setPossession( GameState.ps_ROAD );
+			
+			if   ( round == 1 ) gameState.setLast_event( "Overtime Round " + String.valueOf( round ) + ", " + roadTeam.getLocation() + " shoots first." );
+			else                gameState.setLast_event( "Overtime Round " + String.valueOf( round ) + "." );
+			
+			updateGameState( gameState );
+			
+			//System.out.println( "Round " + String.valueOf( round ) + "." );
 			
 			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
 			
@@ -811,9 +825,11 @@ public class RealtimeGameServiceImpl implements GameService {
 			roadTeam.selectOtPenaltyOffense( shooter );
 			homeTeam.selectOtPenaltyDefense();
 			
-			updateGameRecords( homeTeam, roadTeam );
+			gameState.setLast_event( shooter.getLast_name() + " will take the penalty shot for " + roadTeam.getLocation() + "." );
 			
-			System.out.println( shooter.getLast_name() + " will take the shot for " + roadTeam.getLocation() + "." );
+			updateGameRecords( gameState, homeTeam, roadTeam );
+			
+			//System.out.println( shooter.getLast_name() + " will take the shot for " + roadTeam.getLocation() + "." );
 			
 			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
 			
@@ -827,18 +843,30 @@ public class RealtimeGameServiceImpl implements GameService {
 				//roadTeam.getGame().getScore().setTotal_score( roadTeam.getGame().getScore().getTotal_score() + 1 );
 				roadTeam.getGame().updateScores( 1, 0, true );
 				
-				updateGameRecords( homeTeam, roadTeam );
+				gameState.setLast_event( roadTeam.getLocation() + " penalty shot by " + shooter.getLast_name() + " is good." );
 				
-				System.out.print( "Penalty shot is good!" );
-				System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-				System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+				updateGameRecords( gameState, homeTeam, roadTeam );
+				
+				//System.out.print( "Penalty shot is good!" );
+				//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+				//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 			}
 			else {
 				
-				System.out.println( "Penalty shot is no good." );
+				gameState.setLast_event( roadTeam.getLocation() + " penalty shot by " + shooter.getLast_name() + " is no good." );
+				
+				updateGameState( gameState );
+				
+				//System.out.println( "Penalty shot is no good." );
 			}
 
 			pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
+
+			gameState.setPossession( GameState.ps_HOME );
+			
+			updateGameState( gameState );
+			
+			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
 			
 			shooter = (Player)homeShooters.get( homeIdx );
 
@@ -849,10 +877,12 @@ public class RealtimeGameServiceImpl implements GameService {
 			// Select the offensive and defensive line ups
 			homeTeam.selectOtPenaltyOffense( shooter );
 			roadTeam.selectOtPenaltyDefense();
+
+			gameState.setLast_event( shooter.getLast_name() + " will take the penalty shot for " + homeTeam.getLocation() + "." );
 			
-			updateGameRecords( homeTeam, roadTeam );
+			updateGameRecords( gameState, homeTeam, roadTeam );
 			
-			System.out.println( shooter.getLast_name() + " will take the shot for " + homeTeam.getLocation() + "." );
+			//System.out.println( shooter.getLast_name() + " will take the shot for " + homeTeam.getLocation() + "." );
 			
 			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
 			
@@ -865,16 +895,22 @@ public class RealtimeGameServiceImpl implements GameService {
 				// Update home score
 				//homeTeam.getGame().getScore().setTotal_score( homeTeam.getGame().getScore().getTotal_score() + 1 );
 				homeTeam.getGame().updateScores( 1, 0, true );
+
+				gameState.setLast_event( homeTeam.getLocation() + " penalty shot by " + shooter.getLast_name() + " is good." );
 				
-				updateGameRecords( homeTeam, roadTeam );
+				updateGameRecords( gameState, homeTeam, roadTeam );
 				
-				System.out.print( "Penalty shot is good!" );
-				System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-				System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+				//System.out.print( "Penalty shot is good!" );
+				//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+				//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 			}
 			else {
+
+				gameState.setLast_event( homeTeam.getLocation() + " penalty shot by " + shooter.getLast_name() + " is no good." );
 				
-				System.out.println( "Penalty shot is no good." );
+				updateGameState( gameState );
+				
+				//System.out.println( "Penalty shot is no good." );
 			}
 			
 			pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
@@ -888,7 +924,7 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	private void simulateGame( Team roadTeam, Team homeTeam, List injuries, int game_type ) throws SQLException {
+	private void simulateGame( GameState gameState, Team roadTeam, Team homeTeam, List injuries, int game_type ) throws SQLException {
 		
 		Team    attacker      = null;
 		Team    defender      = null;
@@ -920,7 +956,16 @@ public class RealtimeGameServiceImpl implements GameService {
 			
 			attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
 
-			System.out.println( "Beginning of Period " + String.valueOf( period ) + ", " + attacker.getLocation() + " has possession." );
+			gameState.setPeriod( period );
+			gameState.setOvertime( false );
+			gameState.setTime_remaining( 720 );
+			gameState.setClock_stopped( false );
+			gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+			gameState.setLast_event( "Beginning of Period " + String.valueOf( period ) + "." );
+			
+			updateGameState( gameState );
+			
+			//System.out.println( "Beginning of Period " + String.valueOf( period ) + ", " + attacker.getLocation() + " has possession." );
 			
 			// Each period is 12:00
 			for ( int time_remaining = 720, time_elapsed = 0; ; ) {
@@ -937,11 +982,18 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					roadTeam.distributeTime( time_remaining );
 					homeTeam.distributeTime( time_remaining );
+
+					gameState.setTime_remaining( 0 );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( GameState.ps_NONE );
+					gameState.setLast_event( "End of Period " + String.valueOf( period ) + "." );
 					
-					System.out.print( "(00:00) " );
-					System.out.print( "End of Period " + String.valueOf( period ) + ". " );
-					System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-					System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+					updateGameState( gameState );
+					
+					//System.out.print( "(00:00) " );
+					//System.out.print( "End of Period " + String.valueOf( period ) + ". " );
+					//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+					//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 					
 					break;
 				}
@@ -962,21 +1014,26 @@ public class RealtimeGameServiceImpl implements GameService {
 				switch ( attacker.getGame().pickEvent() ) {
 				
 				case 0: // Failed Attempt
-					
+
 					attacker.getGame().getScore().setAttempts( attacker.getGame().getScore().getAttempts() + 1 );
 					
 					oPlayer = attacker.distributeAttempt();
 					dPlayer = defender.distributeStop();
+
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( false );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( attacker.getLocation() + " scoring attempt by " + oPlayer.getLast_name() + " stopped by " + dPlayer.getLast_name() + "." );
 					
-					updateGameRecords( homeTeam, roadTeam );
+					updateGameRecords( gameState, homeTeam, roadTeam );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( "Scoring attempt by " + oPlayer.getLast_name() + " stopped by " + dPlayer.getLast_name() + "." );
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( "Scoring attempt by " + oPlayer.getLast_name() + " stopped by " + dPlayer.getLast_name() + "." );
 					
 					break;
 					
 				case 1: // Scoring Attempt
-					
+
 					attacker.getGame().getScore().setAttempts( attacker.getGame().getScore().getAttempts() + 1 );
 					attacker.getGame().getScore().setGoals(    attacker.getGame().getScore().getGoals()    + 1 );
 					//attacker.getGame().getScore().setTotal_score(    attacker.getGame().getScore().getTotal_score()    + 3 );
@@ -985,40 +1042,53 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					oPlayer = attacker.distributeGoal();
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( attacker.getLocation() + " goal scored by " + oPlayer.getLast_name() + "." );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.print( oPlayer.getLast_name() + " scores! " );
-					System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-					System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.print( oPlayer.getLast_name() + " scores! " );
+					//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+					//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 					
 					// Change possession
 					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
 					else                          { attacker = homeTeam; defender = roadTeam; }
-					
+
 					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
 
 					clock_stopped = true;
 					
 					pause( (int)Math.floor( Math.random() * 30.0 ) + 15 );
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setClock_stopped( false );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( attacker.getLocation() + " has possession." );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( attacker.getLocation() + " has possession." );
 					
 					break;
 					
 				case 2: // Turnover
-					
+
 					attacker.getGame().getScore().setTurnovers( attacker.getGame().getScore().getTurnovers() + 1 );
 					
 					oPlayer = attacker.distributeTurnover();
-					
-					updateGameRecords( homeTeam, roadTeam );
 
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( "Turnover by " + oPlayer.getLast_name() + "." );
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( attacker.getLocation() + " turnover by " + oPlayer.getLast_name() + "." );
+					
+					updateGameRecords( gameState, homeTeam, roadTeam );
+
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( "Turnover by " + oPlayer.getLast_name() + "." );
 					
 					// Change possession
 					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
@@ -1030,25 +1100,33 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setClock_stopped( false );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( attacker.getLocation() + " has possession." );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( attacker.getLocation() + " has possession." );
 					
 					break;
 					
 				case 3: // Defender Steals
-					
+
 					attacker.getGame().getScore().setTurnovers( attacker.getGame().getScore().getTurnovers() + 1 );
 					defender.getGame().getScore().setSteals(    defender.getGame().getScore().getSteals()    + 1 );
 					
 					oPlayer = attacker.distributeTurnover();
 					dPlayer = defender.distributeSteal();
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( false );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( attacker.getLocation() + " pass from " + oPlayer.getLast_name() + " stolen by " + dPlayer.getLast_name() + "." );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.print( "Pass from " + oPlayer.getLast_name() + " stolen by " + dPlayer.getLast_name() + "! " );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.print( "Pass from " + oPlayer.getLast_name() + " stolen by " + dPlayer.getLast_name() + "! " );
 					
 					// Change possession
 					if   ( attacker == homeTeam ) { attacker = roadTeam; defender = homeTeam; }
@@ -1056,9 +1134,11 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					attacker.getGame().getScore().setPossessions( attacker.getGame().getScore().getPossessions() + 1 );
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
 					
-					System.out.println( attacker.getLocation() + " has possession." );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.println( attacker.getLocation() + " has possession." );
 					
 					break;
 					
@@ -1069,12 +1149,17 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					dPlayer = defender.distributePenalty();
 					oPlayer = attacker.distributePenaltyShot();
+
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( "Penalty on " + defender.getLocation() + ", attributed to " + dPlayer.getLast_name() + ", " + oPlayer.getLast_name() + " will take the penalty shot for " + attacker.getLocation() + "." );
 					
-					updateGameRecords( homeTeam, roadTeam );
+					updateGameRecords( gameState, homeTeam, roadTeam );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.print( "Penalty on " + defender.getLocation() + ", attributed to " + dPlayer.getLast_name() + ", " );
-					System.out.println( oPlayer.getLast_name() + " will take the penalty shot for " + attacker.getLocation() + "." );
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.print( "Penalty on " + defender.getLocation() + ", attributed to " + dPlayer.getLast_name() + ", " );
+					//System.out.println( oPlayer.getLast_name() + " will take the penalty shot for " + attacker.getLocation() + "." );
 					
 					pause( (int)Math.floor( Math.random() * 15.0 ) + 10 );
 					
@@ -1087,17 +1172,23 @@ public class RealtimeGameServiceImpl implements GameService {
 						
 						oPlayer.getGame().setPsm( oPlayer.getGame().getPsm() + 1 );
 					
-						updateGameRecords( homeTeam, roadTeam );
+						gameState.setLast_event( attacker.getLocation() + " penalty shot by " + oPlayer.getLast_name() + " is good." );
 						
-						System.out.print( getTimeRemainingDsp( time_remaining ) );
-						System.out.print( "Penalty shot is good! " );
-						System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-						System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+						updateGameRecords( gameState, homeTeam, roadTeam );
+						
+						//System.out.print( getTimeRemainingDsp( time_remaining ) );
+						//System.out.print( "Penalty shot is good! " );
+						//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+						//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 					}
 					else {
 						
-						System.out.print( getTimeRemainingDsp( time_remaining ) );
-						System.out.println( "Penalty shot is no good." );
+						gameState.setLast_event( attacker.getLocation() + " penalty shot by " + oPlayer.getLast_name() + " is no good." );
+						
+						updateGameState( gameState );
+						
+						//System.out.print( getTimeRemainingDsp( time_remaining ) );
+						//System.out.println( "Penalty shot is no good." );
 					}
 					
 					// Change possession
@@ -1110,10 +1201,13 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
 
-					updateGameRecords( homeTeam, roadTeam );
+					gameState.setClock_stopped( false );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( attacker.getLocation() + " has possession." );
+					updateGameRecords( gameState, homeTeam, roadTeam );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( attacker.getLocation() + " has possession." );
 					
 					break;
 					
@@ -1125,8 +1219,13 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					oPlayer = attacker.distributePenalty();
 					dPlayer = attacker.distributePenaltyShot();
+
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( "Penalty on " + attacker.getLocation() + ", attributed to " + oPlayer.getLast_name() + ", " + dPlayer.getLast_name() + " will take the penalty shot for " + defender.getLocation() + "." );
 					
-					updateGameRecords( homeTeam, roadTeam );
+					updateGameRecords( gameState, homeTeam, roadTeam );
 					
 					System.out.print( getTimeRemainingDsp( time_remaining ) );
 					System.out.print( "Penalty on " + attacker.getLocation() + ", attributed to " + oPlayer.getLast_name() + ", " );
@@ -1141,29 +1240,39 @@ public class RealtimeGameServiceImpl implements GameService {
 						defender.getGame().getScore().setPsm(   defender.getGame().getScore().getPsm()  + 1 );
 						//defender.getGame().getScore().setTotal_score( defender.getGame().getScore().getTotal_score()+ 1 );
 						
-						attacker.getGame().updateScores( 1, period, false );
+						defender.getGame().updateScores( 1, period, false );
 						
 						dPlayer.getGame().setPsm( dPlayer.getGame().getPsm() + 1 );
+
+						gameState.setLast_event( defender.getLocation() + " penalty shot by " + dPlayer.getLast_name() + " is good." );
 						
-						updateGameRecords( homeTeam, roadTeam );
+						updateGameRecords( gameState, homeTeam, roadTeam );
 						
-						System.out.print( getTimeRemainingDsp( time_remaining ) );
-						System.out.print( "Penalty shot is good! " );
-						System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
-						System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
+						//System.out.print( getTimeRemainingDsp( time_remaining ) );
+						//System.out.print( "Penalty shot is good! " );
+						//System.out.print( "Score: " + roadTeam.getLocation() + " " + String.valueOf( roadTeam.getGame().getScore().getTotal_score() )       );
+						//System.out.println( ", "    + homeTeam.getLocation() + " " + String.valueOf( homeTeam.getGame().getScore().getTotal_score() ) + "." );
 					}
 					else {
+
+						gameState.setLast_event( defender.getLocation() + " penalty shot by " + dPlayer.getLast_name() + " is no good." );
 						
-						System.out.print( getTimeRemainingDsp( time_remaining ) );
-						System.out.println( "Penalty shot is no good." );
+						updateGameState( gameState );
+						
+						//System.out.print( getTimeRemainingDsp( time_remaining ) );
+						//System.out.println( "Penalty shot is no good." );
 					}
 					
 					clock_stopped = true;
 					
 					pause( (int)Math.floor( Math.random() * 10.0 ) + 10 );
-
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( attacker.getLocation() + " has possession." );
+					
+					gameState.setClock_stopped( true );
+					
+					updateGameState( gameState );
+					
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( attacker.getLocation() + " has possession." );
 					
 					break;
 				}
@@ -1173,15 +1282,24 @@ public class RealtimeGameServiceImpl implements GameService {
 					
 					// There was an injury - 1 in 1000 chance - static
 					Player p = findInjuredPlayer( homeTeam, roadTeam, injuries );
+
+					gameState.setTime_remaining( time_remaining );
+					gameState.setClock_stopped( true );
+					gameState.setPossession( (attacker == homeTeam) ? GameState.ps_HOME : GameState.ps_ROAD );
+					gameState.setLast_event( p.getLast_name() + " was injured during the play." );
 					
-					updateGameRecords( homeTeam, roadTeam );
+					updateGameRecords( gameState, homeTeam, roadTeam );
 					
-					System.out.print( getTimeRemainingDsp( time_remaining ) );
-					System.out.println( p.getLast_name() + " was injured during the play." );
+					//System.out.print( getTimeRemainingDsp( time_remaining ) );
+					//System.out.println( p.getLast_name() + " was injured during the play." );
 					
 					clock_stopped = true;
 					
 					pause( (int)Math.floor( Math.random() * 120.0 ) + 90 );
+					
+					gameState.setClock_stopped( false );
+					
+					updateGameState( gameState );
 				}
 				
 				// If clock is stopped, substitute players if necessary
@@ -1203,15 +1321,24 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 		
 		if ( homeTeam.getGame().getScore().getTotal_score() == roadTeam.getGame().getScore().getTotal_score() ) {
+
+			gameState.setPeriod( 0 );
+			gameState.setOvertime( true );
+			gameState.setTime_remaining( 0 );
+			gameState.setClock_stopped( true );
+			gameState.setPossession( GameState.ps_NONE );
+			gameState.setLast_event( "Game tied at end of regulation." );
 			
-			System.out.println( "Game tied at end of regulation." );
+			updateGameState( gameState );
+			
+			//System.out.println( "Game tied at end of regulation." );
 			
 			roadTeam.restPlayers( 300 );
 			homeTeam.restPlayers( 300 );
 
 			pause( 300 );
 			
-			simulateOvertime( homeTeam, roadTeam );
+			simulateOvertime( gameState, homeTeam, roadTeam );
 		}
 	}
 	
@@ -1253,6 +1380,8 @@ public class RealtimeGameServiceImpl implements GameService {
 		
 		int game_id = getNextGameId();
 
+		GameState gameState = new GameState( game_id );
+		
 		roadTeam.initTeamGame( homeTeam, game_id, year, type, gameDate, true  );
 		homeTeam.initTeamGame( roadTeam, game_id, year, type, gameDate, false );
 		
@@ -1263,13 +1392,19 @@ public class RealtimeGameServiceImpl implements GameService {
 
 		System.out.println( "Processing Match (" + String.valueOf( game_id ) + "): " + roadTeam.getLocation() + " at " + homeTeam.getLocation() + "." );
 
-		insertGameRecords( homeTeam, roadTeam );
+		insertGameRecords( gameState, homeTeam, roadTeam );
 		
-		simulateGame( roadTeam, homeTeam, injuries, type );
+		simulateGame( gameState, roadTeam, homeTeam, injuries, type );
 
 		setWinsAndLosses( roadTeam, homeTeam, type );
+
+		gameState.setPeriod( 0 );
+		gameState.setTime_remaining( 0 );
+		gameState.setClock_stopped( true );
+		gameState.setPossession( GameState.ps_NONE );
+		gameState.setLast_event( "End of Game. " + ((homeTeam.getGame().isWin()) ? homeTeam.getLocation() : roadTeam.getLocation()) + " wins." );
 		
-		updateGameRecords( homeTeam, roadTeam );
+		updateGameRecords( gameState, homeTeam, roadTeam );
 		
 		/*
 		teamService.updateTeam( homeTeam );
@@ -2989,4 +3124,94 @@ public class RealtimeGameServiceImpl implements GameService {
 		return playoffGames;
 	}
 
+	public GameState getGameState( int game_id ) throws SQLException {
+
+		PreparedStatement ps        = null;
+		ResultSet         dbRs      = null;
+		GameState         gameState = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGameStateSelectPs( dbConn );
+			
+			ps.setInt( 1, game_id );
+			
+			dbRs = ps.executeQuery();
+			
+			if ( dbRs.next() ) {
+				
+				gameState = new GameState( game_id );
+				
+				gameState.setPeriod(         dbRs.getInt(     1 ) );
+				gameState.setSequence(       dbRs.getInt(     2 ) );
+				gameState.setOvertime(       dbRs.getBoolean( 3 ) );
+				gameState.setTime_remaining( dbRs.getInt(     4 ) );
+				gameState.setClock_stopped(  dbRs.getBoolean( 5 ) );
+				gameState.setPossession(     dbRs.getInt(     6 ) );
+				gameState.setLast_event(     dbRs.getString(  7 ) );
+			}
+			
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs  );
+			DatabaseImpl.closeDbStmt( ps  );
+		}	
+		
+		return gameState;
+	}
+
+	public void insertGameState( GameState gameState ) throws SQLException {
+
+		PreparedStatement ps        = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getGameStateInsertPs( dbConn );
+			
+			ps.setInt(     1, gameState.getGame_id()        );
+			ps.setInt(     2, gameState.getSequence()       );
+			ps.setInt(     3, gameState.getPeriod()         );
+			ps.setBoolean( 4, gameState.isOvertime()        );
+			ps.setInt(     5, gameState.getTime_remaining() );
+			ps.setBoolean( 6, gameState.isClock_stopped()   );
+			ps.setInt(     7, gameState.getPossession()     );
+			ps.setString(  8, gameState.getLast_event()     );
+			
+			ps.executeUpdate();
+		}
+		finally {
+			
+			DatabaseImpl.closeDbStmt( ps  );
+		}	
+	}
+
+	public void updateGameState( GameState gameState ) throws SQLException {
+
+		PreparedStatement ps        = null;
+		
+		gameState.incrementSequence();
+		
+		try {
+			
+			ps = DatabaseImpl.getGameStateUpdatePs( dbConn );
+			
+			ps.setInt(     1, gameState.getPeriod()         );
+			ps.setInt(     2, gameState.getSequence()       );
+			ps.setBoolean( 3, gameState.isOvertime()        );
+			ps.setInt(     4, gameState.getTime_remaining() );
+			ps.setBoolean( 5, gameState.isClock_stopped()   );
+			ps.setInt(     6, gameState.getPossession()     );
+			ps.setString(  7, gameState.getLast_event()     );
+			
+			ps.setInt(     8, gameState.getGame_id()        );
+			
+			ps.executeUpdate();
+		}
+		finally {
+			
+			DatabaseImpl.closeDbStmt( ps  );
+		}	
+	}
+	
 }
