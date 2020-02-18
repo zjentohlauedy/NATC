@@ -4,6 +4,12 @@ import natc.utility.Utility;
 
 public class Player {
 
+	public static final double MAX_FATIGUE_RATE = (1.0 / 300.0); // 5 minutes
+	public static final double MIN_FATIGUE_RATE = (1.0 / 420.0); // 7 minutes
+	
+	public static final double MAX_REST_RATE    = (1.0 / 300.0); // 5 minutes
+	public static final double MIN_REST_RATE    = (1.0 / 420.0); // 7 minutes
+	
 	private int     player_id;
 	
 	private int     team_id;
@@ -30,6 +36,11 @@ public class Player {
 	private double  penalty_shot;    // psm
 	private double  penalty_offense; // intangible
 	private double  penalty_defense; // intangible
+	
+	private double  endurance;
+	private double  fatigue;
+	private boolean playing;
+	private boolean resting;
 	
 	private boolean rookie;
 	private boolean retired;
@@ -65,6 +76,10 @@ public class Player {
 		this.penalty_shot    = 0;
 		this.penalty_offense = 0;
 		this.penalty_defense = 0;
+		this.endurance       = 0;
+		this.fatigue         = 0;
+		this.playing         = false;
+		this.resting         = false;
 		this.rookie          = false;
 		this.retired         = false;
 		this.award           = 0;
@@ -94,6 +109,10 @@ public class Player {
 		this.penalty_shot    = 30.0;
 		this.penalty_offense = 30.0;
 		this.penalty_defense = 30.0;
+		this.endurance       = 30.0;
+		this.fatigue         = 30.0;
+		this.playing         = false;
+		this.resting         = false;
 		this.rookie          = true;
 		this.retired         = false;
 		this.award           = 0;
@@ -111,15 +130,6 @@ public class Player {
 		this.age = 17;
 	}
 
-	public double getProjectedRating() {
-	
-		double projection_factor = 1.367577;
-		
-		if ( this.age >= 20 ) return getRating();
-		
-		return getRating() + (projection_factor * (double)(20 - this.age));
-	}
-	
 	public double getRating() {
 	
 		double rating = (this.scoring + this.passing + this.blocking) * 2.0;
@@ -184,6 +194,7 @@ public class Player {
 		this.penalty_shot    = adjustAttribute( this.penalty_shot    );
 		this.penalty_offense = adjustAttribute( this.penalty_offense );
 		this.penalty_defense = adjustAttribute( this.penalty_defense );
+		this.endurance       = adjustAttribute( this.endurance       );
 	}
 	
 	public void agePlayer() {
@@ -207,6 +218,45 @@ public class Player {
 		this.game = playerGame;
 	}
 	
+	public void fatiguePlayer( int time ) {
+	
+		double x = (this.endurance - 20.0) / 25.0;
+		
+		double fatigue_rate = Player.MAX_FATIGUE_RATE - (x * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
+		
+		this.fatigue += fatigue_rate * time;
+		
+		if ( this.fatigue > 1.0 ) {
+		
+			//System.out.println( this.first_name + " " + this.last_name + " is tired, Fatigue: " + String.valueOf( this.fatigue ) );
+		}
+	}
+	
+	public void restPlayer( int time ) {
+	
+		double x = (this.endurance - 20.0) / 25.0;
+		
+		double resting_rate = Player.MIN_REST_RATE + (x * (Player.MAX_REST_RATE - Player.MIN_REST_RATE));
+		
+		this.fatigue -= resting_rate * time;
+		
+		if ( this.fatigue <= 0.0 ) {
+		
+			this.fatigue = 0.0;
+			
+			this.resting = false;
+		}
+	}
+	
+	public int getTimeUntilTired() {
+	
+		double x = (this.endurance - 20.0) / 25.0;
+		
+		double fatigue_rate = Player.MAX_FATIGUE_RATE - (x * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
+		
+		return (int)Math.ceil( (1.0 - this.fatigue) / fatigue_rate );
+	}
+	
 	public int getAge() {
 		return age;
 	}
@@ -224,7 +274,15 @@ public class Player {
 	}
 
 	public double getBlocking() {
-		return blocking;
+		
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.blocking * (this.fatigue - 1.0);
+				
+				return this.blocking - x;
+		}
+		
+		return this.blocking;
 	}
 
 	public void setBlocking(double blocking) {
@@ -232,7 +290,15 @@ public class Player {
 	}
 
 	public double getDiscipline() {
-		return discipline;
+		
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.discipline * (this.fatigue - 1.0);
+				
+				return this.discipline - x;
+		}
+		
+		return this.discipline;
 	}
 
 	public void setDiscipline(double discipline) {
@@ -256,7 +322,15 @@ public class Player {
 	}
 
 	public double getPassing() {
-		return passing;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.passing * (this.fatigue - 1.0);
+				
+				return this.passing - x;
+		}
+		
+		return this.passing;
 	}
 
 	public void setPassing(double passing) {
@@ -264,7 +338,15 @@ public class Player {
 	}
 
 	public double getPenalty_defense() {
-		return penalty_defense;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.penalty_defense * (this.fatigue - 1.0);
+				
+				return this.penalty_defense - x;
+		}
+		
+		return this.penalty_defense;
 	}
 
 	public void setPenalty_defense(double penalty_defense) {
@@ -272,7 +354,15 @@ public class Player {
 	}
 
 	public double getPenalty_offense() {
-		return penalty_offense;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.penalty_offense * (this.fatigue - 1.0);
+				
+				return this.penalty_offense - x;
+		}
+		
+		return this.penalty_offense;
 	}
 
 	public void setPenalty_offense(double penalty_offense) {
@@ -280,7 +370,15 @@ public class Player {
 	}
 
 	public double getPenalty_shot() {
-		return penalty_shot;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.penalty_shot * (this.fatigue - 1.0);
+				
+				return this.penalty_shot - x;
+		}
+		
+		return this.penalty_shot;
 	}
 
 	public void setPenalty_shot(double penalty_shot) {
@@ -296,7 +394,15 @@ public class Player {
 	}
 
 	public double getPresence() {
-		return presence;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.presence * (this.fatigue - 1.0);
+				
+				return this.presence - x;
+		}
+		
+		return this.presence;
 	}
 
 	public void setPresence(double presence) {
@@ -320,7 +426,15 @@ public class Player {
 	}
 
 	public double getScoring() {
-		return scoring;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.scoring * (this.fatigue - 1.0);
+				
+				return this.scoring - x;
+		}
+		
+		return this.scoring;
 	}
 
 	public void setScoring(double scoring) {
@@ -328,7 +442,15 @@ public class Player {
 	}
 
 	public double getStealing() {
-		return stealing;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.stealing * (this.fatigue - 1.0);
+				
+				return this.stealing - x;
+		}
+		
+		return this.stealing;
 	}
 
 	public void setStealing(double stealing) {
@@ -336,7 +458,15 @@ public class Player {
 	}
 
 	public double getTackling() {
-		return tackling;
+
+		if ( this.isPlaying() && this.fatigue > 1.0 ) {
+			
+				double x = this.tackling * (this.fatigue - 1.0);
+				
+				return this.tackling - x;
+		}
+		
+		return this.tackling;
 	}
 
 	public void setTackling(double tackling) {
@@ -413,6 +543,38 @@ public class Player {
 
 	public void setGame(PlayerGame game) {
 		this.game = game;
+	}
+
+	public double getEndurance() {
+		return endurance;
+	}
+
+	public void setEndurance(double endurance) {
+		this.endurance = endurance;
+	}
+
+	public double getFatigue() {
+		return fatigue;
+	}
+
+	public void setFatigue(double fatigue) {
+		this.fatigue = fatigue;
+	}
+
+	public boolean isPlaying() {
+		return playing;
+	}
+
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
+
+	public boolean isResting() {
+		return resting;
+	}
+
+	public void setResting(boolean resting) {
+		this.resting = resting;
 	}
 	
 }

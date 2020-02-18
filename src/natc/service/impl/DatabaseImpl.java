@@ -54,6 +54,7 @@ public class DatabaseImpl {
 		/**/                                      + "Penalty_Shot,    "
 		/**/                                      + "Penalty_Offense, "
 		/**/                                      + "Penalty_Defense, "
+		/**/                                      + "Endurance,       "
 		/**/                                      + "Rookie,          "
 		/**/                                      + "Retired,         "
 		/**/                                      + "Award,           "
@@ -986,7 +987,7 @@ public class DatabaseImpl {
 			/**/   + "   AND pg.Player_Id = p.Player_Id "
 			/**/   + "   AND pg.Game_Id   = ?           "
 			/**/   + "   AND pg.Team_Id   = ?           "
-			/**/   + "ORDER BY Player_Id";
+			/**/   + "ORDER BY pg.Playing_Time DESC, p.Last_Name, p.First_Name ";
 		
 		return dbConn.prepareStatement( sql );
 	}
@@ -1490,13 +1491,14 @@ public class DatabaseImpl {
 			/**/   + "                        Penalty_Shot,     "
 			/**/   + "                        Penalty_Offense,  "
 			/**/   + "                        Penalty_Defense,  "
+			/**/   + "                        Endurance,        "
 			/**/   + "                        Rookie,           "
 			/**/   + "                        Retired,          "
 			/**/   + "                        Award,            "
 			/**/   + "                        Draft_Pick,       "
 			/**/   + "                        Seasons_Played,   "
 			/**/   + "                        Released )        "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
 
 		return dbConn.prepareStatement( sql );
 	}
@@ -1575,6 +1577,7 @@ public class DatabaseImpl {
 			/**/   +        "Penalty_Shot    = ?, "
 			/**/   +        "Penalty_Offense = ?, "
 			/**/   +        "Penalty_Defense = ?, "
+			/**/   +        "Endurance       = ?, "
 			/**/   +        "Rookie          = ?, "
 			/**/   +        "Retired         = ?, "
 			/**/   +        "Award           = ?, "

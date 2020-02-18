@@ -146,12 +146,13 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setDouble(  14, player.getPenalty_shot()    );
 			ps.setDouble(  15, player.getPenalty_offense() );
 			ps.setDouble(  16, player.getPenalty_defense() );
-			ps.setBoolean( 17, player.isRookie()           );
-			ps.setBoolean( 18, player.isRetired()          );
-			ps.setInt(     19, player.getAward()           );
-			ps.setInt(     20, player.getDraft_pick()      );
-			ps.setInt(     21, player.getSeasons_played()  );
-			ps.setBoolean( 22, player.isReleased()         );
+			ps.setDouble(  17, player.getEndurance()       );
+			ps.setBoolean( 18, player.isRookie()           );
+			ps.setBoolean( 19, player.isRetired()          );
+			ps.setInt(     20, player.getAward()           );
+			ps.setInt(     21, player.getDraft_pick()      );
+			ps.setInt(     22, player.getSeasons_played()  );
+			ps.setBoolean( 23, player.isReleased()         );
 			
 			ps.executeUpdate();
 		}
@@ -206,18 +207,19 @@ public class PlayerServiceImpl implements PlayerService {
 			ps.setDouble(  12, player.getPenalty_shot()    );
 			ps.setDouble(  13, player.getPenalty_offense() );
 			ps.setDouble(  14, player.getPenalty_defense() );
-			ps.setBoolean( 15, player.isRookie()           );
-			ps.setBoolean( 16, player.isRetired()          );
-			ps.setInt(     17, player.getAward()           );
-			ps.setInt(     18, player.getDraft_pick()      );
-			ps.setInt(     19, player.getSeasons_played()  );
-			ps.setBoolean( 20, player.isReleased()         );
+			ps.setDouble(  15, player.getEndurance()       );
+			ps.setBoolean( 16, player.isRookie()           );
+			ps.setBoolean( 17, player.isRetired()          );
+			ps.setInt(     18, player.getAward()           );
+			ps.setInt(     19, player.getDraft_pick()      );
+			ps.setInt(     20, player.getSeasons_played()  );
+			ps.setBoolean( 21, player.isReleased()         );
 			
-			if   ( is_released ) ps.setInt( 21, player.getTeam_id()     );
-			else                 ps.setInt( 21, player.getReleased_by() );
+			if   ( is_released ) ps.setInt( 22, player.getTeam_id()     );
+			else                 ps.setInt( 22, player.getReleased_by() );
 			
-			ps.setString(  22, year                        );
-			ps.setInt(     23, player.getPlayer_id()       );
+			ps.setString(  23, year                        );
+			ps.setInt(     24, player.getPlayer_id()       );
 			
 			ps.executeUpdate();
 		}
@@ -263,14 +265,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 			}
 		}
 		finally {
@@ -328,14 +331,15 @@ public class PlayerServiceImpl implements PlayerService {
 					player.setPenalty_shot(    dbRs2.getDouble(  14 ) );
 					player.setPenalty_offense( dbRs2.getDouble(  15 ) );
 					player.setPenalty_defense( dbRs2.getDouble(  16 ) );
-					player.setRookie(          dbRs2.getBoolean( 17 ) );
-					player.setRetired(         dbRs2.getBoolean( 18 ) );
-					player.setAward(           dbRs2.getInt(     19 ) );
-					player.setDraft_pick(      dbRs2.getInt(     20 ) );
-					player.setSeasons_played(  dbRs2.getInt(     21 ) );
-					player.setAllstar_team_id( dbRs2.getInt(     22 ) );
-					player.setReleased(        dbRs2.getBoolean( 23 ) );
-					player.setReleased_by(     dbRs2.getInt(     24 ) );
+					player.setEndurance(       dbRs2.getDouble(  17 ) ); 
+					player.setRookie(          dbRs2.getBoolean( 18 ) );
+					player.setRetired(         dbRs2.getBoolean( 19 ) );
+					player.setAward(           dbRs2.getInt(     20 ) );
+					player.setDraft_pick(      dbRs2.getInt(     21 ) );
+					player.setSeasons_played(  dbRs2.getInt(     22 ) );
+					player.setAllstar_team_id( dbRs2.getInt(     23 ) );
+					player.setReleased(        dbRs2.getBoolean( 24 ) );
+					player.setReleased_by(     dbRs2.getInt(     25 ) );
 				}
 			}
 		}
@@ -468,14 +472,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -527,14 +532,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -655,14 +661,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -713,14 +720,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				
@@ -1090,14 +1098,15 @@ public class PlayerServiceImpl implements PlayerService {
 				player.setPenalty_shot(    dbRs.getDouble(  14 ) );
 				player.setPenalty_offense( dbRs.getDouble(  15 ) );
 				player.setPenalty_defense( dbRs.getDouble(  16 ) );
-				player.setRookie(          dbRs.getBoolean( 17 ) );
-				player.setRetired(         dbRs.getBoolean( 18 ) );
-				player.setAward(           dbRs.getInt(     19 ) );
-				player.setDraft_pick(      dbRs.getInt(     20 ) );
-				player.setSeasons_played(  dbRs.getInt(     21 ) );
-				player.setAllstar_team_id( dbRs.getInt(     22 ) );
-				player.setReleased(        dbRs.getBoolean( 23 ) );
-				player.setReleased_by(     dbRs.getInt(     24 ) );
+				player.setEndurance(       dbRs.getDouble(  17 ) );
+				player.setRookie(          dbRs.getBoolean( 18 ) );
+				player.setRetired(         dbRs.getBoolean( 19 ) );
+				player.setAward(           dbRs.getInt(     20 ) );
+				player.setDraft_pick(      dbRs.getInt(     21 ) );
+				player.setSeasons_played(  dbRs.getInt(     22 ) );
+				player.setAllstar_team_id( dbRs.getInt(     23 ) );
+				player.setReleased(        dbRs.getBoolean( 24 ) );
+				player.setReleased_by(     dbRs.getInt(     25 ) );
 				
 				if ( players == null ) players = new ArrayList();
 				

@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Team {
 
+	public static final int AVG_TIME_PER_STOPPAGE = 67;
+	
 	private String year;
 	
 	private int    team_id;
@@ -44,6 +46,7 @@ public class Team {
 	private int    preseason_wins;
 	private int    preseason_losses;
 	
+	// Team Ratings
 	private double offense;
 	private double defense;
 	private double discipline;
@@ -51,6 +54,8 @@ public class Team {
 	private double ps_defense;
 	
 	private List   players;
+	
+	private boolean in_game;
 	
 	private TeamGame game;
 	
@@ -91,23 +96,170 @@ public class Team {
 		this.ps_offense       = 0.0;
 		this.ps_defense       = 0.0;
 		this.players          = null;
+		this.in_game          = false;
 		this.game             = null;
 	}
 
-	public void initTeamGame( Team opponent, int game_id, String year, int game_type, Date game_date, boolean isRoad ) {
+	public void restPlayers( int rest_time ) {
 	
-		TeamGame teamGame = new TeamGame();
+		Iterator i = this.players.iterator();
 		
-		teamGame.setGame_id(       game_id               );
-		teamGame.setYear(          year                  );
-		teamGame.setDatestamp(     game_date             );
-		teamGame.setType(          game_type             );
-		teamGame.setPlayoff_round( this.playoff_rank     );
-		teamGame.setTeam_id(       this.team_id          );
-		teamGame.setOpponent(      opponent.getTeam_id() );
-		teamGame.setRoad(          isRoad                );
-		teamGame.setScore(         new Score()           );
+		while ( i.hasNext() ) {
+
+			Player player = (Player)i.next();
+			
+			if ( player.isPlaying() ) {
+			
+				player.setPlaying( false );
+				player.setResting( true  );
+			}
+			
+			player.restPlayer( rest_time );
+		}
+	}
+	
+	public void determineActivePlayers( int time_remaining ) {
+
+		Iterator i = this.players.iterator();
+
+		int active_players = 0;
+
+		while ( i.hasNext() ) {
+
+			Player player = (Player)i.next();
+
+			if ( active_players == 5 ) {
+
+				if ( player.isPlaying() ) {
+
+					player.setPlaying( false );
+					player.setResting( true  );
+				}
+			}
+			else {
+
+				if ( player.isPlaying() ) {
+
+					if ( player.getTimeUntilTired() > ((Team.AVG_TIME_PER_STOPPAGE < time_remaining) ? Team.AVG_TIME_PER_STOPPAGE : time_remaining) ) {
+
+						active_players++;
+					}
+					else {
+						// remove player from game
+						player.setPlaying( false );
+						player.setResting( true  );
+					}
+				}
+				else if ( player.isResting() ) {
+
+					if ( player.getTimeUntilTired() > time_remaining ) {
+
+						active_players++;
+
+						player.setPlaying( true  );
+						player.setResting( false );
+					}
+				}
+				else {
+
+					// Player isn't playing or resting, so put him in game
+					active_players++;
+
+					player.setPlaying( true  );
+				}
+			}
+		}
 		
+		// In case team runs out of rested players
+		if ( active_players < 5 ) {
+
+			while ( active_players < 5 ) {
+
+				Player p = null;
+
+				i = this.players.iterator();
+
+				while ( i.hasNext() ) {
+
+					Player player = (Player)i.next();
+
+					if ( ! player.isPlaying() ) {
+
+						if ( p == null ) {
+
+							p = player;
+						}
+						else if ( player.getFatigue() < p.getFatigue() ) {
+							
+							p = player;
+						}
+					}
+				}
+				
+				p.setResting( false );
+				p.setPlaying( true  );
+				
+				active_players++;
+			}
+		}
+
+		this.calcTeamRatings();
+	}
+
+	public void calcTeamRatings() {
+	
+		if ( this.players == null ) return;
+		
+		this.offense    = 0;
+		this.defense    = 0;
+		this.discipline = 0;
+		this.ps_offense = 0;
+		this.ps_defense = 0;
+		
+		Iterator i = this.players.iterator();
+
+		while ( i.hasNext() ) {
+
+			Player player = (Player)i.next();
+			
+			if ( this.isIn_game() && ! player.isPlaying() ) continue;
+
+			this.offense += ( player.getScoring() +
+					/**/      player.getPassing() +
+					/**/      player.getBlocking() ) / 3;
+
+			this.defense += ( player.getTackling() +
+					/**/      player.getStealing() +
+					/**/      player.getPresence() ) / 3;
+
+			this.discipline += player.getDiscipline();
+
+			this.ps_offense += ( player.getPenalty_shot() +
+					/**/         player.getPenalty_offense() ) / 2;
+
+			this.ps_defense += player.getPenalty_defense();
+		}
+
+		if ( this.isIn_game() ) {
+
+			this.offense    /= 5;
+			this.defense    /= 5;
+			this.discipline /= 5;
+			this.ps_offense /= 5;
+			this.ps_defense /= 5;
+		}
+		else {
+
+			this.offense    /= this.players.size();
+			this.defense    /= this.players.size();
+			this.discipline /= this.players.size();
+			this.ps_offense /= this.players.size();
+			this.ps_defense /= this.players.size();
+		}
+	}
+	
+	public void calcProbabilities( Team opponent, int game_type, boolean isRoad ) {
+	
 		/*
 		 *  base probabilities
 		 */
@@ -152,9 +304,25 @@ public class Team {
 		tbl[5] = tbl[4] * (2.0 / this.discipline);
 		tbl[4] = tbl[4] - tbl[5];
 		
-		teamGame.setPb_table( tbl );
+		this.game.setPb_table( tbl );
+	}
+	
+	public void initTeamGame( Team opponent, int game_id, String year, int game_type, Date game_date, boolean isRoad ) {
+	
+		TeamGame teamGame = new TeamGame();
 		
-		this.game = teamGame;
+		teamGame.setGame_id(       game_id               );
+		teamGame.setYear(          year                  );
+		teamGame.setDatestamp(     game_date             );
+		teamGame.setType(          game_type             );
+		teamGame.setPlayoff_round( this.playoff_rank     );
+		teamGame.setTeam_id(       this.team_id          );
+		teamGame.setOpponent(      opponent.getTeam_id() );
+		teamGame.setRoad(          isRoad                );
+		teamGame.setScore(         new Score()           );
+
+		this.game    = teamGame;
+		this.in_game = true;
 	}
 	
 	public void initPlayerGames() {
@@ -179,8 +347,19 @@ public class Team {
 			
 			Player p = (Player)i.next();
 			
-			p.getGame().setPlaying_time( p.getGame().getPlaying_time() + time );
+			if ( p.isPlaying() ) {
+				
+				p.getGame().setPlaying_time( p.getGame().getPlaying_time() + time );
+
+				p.fatiguePlayer( time );
+			}
+			else if ( p.isResting() ) {
+			
+				p.restPlayer( time );
+			}
 		}
+		
+		this.calcTeamRatings();
 	}
 	
 	public Player distributeAttempt() {
@@ -195,6 +374,8 @@ public class Team {
 		
 			Player p = (Player)i.next();
 			
+			if ( ! p.isPlaying() ) continue;
+			
 			total_rating += p.getRating();
 		}
 		
@@ -205,6 +386,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getRating();
 			
@@ -232,6 +415,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_rating += p.getTackling();
 		}
@@ -243,6 +428,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getTackling();
 			
@@ -271,6 +458,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_scoring += p.getScoring();
 			total_passing += p.getPassing();
@@ -284,6 +473,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getScoring();
 			
@@ -306,6 +497,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getPassing();
 			
@@ -334,6 +527,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_rating += p.getTurnoverRating();
 		}
@@ -345,6 +540,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getTurnoverRating();
 			
@@ -372,6 +569,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_rating += p.getStealing();
 		}
@@ -383,6 +582,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getStealing();
 			
@@ -410,6 +611,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_rating += (100.0 - p.getDiscipline());
 		}
@@ -421,6 +624,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= (100.0 - p.getDiscipline());
 			
@@ -448,6 +653,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			total_rating += p.getRating();
 		}
@@ -459,6 +666,8 @@ public class Team {
 		while ( i.hasNext() ) {
 		
 			Player p = (Player)i.next();
+
+			if ( ! p.isPlaying() ) continue;
 			
 			x -= p.getRating();
 			
@@ -769,6 +978,14 @@ public class Team {
 
 	public void setGame(TeamGame game) {
 		this.game = game;
+	}
+
+	public boolean isIn_game() {
+		return in_game;
+	}
+
+	public void setIn_game(boolean inGame) {
+		in_game = inGame;
 	}
 
 }

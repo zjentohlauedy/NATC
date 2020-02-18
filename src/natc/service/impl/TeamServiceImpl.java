@@ -331,50 +331,12 @@ public class TeamServiceImpl implements TeamService {
 					players = playerService.getPlayersByTeamId( team_id );
 				}
 				
-				double offense    = 0.0;
-				double defense    = 0.0;
-				double discipline = 0.0;
-				double ps_offense = 0.0;
-				double ps_defense = 0.0;
-
 				if ( players != null ) {
 					
-					Iterator i = players.iterator();
-
-					while ( i.hasNext() ) {
-
-						Player player = (Player)i.next();
-
-						offense += ( player.getScoring() +
-								/**/ player.getPassing() +
-								/**/ player.getBlocking() ) / 3;
-
-						defense += ( player.getTackling() +
-								/**/ player.getStealing() +
-								/**/ player.getPresence() ) / 3;
-
-						discipline += player.getDiscipline();
-
-						ps_offense += ( player.getPenalty_shot() +
-								/**/    player.getPenalty_offense() ) / 2;
-
-						ps_defense += player.getPenalty_defense();
-					}
-
 					team.setPlayers( players );
 
-					offense /= players.size();
-					defense /= players.size();
-					discipline /= players.size();
-					ps_offense /= players.size();
-					ps_defense /= players.size();
+					team.calcTeamRatings();
 				}
-
-				team.setOffense(    offense    );
-				team.setDefense(    defense    );
-				team.setDiscipline( discipline );
-				team.setPs_offense( ps_offense );
-				team.setPs_defense( ps_defense );
 			}
 		}
 		finally {
