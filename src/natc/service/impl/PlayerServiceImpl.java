@@ -886,6 +886,9 @@ public class PlayerServiceImpl implements PlayerService {
 		playerStats.setOt_psa(              playerGame.getOt_psa()              );
 		playerStats.setOt_psm(              playerGame.getOt_psm()              );
 		
+		if   ( type == TeamGame.gt_Allstar ) playerStats.setTeam_id( player.getAllstar_team_id() );
+		else                                 playerStats.setTeam_id( player.getTeam_id()         );
+		
 		if ( player.isPlayed_in_game() ) playerStats.setGames( 1 );
 		if ( player.isStarted()        ) playerStats.setGames_started( 1 );
 		
@@ -955,21 +958,22 @@ public class PlayerServiceImpl implements PlayerService {
 			ps1.setString(  1, playerStats.getYear()                );
 			ps1.setInt(     2, playerStats.getType()                );
 			ps1.setInt(     3, playerStats.getPlayer_id()           );
-			ps1.setInt(     4, playerStats.getGames()               );
-			ps1.setInt(     5, playerStats.getGames_started()       );
-			ps1.setInt(     6, playerStats.getPlaying_time()        );
-			ps1.setInt(     7, playerStats.getAttempts()            );
-			ps1.setInt(     8, playerStats.getGoals()               );
-			ps1.setInt(     9, playerStats.getAssists()             );
-			ps1.setInt(    10, playerStats.getTurnovers()           );
-			ps1.setInt(    11, playerStats.getStops()               );
-			ps1.setInt(    12, playerStats.getSteals()              );
-			ps1.setInt(    13, playerStats.getPenalties()           );
-			ps1.setInt(    14, playerStats.getOffensive_penalties() );
-			ps1.setInt(    15, playerStats.getPsa()                 );
-			ps1.setInt(    16, playerStats.getPsm()                 );
-			ps1.setInt(    17, playerStats.getOt_psa()              );
-			ps1.setInt(    18, playerStats.getOt_psm()              );
+			ps1.setInt(     4, playerStats.getTeam_id()             );
+			ps1.setInt(     5, playerStats.getGames()               );
+			ps1.setInt(     6, playerStats.getGames_started()       );
+			ps1.setInt(     7, playerStats.getPlaying_time()        );
+			ps1.setInt(     8, playerStats.getAttempts()            );
+			ps1.setInt(     9, playerStats.getGoals()               );
+			ps1.setInt(    10, playerStats.getAssists()             );
+			ps1.setInt(    11, playerStats.getTurnovers()           );
+			ps1.setInt(    12, playerStats.getStops()               );
+			ps1.setInt(    13, playerStats.getSteals()              );
+			ps1.setInt(    14, playerStats.getPenalties()           );
+			ps1.setInt(    15, playerStats.getOffensive_penalties() );
+			ps1.setInt(    16, playerStats.getPsa()                 );
+			ps1.setInt(    17, playerStats.getPsm()                 );
+			ps1.setInt(    18, playerStats.getOt_psa()              );
+			ps1.setInt(    19, playerStats.getOt_psm()              );
 			
 			ps1.executeUpdate();
 		}

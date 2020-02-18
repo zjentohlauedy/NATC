@@ -5,6 +5,7 @@ public class PlayerStats {
 	private String year;
 	private int    type;
 	private int    player_id;
+	private int    team_id;
 	private int    games;
 	private int    games_started;
 	private int    playing_time;
@@ -26,6 +27,7 @@ public class PlayerStats {
 		this.year                = null;
 		this.type                = 0;
 		this.player_id           = 0;
+		this.team_id             = 0;
 		this.games               = 0;
 		this.games_started       = 0;
 		this.playing_time        = 0;
@@ -184,6 +186,14 @@ public class PlayerStats {
 
 	public void setGames_started(int gamesStarted) {
 		games_started = gamesStarted;
+	}
+
+	public int getTeam_id() {
+		return team_id;
+	}
+
+	public void setTeam_id(int teamId) {
+		team_id = teamId;
 	}
 	
 }

@@ -763,7 +763,7 @@ public class ManagerServiceImpl implements ManagerService {
 				
 				ps2 = DatabaseImpl.getManagerTeamWinPctSelectPs( dbConn );
 
-				ps2.setInt( 1, managerView.getTeam_id()    );
+				ps2.setInt( 1, team_id                     );
 				ps2.setInt( 2, managerView.getManager_id() );
 				
 				dbRs2 = ps2.executeQuery();

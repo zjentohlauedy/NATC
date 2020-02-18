@@ -254,14 +254,39 @@ public class Team {
 	
 	public void determineActivePlayers( int time_remaining ) {
 
-		Iterator i = this.players.iterator();
+		Iterator i = null;
 
+		// For Allstar games replace injured players with the next Alternate
+		if ( this.game.getType() == TeamGame.gt_Allstar ) {
+
+			int roster_size = 0;
+			
+			i = this.players.iterator();
+			
+			while ( i.hasNext()  &&  roster_size < Constants.MIN_ROSTER_SIZE ) {
+
+				Player player = (Player)i.next();
+				
+				if ( ! player.isInjured() ) {
+				
+					if ( player.isAllstar_alternate() ) player.setAllstar_alternate( false );
+					
+					roster_size++;
+				}
+			}
+		}
+
+		i = this.players.iterator();
+		
 		int active_players = 0;
 
 		while ( i.hasNext() ) {
 
 			Player player = (Player)i.next();
 
+			// Allstar Alternates are not considered for Allstar games
+			if ( this.game.getType() == TeamGame.gt_Allstar  &&  player.isAllstar_alternate() ) continue;
+			
 			if ( player.isInjured() ) {
 				
 				if ( player.isPlaying() ) {
@@ -327,7 +352,7 @@ public class Team {
 
 					Player player = (Player)i.next();
 
-					if ( ! player.isPlaying()  &&  ! player.isInjured() ) {
+					if ( ! player.isPlaying()  &&  ! player.isInjured()  &&  ! player.isAllstar_alternate() ) {
 
 						if ( p == null ) {
 

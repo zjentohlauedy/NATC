@@ -891,8 +891,8 @@ public class DatabaseImpl {
 			/**/   + "  FROM Player_Stats_Sum_T S, Players_T P, Teams_T T "
 			/**/   + " WHERE S.Player_Id = P.Player_Id "
 			/**/   + "   AND S.Year      = P.Year      "
-			/**/   + "   AND P.Team_Id   = T.Team_Id   "
-			/**/   + "   AND P.Year      = T.Year      "
+			/**/   + "   AND S.Team_Id   = T.Team_Id   "
+			/**/   + "   AND S.Year      = T.Year      "
 			/**/   + "   AND S.Player_Id = ?           "
 			/**/   + "   AND S.Type      = ?           "
 			/**/   + "ORDER BY Year";
@@ -907,12 +907,10 @@ public class DatabaseImpl {
 			/**/   +         "t.Division,   "
 			/**/   +      "((ps.Goals * 2) + ps.Assists - ps.Turnovers) + (ps.Stops + (ps.Steals * 2) - ps.Penalties) Score "
 			/**/
-			/**/   +"  FROM  Player_Stats_Sum_T ps, Players_T p, Teams_T t "
+			/**/   +"  FROM  Player_Stats_Sum_T ps, Teams_T t "
 			/**/
-			/**/   +" WHERE ps.Year      = p.Year      "
-			/**/   +"   AND ps.Player_Id = p.Player_Id "
-			/**/   +"   AND  p.Team_Id   = t.Team_Id   "
-			/**/   +"   AND  p.Year      = t.Year      "
+			/**/   +" WHERE ps.Team_Id   = t.Team_Id   "
+			/**/   +"   AND ps.Year      = t.Year      "
 			/**/   +"   AND ps.Year      = ?           "
 			/**/   +"   AND ps.Type      = ?           "
 			/**/
@@ -937,15 +935,13 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getAllstarForTeamSelectPs( Connection dbConn ) throws SQLException {
 
-		String sql = "SELECT P.Player_Id, ((PS.Goals * 2) + PS.Assists - PS.Turnovers) + (PS.Stops + (PS.Steals * 2) - PS.Penalties) Score "
+		String sql = "SELECT Player_Id, ((Goals * 2) + Assists - Turnovers) + (Stops + (Steals * 2) - Penalties) Score "
 			/**/
-			/**/   +"  FROM  Player_Stats_Sum_T PS, Players_T P "
+			/**/   +"  FROM  Player_Stats_Sum_T PS "
 			/**/
-			/**/   +" WHERE PS.Year      = P.Year "
-			/**/   +"   AND PS.Player_Id = P.Player_Id "
-			/**/   + "  AND PS.Year      = ? "
-			/**/   +"   AND PS.Type      = ? "
-			/**/   +"   AND  P.Team_Id   = ? "
+			/**/   +" WHERE Year      = ? "
+			/**/   +"   AND Type      = ? "
+			/**/   +"   AND Team_Id   = ? "
 			/**/   +" ORDER BY Score DESC "
 			/**/   +" LIMIT 1             ";
 
@@ -2354,6 +2350,7 @@ public class DatabaseImpl {
 		String sql = "INSERT INTO Player_Stats_Sum_T ( Year,                "
 			/**/   +                           "       Type,                "
 			/**/   +                           "       Player_Id,           "
+			/**/   +                           "       Team_Id,             "
 			/**/   +                           "       Games,               "
 			/**/   +                           "       Games_Started,       "
 			/**/   +                           "       Playing_Time,        "
@@ -2369,7 +2366,7 @@ public class DatabaseImpl {
 			/**/   +                           "       Psm,                 "
 			/**/   +                           "       Ot_Psa,              "
 			/**/   +                           "       Ot_Psm )             "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
 		
 		return dbConn.prepareStatement( sql );
 	}

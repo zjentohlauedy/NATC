@@ -255,15 +255,17 @@ public class GameServiceImpl implements GameService {
 		private boolean    useAge;
 		private boolean    useConfidence;
 		private boolean    useFatigue;
+		private boolean    considerAlternates;
 		
 		public PlayerComparator( Connection dbConn, String year, int mode ) {
 		
-			this.dbConn        = dbConn;
-			this.year          = year;
-			this.mode          = mode;
-			this.useAge        = false;
-			this.useConfidence = false;
-			this.useFatigue    = false;
+			this.dbConn             = dbConn;
+			this.year               = year;
+			this.mode               = mode;
+			this.useAge             = false;
+			this.useConfidence      = false;
+			this.useFatigue         = false;
+			this.considerAlternates = false;
 		}
 
 		public PlayerComparator( Connection dbConn,
@@ -271,20 +273,24 @@ public class GameServiceImpl implements GameService {
 				/**/             int        mode,
 				/**/             boolean    useAge,
 				/**/             boolean    useConfidence,
-				/**/             boolean    useFatigue     ) {
+				/**/             boolean    useFatigue,
+				/**/             boolean    considerAlternates ) {
 		
-			this.dbConn        = dbConn;
-			this.year          = year;
-			this.mode          = mode;
-			this.useAge        = useAge;
-			this.useConfidence = useConfidence;
-			this.useFatigue    = useFatigue;
+			this.dbConn             = dbConn;
+			this.year               = year;
+			this.mode               = mode;
+			this.useAge             = useAge;
+			this.useConfidence      = useConfidence;
+			this.useFatigue         = useFatigue;
+			this.considerAlternates = considerAlternates;
 		}
 
 		public int compare( Object arg0, Object arg1 ) {
 			
 			Player player0 = (Player)arg0;
 			Player player1 = (Player)arg1;
+			
+			if ( considerAlternates  &&  player0.isAllstar_alternate() != player1.isAllstar_alternate() ) return (player0.isAllstar_alternate()) ? 0 : 1;
 			
 			switch ( mode ) {
 			
@@ -754,23 +760,25 @@ public class GameServiceImpl implements GameService {
 		// If the playoff ranks are different then it is the post season and one team already advanced
 		if ( homeTeam.getPlayoff_rank() != roadTeam.getPlayoff_rank() ) return;
 		
-		// Sorter players on each team by rating.
+		boolean useAlts = (type == TeamGame.gt_Allstar) ? true : false;
+		
+		// Sort players on each team by rating.
 		switch ( homeTeam.getManager().getStyle() ) {
 		
-		case Manager.STYLE_OFFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false ) );  break;
-		case Manager.STYLE_DEFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false ) );  break;
-		case Manager.STYLE_INTANGIBLE: Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false ) );  break;
-		case Manager.STYLE_PENALTY:    Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false ) );  break;
-		case Manager.STYLE_BALANCED:   Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false ) );  break;
+		case Manager.STYLE_OFFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_DEFENSIVE:  Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_INTANGIBLE: Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false, useAlts ) );  break;
+		case Manager.STYLE_PENALTY:    Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false, useAlts ) );  break;
+		case Manager.STYLE_BALANCED:   Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false, useAlts ) );  break;
 		}
 
 		switch ( roadTeam.getManager().getStyle() ) {
 		
-		case Manager.STYLE_OFFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false ) );  break;
-		case Manager.STYLE_DEFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false ) );  break;
-		case Manager.STYLE_INTANGIBLE: Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false ) );  break;
-		case Manager.STYLE_PENALTY:    Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false ) );  break;
-		case Manager.STYLE_BALANCED:   Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false ) );  break;
+		case Manager.STYLE_OFFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Offensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_DEFENSIVE:  Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Defensive,  true, true, false, useAlts ) );  break;
+		case Manager.STYLE_INTANGIBLE: Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Intangible, true, true, false, useAlts ) );  break;
+		case Manager.STYLE_PENALTY:    Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Penalty,    true, true, false, useAlts ) );  break;
+		case Manager.STYLE_BALANCED:   Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Balanced,   true, true, false, useAlts ) );  break;
 		}
 		
 		// Sorting puts the lowest rated players in front, so reverse the lists
@@ -1438,11 +1446,11 @@ public class GameServiceImpl implements GameService {
 				// Sorter players on each team by rating.
 				switch ( nextTeam.getManager().getStyle() ) {
 				
-				case Manager.STYLE_OFFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false );  break;
-				case Manager.STYLE_DEFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false );  break;
-				case Manager.STYLE_INTANGIBLE: pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false );  break;
-				case Manager.STYLE_PENALTY:    pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false );  break;
-				case Manager.STYLE_BALANCED:   pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false );  break;
+				case Manager.STYLE_OFFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false, false );  break;
+				case Manager.STYLE_DEFENSIVE:  pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false, false );  break;
+				case Manager.STYLE_INTANGIBLE: pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false, false );  break;
+				case Manager.STYLE_PENALTY:    pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false, false );  break;
+				case Manager.STYLE_BALANCED:   pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false, false );  break;
 				}
 				
 				Collections.sort( nextTeam.getPlayers(), pc );
@@ -1661,11 +1669,11 @@ public class GameServiceImpl implements GameService {
 					// Sorter players on each team by rating.
 					switch ( team.getManager().getStyle() ) {
 					
-					case Manager.STYLE_OFFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false ) );  break;
-					case Manager.STYLE_DEFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false ) );  break;
-					case Manager.STYLE_INTANGIBLE: Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false ) );  break;
-					case Manager.STYLE_PENALTY:    Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false ) );  break;
-					case Manager.STYLE_BALANCED:   Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false ) );  break;
+					case Manager.STYLE_OFFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Offensive,  true, false, false, false ) );  break;
+					case Manager.STYLE_DEFENSIVE:  Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Defensive,  true, false, false, false ) );  break;
+					case Manager.STYLE_INTANGIBLE: Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Intangible, true, false, false, false ) );  break;
+					case Manager.STYLE_PENALTY:    Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Penalty,    true, false, false, false ) );  break;
+					case Manager.STYLE_BALANCED:   Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Balanced,   true, false, false, false ) );  break;
 					}
 
 					for ( int j = 0; j < playerList.size() - Constants.PLAYERS_PER_TEAM; ++j ) {
