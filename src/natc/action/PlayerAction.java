@@ -14,10 +14,13 @@ import org.apache.struts.action.ActionMapping;
 
 import natc.data.Player;
 import natc.data.Schedule;
+import natc.data.Team;
 import natc.service.PlayerService;
 import natc.service.ScheduleService;
+import natc.service.TeamService;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
+import natc.service.impl.TeamServiceImpl;
 
 public class PlayerAction extends Action {
 
@@ -30,6 +33,7 @@ public class PlayerAction extends Action {
 		
 		DataSource      dataSource      = null;
 		Connection      dbConn          = null;
+		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
 		ScheduleService scheduleService = null;
 		String          player_id       = null;
@@ -59,7 +63,22 @@ public class PlayerAction extends Action {
 			
 			Player player = playerService.getLatestPlayerById( Integer.parseInt( player_id ) );
 			
+			// For this action we want to see what the player's in-game ratings are as well as potential ratings
+			player.setIn_game( true );
+			
 			request.setAttribute( "player", player );
+			
+			// If the player is on a team, get the team object
+			Team team = null;
+			
+			if ( player.getTeam_id() != 0 ) {
+			
+				teamService = new TeamServiceImpl( dbConn, schedule.getYear() );
+				
+				team = teamService.getTeamById( player.getTeam_id() );
+				
+				request.setAttribute( "team", team );
+			}
 			
 			List playerStats;
 			

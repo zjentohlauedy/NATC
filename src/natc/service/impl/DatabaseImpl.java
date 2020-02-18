@@ -55,6 +55,8 @@ public class DatabaseImpl {
 		/**/                                      + "Penalty_Offense, "
 		/**/                                      + "Penalty_Defense, "
 		/**/                                      + "Endurance,       "
+		/**/                                      + "Confidence,      "
+		/**/                                      + "Vitality,        "
 		/**/                                      + "Rookie,          "
 		/**/                                      + "Retired,         "
 		/**/                                      + "Award,           "
@@ -174,6 +176,7 @@ public class DatabaseImpl {
 		/**/       + "WHERE pg.Player_Id = p1.Player_Id "
 		/**/       + "AND   pg.Year      = p1.Year      "
 		/**/       + "AND   pg.Type      = ?            "
+		/**/       + "AND   pg.Games    >= 75           "
 		/**/
 		/**/       + orderClause + "LIMIT ?";
 
@@ -220,11 +223,14 @@ public class DatabaseImpl {
 		/**/                   + "MAX( p1.Seasons_Played )  "
 		/**/
 		/**/       + "FROM Player_Stats_Sum_T pg, "
-		/**/       +      "Players_T          p1  "
+		/**/       +      "Players_T          p1, "
+		/**/       + "(SELECT Player_Id, SUM( Games ) Games FROM Player_Stats_Sum_T GROUP BY Player_Id) xx "
 		/**/
 		/**/       + "WHERE pg.Player_Id = p1.Player_Id "
+		/**/       + "AND   pg.Player_Id = xx.Player_Id "
 		/**/       + "AND   pg.Year      = p1.Year      "
 		/**/       + "AND   pg.Type      = ?            "
+		/**/       + "AND   xx.Games    >= 100          "
 		/**/
 		/**/       + "GROUP BY p1.Player_Id, p1.First_Name, p1.Last_Name "
 		/**/
@@ -608,6 +614,13 @@ public class DatabaseImpl {
 		
 		return dbConn.prepareStatement( sql );
 	}
+
+	public static PreparedStatement getWinsByStreakPs( Connection dbConn ) throws SQLException {
+		
+		String sql = "SELECT SUM( Win ) FROM (SELECT Game_Id, Win FROM Teamgames_T WHERE Type = ? AND Year = ? AND Team_Id = ? ORDER BY Game_Id DESC LIMIT ?) x";
+		
+		return dbConn.prepareStatement( sql );
+	}
 	
 	public static PreparedStatement getTeamHistorySelectPs( Connection dbConn ) throws SQLException {
 		
@@ -845,12 +858,16 @@ public class DatabaseImpl {
 	        /**/   +        "S.Ot_Psa,              "
 	        /**/   +        "S.Ot_Psm,              "
 	        /**/   +        "P.Award,               "
-	        /**/   +        "P.Allstar_Team_Id      "
-			/**/   + "  FROM Player_Stats_Sum_T S, Players_T P "
+	        /**/   +        "P.Allstar_Team_Id,     "
+	        /**/   +        "T.Team_Id,             "
+	        /**/   +        "T.Abbrev               "
+			/**/   + "  FROM Player_Stats_Sum_T S, Players_T P, Teams_T T "
 			/**/   + " WHERE S.Player_Id = P.Player_Id "
-			/**/   + "   AND S.Year      = P.Year "
-			/**/   + "   AND S.Player_Id = ? "
-			/**/   + "   AND S.Type      = ? "
+			/**/   + "   AND S.Year      = P.Year      "
+			/**/   + "   AND P.Team_Id   = T.Team_Id   "
+			/**/   + "   AND P.Year      = T.Year      "
+			/**/   + "   AND S.Player_Id = ?           "
+			/**/   + "   AND S.Type      = ?           "
 			/**/   + "ORDER BY Year";
 
 		return dbConn.prepareStatement( sql );
@@ -1023,9 +1040,7 @@ public class DatabaseImpl {
 			/**/   + "       t.Team_Id,        "
 			/**/   + "       t.Abbrev,         "
 			/**/   + "       p.Seasons_Played, "
-			/**/   + "       ( ((p.Scoring  + p.Passing  + p.Blocking) * 2) + "
-			/**/   + "         ((p.Tackling + p.Stealing + p.Presence) * 2) + "
-			/**/   + "           p.Discipline + p.Penalty_Shot + p.Penalty_Defense + p.Penalty_Offense ) / 16 AS Rating "
+			/**/   + "     ( p.Scoring  + p.Passing  + p.Blocking + p.Tackling + p.Stealing + p.Presence + p.Discipline + p.Endurance ) * calcCoef( p.Confidence, p.Vitality, p.Age ) AS Rating "
 			/**/
 			/**/   + "  FROM Players_T p, Teams_T t "
 			/**/
@@ -1046,9 +1061,7 @@ public class DatabaseImpl {
 			/**/   + "       t.Team_Id,    "
 			/**/   + "       t.Abbrev,     "
 			/**/   + "       p.Draft_Pick, "
-			/**/   + "       ( ((p.Scoring  + p.Passing  + p.Blocking) * 2) + "
-			/**/   + "         ((p.Tackling + p.Stealing + p.Presence) * 2) + "
-			/**/   + "           p.Discipline + p.Penalty_Shot + p.Penalty_Defense + p.Penalty_Offense ) / 16 AS Rating "
+			/**/   + "     ( p.Scoring  + p.Passing  + p.Blocking + p.Tackling + p.Stealing + p.Presence + p.Discipline + p.Endurance ) * calcCoef( p.Confidence, p.Vitality, p.Age ) AS Rating "
 			/**/
 			/**/   + "  FROM Players_T p, Teams_T t "
 			/**/
@@ -1072,15 +1085,13 @@ public class DatabaseImpl {
 			/**/   + "       this_year.Seasons_Played,           "
 			/**/   + "       this_year.Rating - last_year.Rating "
 			/**/
-			/**/   + "  FROM (SELECT Player_Id, First_Name, Last_Name, Team_Id, Seasons_Played, ( ((Scoring  + Passing  + Blocking) * 2) + "
-			/**/   + "                                                                            ((Tackling + Stealing + Presence) * 2) + "
-			/**/   + "                                                                              Discipline + Penalty_Shot + Penalty_Defense + Penalty_Offense ) / 16 AS Rating "
+			/**/   + "  FROM (SELECT Player_Id, First_Name, Last_Name, Team_Id, Seasons_Played, "
+			/**/   + "             ( Scoring  + Passing  + Blocking + Tackling + Stealing + Presence + Discipline + Endurance ) * calcCoef( Confidence, Vitality, Age ) AS Rating "
 			/**/   + "          FROM Players_T "
 			/**/   + "         WHERE Year = ?) this_year, "
 			/**/
-			/**/   + "       (SELECT Player_Id,                                                 ( ((Scoring  + Passing  + Blocking) * 2) + "
-			/**/   + "                                                                            ((Tackling + Stealing + Presence) * 2) + "
-			/**/   + "                                                                              Discipline + Penalty_Shot + Penalty_Defense + Penalty_Offense ) / 16 AS Rating "
+			/**/   + "       (SELECT Player_Id, "
+			/**/   + "             ( Scoring  + Passing  + Blocking + Tackling + Stealing + Presence + Discipline + Endurance ) * calcCoef( Confidence, Vitality, Age ) AS Rating "
 			/**/   + "          FROM Players_T "
 			/**/   + "         WHERE Year = ?) last_year, "
 			/**/
@@ -1179,9 +1190,30 @@ public class DatabaseImpl {
 		return dbConn.prepareStatement( sql );
 	}
 
+	public static PreparedStatement getAbandonedRookiesSelectPs( Connection dbConn ) throws SQLException {
+	
+		String sql = "SELECT p.Player_Id,  "
+			/**/   + "       p.First_Name, "
+			/**/   + "       p.Last_Name,  "
+			/**/   + "       t.Team_Id,    "
+			/**/   + "       t.Abbrev,     "
+			/**/   + "       p.Draft_Pick  "
+			/**/
+			/**/   + "  FROM Players_T p, Teams_T t "
+			/**/
+			/**/   + " WHERE p.Year        = t.Year "
+			/**/   + "   AND p.Released_By = t.Team_Id "
+			/**/   + "   AND p.Year        = ? "
+			/**/   + "   AND p.Rookie      = ? "
+			/**/   + "   AND p.Team_Id     IS NULL "
+			/**/   + "ORDER BY p.Draft_Pick ASC";
+		
+		return dbConn.prepareStatement( sql );
+	}
+
 	public static PreparedStatement getTeamPlayerDataSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT Games, Goals, Assists, Stops, Steals, Psm "
+		String sql = "SELECT Games, Playing_Time, Goals, Assists, Stops, Steals, Psm "
 			/**/   + "  FROM Player_Stats_Sum_T "
 			/**/   + " WHERE Player_Id = ? "
 			/**/   + "   AND Year      = ? "
@@ -1492,13 +1524,15 @@ public class DatabaseImpl {
 			/**/   + "                        Penalty_Offense,  "
 			/**/   + "                        Penalty_Defense,  "
 			/**/   + "                        Endurance,        "
+			/**/   + "                        Confidence,       "
+			/**/   + "                        Vitality,         "
 			/**/   + "                        Rookie,           "
 			/**/   + "                        Retired,          "
 			/**/   + "                        Award,            "
 			/**/   + "                        Draft_Pick,       "
 			/**/   + "                        Seasons_Played,   "
 			/**/   + "                        Released )        "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" ;
 
 		return dbConn.prepareStatement( sql );
 	}
@@ -1578,6 +1612,8 @@ public class DatabaseImpl {
 			/**/   +        "Penalty_Offense = ?, "
 			/**/   +        "Penalty_Defense = ?, "
 			/**/   +        "Endurance       = ?, "
+			/**/   +        "Confidence      = ?, "
+			/**/   +        "Vitality        = ?, "
 			/**/   +        "Rookie          = ?, "
 			/**/   +        "Retired         = ?, "
 			/**/   +        "Award           = ?, "

@@ -43,52 +43,66 @@
       </logic:equal>
     </td>
   </tr>
+  <logic:present name="team">
+  <tr class="sublabel">
+    <td colspan="2">
+      <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+        <bean:write name="team" property="location"/> <bean:write name="team" property="name"/>
+      </html:link>
+    </td>
+  </tr>
+  </logic:present>
   <tr class="heading">
     <td><bean:message key="player.label.area"   /></td>
     <td><bean:message key="player.label.rating" /></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.scoring"         /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="scoring"         />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedScoring"         />&value2=<bean:write name="player" property="scoring"         />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.passing"         /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="passing"         />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPassing"         />&value2=<bean:write name="player" property="passing"         />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.blocking"        /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="blocking"        />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedBlocking"        />&value2=<bean:write name="player" property="blocking"        />'></td>
   </tr>
   <tr>&nbsp;</tr>
   <tr>
     <td><bean:message key="player.label.tackling"        /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="tackling"        />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedTackling"        />&value2=<bean:write name="player" property="tackling"        />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.stealing"        /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="stealing"        />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedStealing"        />&value2=<bean:write name="player" property="stealing"        />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.presence"        /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="presence"        />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPresence"        />&value2=<bean:write name="player" property="presence"        />'></td>
   </tr>
   <tr>&nbsp;</tr>
   <tr>
     <td><bean:message key="player.label.discipline"      /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="discipline"      />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedDiscipline"      />&value2=<bean:write name="player" property="discipline"      />'></td>
+  </tr>
+  <tr>&nbsp;</tr>
+  <tr>
+    <td><bean:message key="player.label.endurance"      /></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedEndurance"       />&value2=<bean:write name="player" property="endurance"       />'></td>
   </tr>
   <tr>&nbsp;</tr>
   <tr>
     <td><bean:message key="player.label.penalty_shot"    /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="penalty_shot"    />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPenalty_shot"    />&value2=<bean:write name="player" property="penalty_shot"    />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.penalty_offense" /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="penalty_offense" />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPenalty_offense" />&value2=<bean:write name="player" property="penalty_offense" />'></td>
   </tr>
   <tr>
     <td><bean:message key="player.label.penalty_defense" /></td>
-    <td><img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="player" property="penalty_defense" />'></td>
+    <td><img src='drawbar2.jsp?background=000000&color1=ff0000&color2=00ff00&width=150&height=16&value1=<bean:write name="player" property="adjustedPenalty_defense" />&value2=<bean:write name="player" property="penalty_defense" />'></td>
   </tr>
 </table>
 
@@ -96,7 +110,8 @@
 <logic:present name="playerStats">
   <tr class="label"><td colspan="15"><bean:write name="player" property="year"/> <bean:message key="player.label.stats" /></td></tr>
   <tr class="heading">
-    <td><bean:message key="player.label.type"      /></td>
+    <td><bean:message key="player.label.team"          /></td>
+    <td><bean:message key="player.label.type"          /></td>
     <td><bean:message key="player.label.games"         /></td>
     <td><bean:message key="player.label.time_per_game" /></td>
     <td><bean:message key="player.label.attempts"      /></td>
@@ -118,6 +133,13 @@
   </tr>
   <logic:iterate id="playerStatsView" name="playerStats">
     <tr>
+      <td>
+        <logic:present name="team">
+        <html:link page="/Team.do" paramId="team_id" paramName="team" paramProperty="team_id">
+          <bean:write name="team" property="abbrev"/>
+        </html:link>
+        </logic:present>
+      </td>
       <td>
         <logic:equal name="playerStatsView" property="type" value="1">
           <bean:message key="player.label.preseason" />
@@ -172,6 +194,7 @@
 <logic:present name="history">
     <tr class="label"><td colspan="15"><bean:message key="player.label.history" /></td></tr>
     <tr class="heading">
+      <td><bean:message key="player.label.team"          /></td>
       <td><bean:message key="player.label.year"          /></td>
       <td><bean:message key="player.label.games"         /></td>
       <td><bean:message key="player.label.time_per_game" /></td>
@@ -199,6 +222,11 @@
       <logic:notEqual name="playerStatsView" property="year" value="Total">
         <tr>
       </logic:notEqual>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="playerStatsView" paramProperty="team_id">
+            <bean:write name="playerStatsView" property="team_abbrev"/>
+          </html:link>
+        </td>
         <td><bean:write name="playerStatsView" property="year"                 /></td>
         <td><bean:write name="playerStatsView" property="games"                /></td>
         <td><bean:write name="playerStatsView" property="timePerGameDsp"       /></td>

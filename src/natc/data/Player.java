@@ -1,7 +1,5 @@
 package natc.data;
 
-import natc.utility.Utility;
-
 public class Player {
 
 	public static final double MAX_FATIGUE_RATE = (1.0 / 300.0); // 5 minutes
@@ -37,10 +35,14 @@ public class Player {
 	private double  penalty_offense; // intangible
 	private double  penalty_defense; // intangible
 	
+	private double  confidence;
+	private double  vitality;
 	private double  endurance;
 	private double  fatigue;
+	private boolean in_game;
 	private boolean playing;
 	private boolean resting;
+	private boolean played_in_game;
 	
 	private boolean rookie;
 	private boolean retired;
@@ -77,9 +79,13 @@ public class Player {
 		this.penalty_offense = 0;
 		this.penalty_defense = 0;
 		this.endurance       = 0;
+		this.confidence      = 0;
+		this.vitality        = 0;
 		this.fatigue         = 0;
+		this.in_game         = false;
 		this.playing         = false;
 		this.resting         = false;
+		this.played_in_game  = false;
 		this.rookie          = false;
 		this.retired         = false;
 		this.award           = 0;
@@ -98,21 +104,25 @@ public class Player {
 		this.year            = null;
 		this.first_name      = first_name;
 		this.last_name       = last_name;
-		this.age             = 25;
-		this.scoring         = 30.0;
-		this.passing         = 30.0;
-		this.blocking        = 30.0;
-		this.tackling        = 30.0;
-		this.stealing        = 30.0;
-		this.presence        = 30.0;
-		this.discipline      = 30.0;
-		this.penalty_shot    = 30.0;
-		this.penalty_offense = 30.0;
-		this.penalty_defense = 30.0;
-		this.endurance       = 30.0;
-		this.fatigue         = 30.0;
+		this.age             = 17;
+		this.scoring         = Math.random();
+		this.passing         = Math.random();
+		this.blocking        = Math.random();
+		this.tackling        = Math.random();
+		this.stealing        = Math.random();
+		this.presence        = Math.random();
+		this.discipline      = Math.random();
+		this.penalty_shot    = Math.random();
+		this.penalty_offense = Math.random();
+		this.penalty_defense = Math.random();
+		this.endurance       = Math.random();
+		this.confidence      = Math.random();
+		this.vitality        = Math.random();
+		this.fatigue         = 0.0;
+		this.in_game         = false;
 		this.playing         = false;
 		this.resting         = false;
+		this.played_in_game  = false;
 		this.rookie          = true;
 		this.retired         = false;
 		this.award           = 0;
@@ -122,86 +132,626 @@ public class Player {
 		this.score           = 0;
 		this.released        = false;
 		this.game            = null;
-		
-		adjustAttributes();
-		
-		// Age initially set to 25 for call to adjustAttributes, now set to new
-		// player age of 17
-		this.age = 17;
 	}
 
-	public double getRating() {
+	public double getOverallRating() {
 	
-		double rating = (this.scoring + this.passing + this.blocking) * 2.0;
-		
-		rating += (this.tackling + this.stealing + this.presence) * 2.0;
-		
-		rating += this.discipline;
-		
-		rating += this.penalty_shot + this.penalty_offense + this.penalty_defense;
-		
-		rating /= 16.0;
-		
-		return rating;
+		return          this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.penalty_shot
+		/**/          + this.penalty_offense
+		/**/          + this.penalty_defense
+		/**/          + this.endurance
+		/**/          + this.confidence
+		/**/          + this.vitality;
 	}
 	
+	public double getRating() {
+	
+		return          this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.penalty_shot
+		/**/          + this.penalty_offense
+		/**/          + this.penalty_defense;
+	}
+
+	public double getAdjustedRating() {
+	
+		double rating = this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.penalty_shot
+		/**/          + this.penalty_offense
+		/**/          + this.penalty_defense;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.penalty_shot
+		/**/          + this.penalty_offense
+		/**/          + this.penalty_defense;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getPerformanceRating() {
+	
+		return          this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.endurance;
+	}
+
+	public double getAdjustedPerformanceRating() {
+	
+		double rating = this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.endurance;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPerformanceRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = this.scoring
+		/**/          + this.passing
+		/**/          + this.blocking
+		/**/          + this.tackling
+		/**/          + this.stealing
+		/**/          + this.presence
+		/**/          + this.discipline
+		/**/          + this.endurance;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getOffensiveRating() {
+	
+		return (this.scoring + this.passing + this.blocking) / 3.0;
+	}
+
+	public double getAdjustedOffensiveRating() {
+	
+		double rating = (this.scoring + this.passing + this.blocking) / 3.0;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedOffensiveRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = (this.scoring + this.passing + this.blocking) / 3.0;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getDefensiveRating() {
+	
+		return (this.tackling + this.stealing + this.presence) / 3.0;
+	}
+
+	public double getAdjustedDefensiveRating() {
+	
+		double rating = (this.tackling + this.stealing + this.presence) / 3.0;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedDefensiveRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = (this.tackling + this.stealing + this.presence) / 3.0;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
 	public double getTurnoverRating() {
 	
 		// The inverse of discipline and passing
-		return 100.0 - ((this.discipline + this.passing) /2.0);
+		return 1.0 - ((this.discipline + this.passing) / 2.0);
+
 	}
+
+	public double getAdjustedTurnoverRating() {
 	
-	private double adjustAttribute( double old_value )
-	{
-		double next_roll;
+		// The inverse of discipline and passing
+		double rating = 1.0 - ((this.discipline + this.passing) / 2.0);
 
-		/*
-		 * Players under 21 will only get better, but if the attribute is already over 40
-		 * it cannot be increased. So keep it the same. The same idea with players over
-		 * 30 with attributes under 25, just keep it the same.
-		 */
-		if ( this.age < 21  &&  old_value > 40.0 ) return old_value;
-		if ( this.age > 30  &&  old_value < 25.0 ) return old_value;
+		if ( this.isIn_game() ) {
 
-		next_roll = Utility.roll( 10.0 ) - 5.0;
+			rating *= this.getRatingCoefficient( true, true );
 
-		/*
-		 * As mentioned above, players under 21 will only increase, and players over 30
-		 * will only decrease. Players from 21 to 30 will adjust in either direction
-		 * with the exception of attributes over 40 or under 25 which will only decrease
-		 * or increase respectively.
-		 */
-		/**/ if ( this.age < 21 ) next_roll =  Math.abs( next_roll );
-		else if ( this.age > 30 ) next_roll = -Math.abs( next_roll );
-		else {
-			
-			if ( old_value > 40.0 ) next_roll = -Math.abs( next_roll );
-			if ( old_value < 25.0 ) next_roll =  Math.abs( next_roll );
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
 		}
 
-		return old_value + next_roll;
+		return rating;
 	}
 
-	private void adjustAttributes() {
+	public double getAdjustedTurnoverRating( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		// The inverse of discipline and passing
+		double rating = 1.0 - ((this.discipline + this.passing) / 2.0);
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedScoring() {
+		
+		double rating = scoring;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedScoring( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+		
+		double rating = scoring;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPassing() {
+
+		double rating = passing;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPassing( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = passing;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedBlocking() {
+
+		double rating = blocking;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedBlocking( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = blocking;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedTackling() {
+
+		double rating = tackling;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedTackling( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = tackling;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedStealing() {
+
+		double rating = stealing;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedStealing( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = stealing;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPresence() {
+
+		double rating = presence;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPresence( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = presence;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedDiscipline() {
+
+		double rating = discipline;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedDiscipline( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = discipline;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_shot() {
+
+		double rating = penalty_shot;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_shot( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = penalty_shot;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_offense() {
+
+		double rating = penalty_offense;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_offense( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = penalty_offense;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_defense() {
+
+		double rating = penalty_defense;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedPenalty_defense( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = penalty_defense;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedEndurance() {
+
+		double rating = endurance;
+
+		if ( this.isIn_game() ) {
+
+			rating *= this.getRatingCoefficient( true, true );
+
+			if ( this.isPlaying() && this.fatigue > 1.0 ) {
+
+				rating *= (this.fatigue - 1.0);
+			}
+		}
+
+		return rating;
+	}
+
+	public double getAdjustedEndurance( boolean applyAge, boolean applyConfidence, boolean applyFatigue ) {
+
+		double rating = endurance;
+
+		rating *= this.getRatingCoefficient( applyAge, applyConfidence );
+
+		if ( applyFatigue && this.fatigue > 1.0 ) {
+
+			rating *= (this.fatigue - 1.0);
+		}
+
+		return rating;
+	}
+
+	public double getAgeFactor() {
 	
-		this.scoring         = adjustAttribute( this.scoring         );
-		this.passing         = adjustAttribute( this.passing         );
-		this.blocking        = adjustAttribute( this.blocking        );
-		this.tackling        = adjustAttribute( this.tackling        );
-		this.stealing        = adjustAttribute( this.stealing        );
-		this.presence        = adjustAttribute( this.presence        );
-		this.discipline      = adjustAttribute( this.discipline      );
-		this.penalty_shot    = adjustAttribute( this.penalty_shot    );
-		this.penalty_offense = adjustAttribute( this.penalty_offense );
-		this.penalty_defense = adjustAttribute( this.penalty_defense );
-		this.endurance       = adjustAttribute( this.endurance       );
+		int cutoff = (int)Math.ceil( 20.0 + (15.0 * this.vitality) );
+		
+		return (this.age < cutoff) ? 1.0 : 1.0 - (((double)this.age - cutoff) * (0.05 + 0.05 * this.vitality));
+	}
+	
+	public double getConfidenceFactor() {
+	
+		int years = this.age - 17;
+		
+		return 1.0 - ((1.0 - this.confidence) / ((double)(years * years) + 1.0));
+	}
+	
+	public double getRatingCoefficient( boolean useAge, boolean useConfidence ) {
+		
+		double age_factor        = 1.0;
+		double confidence_factor = 1.0;
+		
+		if ( useAge        ) age_factor        = getAgeFactor();
+		if ( useConfidence ) confidence_factor = getConfidenceFactor();
+		
+		return age_factor * confidence_factor;
 	}
 	
 	public void agePlayer() {
 	
 		this.age++;
-		
-		adjustAttributes();
 	}
 
 	public void initPlayerGame( TeamGame teamGame ) {
@@ -215,14 +765,13 @@ public class Player {
 		playerGame.setPlayer_id(     this.player_id      );
 		playerGame.setTeam_id(   teamGame.getTeam_id()   );
 		
-		this.game = playerGame;
+		this.game    = playerGame;
+		this.in_game = true;
 	}
 	
 	public void fatiguePlayer( int time ) {
 	
-		double x = (this.endurance - 20.0) / 25.0;
-		
-		double fatigue_rate = Player.MAX_FATIGUE_RATE - (x * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
+		double fatigue_rate = Player.MAX_FATIGUE_RATE - (getAdjustedEndurance() * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
 		
 		this.fatigue += fatigue_rate * time;
 		
@@ -234,9 +783,7 @@ public class Player {
 	
 	public void restPlayer( int time ) {
 	
-		double x = (this.endurance - 20.0) / 25.0;
-		
-		double resting_rate = Player.MIN_REST_RATE + (x * (Player.MAX_REST_RATE - Player.MIN_REST_RATE));
+		double resting_rate = Player.MIN_REST_RATE + (getAdjustedEndurance() * (Player.MAX_REST_RATE - Player.MIN_REST_RATE));
 		
 		this.fatigue -= resting_rate * time;
 		
@@ -250,275 +797,25 @@ public class Player {
 	
 	public int getTimeUntilTired() {
 	
-		double x = (this.endurance - 20.0) / 25.0;
-		
-		double fatigue_rate = Player.MAX_FATIGUE_RATE - (x * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
+		double fatigue_rate = Player.MAX_FATIGUE_RATE - (getAdjustedEndurance() * (Player.MAX_FATIGUE_RATE - Player.MIN_FATIGUE_RATE));
 		
 		return (int)Math.ceil( (1.0 - this.fatigue) / fatigue_rate );
-	}
-	
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	public int getAward() {
-		return award;
-	}
-
-	public void setAward(int award) {
-		this.award = award;
-	}
-
-	public double getBlocking() {
-		
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.blocking * (this.fatigue - 1.0);
-				
-				return this.blocking - x;
-		}
-		
-		return this.blocking;
-	}
-
-	public void setBlocking(double blocking) {
-		this.blocking = blocking;
-	}
-
-	public double getDiscipline() {
-		
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.discipline * (this.fatigue - 1.0);
-				
-				return this.discipline - x;
-		}
-		
-		return this.discipline;
-	}
-
-	public void setDiscipline(double discipline) {
-		this.discipline = discipline;
-	}
-
-	public String getFirst_name() {
-		return first_name;
-	}
-
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
-	}
-
-	public String getLast_name() {
-		return last_name;
-	}
-
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
-	}
-
-	public double getPassing() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.passing * (this.fatigue - 1.0);
-				
-				return this.passing - x;
-		}
-		
-		return this.passing;
-	}
-
-	public void setPassing(double passing) {
-		this.passing = passing;
-	}
-
-	public double getPenalty_defense() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.penalty_defense * (this.fatigue - 1.0);
-				
-				return this.penalty_defense - x;
-		}
-		
-		return this.penalty_defense;
-	}
-
-	public void setPenalty_defense(double penalty_defense) {
-		this.penalty_defense = penalty_defense;
-	}
-
-	public double getPenalty_offense() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.penalty_offense * (this.fatigue - 1.0);
-				
-				return this.penalty_offense - x;
-		}
-		
-		return this.penalty_offense;
-	}
-
-	public void setPenalty_offense(double penalty_offense) {
-		this.penalty_offense = penalty_offense;
-	}
-
-	public double getPenalty_shot() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.penalty_shot * (this.fatigue - 1.0);
-				
-				return this.penalty_shot - x;
-		}
-		
-		return this.penalty_shot;
-	}
-
-	public void setPenalty_shot(double penalty_shot) {
-		this.penalty_shot = penalty_shot;
 	}
 
 	public int getPlayer_id() {
 		return player_id;
 	}
 
-	public void setPlayer_id(int player_id) {
-		this.player_id = player_id;
-	}
-
-	public double getPresence() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.presence * (this.fatigue - 1.0);
-				
-				return this.presence - x;
-		}
-		
-		return this.presence;
-	}
-
-	public void setPresence(double presence) {
-		this.presence = presence;
-	}
-
-	public boolean isRetired() {
-		return retired;
-	}
-
-	public void setRetired(boolean retired) {
-		this.retired = retired;
-	}
-
-	public boolean isRookie() {
-		return rookie;
-	}
-
-	public void setRookie(boolean rookie) {
-		this.rookie = rookie;
-	}
-
-	public double getScoring() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.scoring * (this.fatigue - 1.0);
-				
-				return this.scoring - x;
-		}
-		
-		return this.scoring;
-	}
-
-	public void setScoring(double scoring) {
-		this.scoring = scoring;
-	}
-
-	public double getStealing() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.stealing * (this.fatigue - 1.0);
-				
-				return this.stealing - x;
-		}
-		
-		return this.stealing;
-	}
-
-	public void setStealing(double stealing) {
-		this.stealing = stealing;
-	}
-
-	public double getTackling() {
-
-		if ( this.isPlaying() && this.fatigue > 1.0 ) {
-			
-				double x = this.tackling * (this.fatigue - 1.0);
-				
-				return this.tackling - x;
-		}
-		
-		return this.tackling;
-	}
-
-	public void setTackling(double tackling) {
-		this.tackling = tackling;
+	public void setPlayer_id(int playerId) {
+		player_id = playerId;
 	}
 
 	public int getTeam_id() {
 		return team_id;
 	}
 
-	public void setTeam_id(int team_id) {
-		this.team_id = team_id;
-	}
-
-	public int getDraft_pick() {
-		return draft_pick;
-	}
-
-	public void setDraft_pick(int draft_pick) {
-		this.draft_pick = draft_pick;
-	}
-
-	public int getSeasons_played() {
-		return seasons_played;
-	}
-
-	public void setSeasons_played(int seasons_played) {
-		this.seasons_played = seasons_played;
-	}
-
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}
-
-	public boolean isReleased() {
-		return released;
-	}
-
-	public void setReleased(boolean released) {
-		this.released = released;
-	}
-
-	public int getReleased_by() {
-		return released_by;
-	}
-
-	public void setReleased_by(int released_by) {
-		this.released_by = released_by;
+	public void setTeam_id(int teamId) {
+		team_id = teamId;
 	}
 
 	public String getYear() {
@@ -529,20 +826,124 @@ public class Player {
 		this.year = year;
 	}
 
-	public int getAllstar_team_id() {
-		return allstar_team_id;
+	public String getFirst_name() {
+		return first_name;
 	}
 
-	public void setAllstar_team_id(int allstar_team_id) {
-		this.allstar_team_id = allstar_team_id;
+	public void setFirst_name(String firstName) {
+		first_name = firstName;
 	}
 
-	public PlayerGame getGame() {
-		return game;
+	public String getLast_name() {
+		return last_name;
 	}
 
-	public void setGame(PlayerGame game) {
-		this.game = game;
+	public void setLast_name(String lastName) {
+		last_name = lastName;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public double getScoring() {
+		return scoring;
+	}
+
+	public void setScoring(double scoring) {
+		this.scoring = scoring;
+	}
+
+	public double getPassing() {
+		return passing;
+	}
+
+	public void setPassing(double passing) {
+		this.passing = passing;
+	}
+
+	public double getBlocking() {
+		return blocking;
+	}
+
+	public void setBlocking(double blocking) {
+		this.blocking = blocking;
+	}
+
+	public double getTackling() {
+		return tackling;
+	}
+
+	public void setTackling(double tackling) {
+		this.tackling = tackling;
+	}
+
+	public double getStealing() {
+		return stealing;
+	}
+
+	public void setStealing(double stealing) {
+		this.stealing = stealing;
+	}
+
+	public double getPresence() {
+		return presence;
+	}
+
+	public void setPresence(double presence) {
+		this.presence = presence;
+	}
+
+	public double getDiscipline() {
+		return discipline;
+	}
+
+	public void setDiscipline(double discipline) {
+		this.discipline = discipline;
+	}
+
+	public double getPenalty_shot() {
+		return penalty_shot;
+	}
+
+	public void setPenalty_shot(double penaltyShot) {
+		penalty_shot = penaltyShot;
+	}
+
+	public double getPenalty_offense() {
+		return penalty_offense;
+	}
+
+	public void setPenalty_offense(double penaltyOffense) {
+		penalty_offense = penaltyOffense;
+	}
+
+	public double getPenalty_defense() {
+		return penalty_defense;
+	}
+
+	public void setPenalty_defense(double penaltyDefense) {
+		penalty_defense = penaltyDefense;
+	}
+
+	public double getConfidence() {
+		return confidence;
+	}
+
+	public void setConfidence(double confidence) {
+		this.confidence = confidence;
+	}
+
+	public double getVitality() {
+		return vitality;
+	}
+
+	public void setVitality(double vitality) {
+		this.vitality = vitality;
 	}
 
 	public double getEndurance() {
@@ -561,6 +962,14 @@ public class Player {
 		this.fatigue = fatigue;
 	}
 
+	public boolean isIn_game() {
+		return in_game;
+	}
+
+	public void setIn_game(boolean inGame) {
+		in_game = inGame;
+	}
+
 	public boolean isPlaying() {
 		return playing;
 	}
@@ -576,5 +985,93 @@ public class Player {
 	public void setResting(boolean resting) {
 		this.resting = resting;
 	}
-	
+
+	public boolean isRookie() {
+		return rookie;
+	}
+
+	public void setRookie(boolean rookie) {
+		this.rookie = rookie;
+	}
+
+	public boolean isRetired() {
+		return retired;
+	}
+
+	public void setRetired(boolean retired) {
+		this.retired = retired;
+	}
+
+	public int getAward() {
+		return award;
+	}
+
+	public void setAward(int award) {
+		this.award = award;
+	}
+
+	public int getDraft_pick() {
+		return draft_pick;
+	}
+
+	public void setDraft_pick(int draftPick) {
+		draft_pick = draftPick;
+	}
+
+	public int getSeasons_played() {
+		return seasons_played;
+	}
+
+	public void setSeasons_played(int seasonsPlayed) {
+		seasons_played = seasonsPlayed;
+	}
+
+	public int getAllstar_team_id() {
+		return allstar_team_id;
+	}
+
+	public void setAllstar_team_id(int allstarTeamId) {
+		allstar_team_id = allstarTeamId;
+	}
+
+	public boolean isReleased() {
+		return released;
+	}
+
+	public void setReleased(boolean released) {
+		this.released = released;
+	}
+
+	public int getReleased_by() {
+		return released_by;
+	}
+
+	public void setReleased_by(int releasedBy) {
+		released_by = releasedBy;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public PlayerGame getGame() {
+		return game;
+	}
+
+	public void setGame(PlayerGame game) {
+		this.game = game;
+	}
+
+	public boolean isPlayed_in_game() {
+		return played_in_game;
+	}
+
+	public void setPlayed_in_game(boolean playedInGame) {
+		played_in_game = playedInGame;
+	}
+
 }

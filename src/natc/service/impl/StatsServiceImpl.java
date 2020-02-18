@@ -169,10 +169,10 @@ public class StatsServiceImpl implements StatsService {
 		categories.add( new Parameters( DatabaseImpl.STAT_GOALS,         StatsView.KEY_GOALS,         false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_ASSISTS,       StatsView.KEY_ASSISTS,       false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_OFFENSE,       StatsView.KEY_OFFENSE,       false ) );
-		categories.add( new Parameters( DatabaseImpl.STAT_TURNOVERS,     StatsView.KEY_TURNOVERS,     true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_TURNOVERS,     StatsView.KEY_TURNOVERS,     false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_STOPS,         StatsView.KEY_STOPS,         false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_STEALS,        StatsView.KEY_STEALS,        false ) );
-		categories.add( new Parameters( DatabaseImpl.STAT_PENALTIES,     StatsView.KEY_PENALTIES,     true  ) );
+		categories.add( new Parameters( DatabaseImpl.STAT_PENALTIES,     StatsView.KEY_PENALTIES,     false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_PSA,           StatsView.KEY_PSA,           false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_PSM,           StatsView.KEY_PSM,           false ) );
 		categories.add( new Parameters( DatabaseImpl.STAT_OT_PSA,        StatsView.KEY_OT_PSA,        false ) );

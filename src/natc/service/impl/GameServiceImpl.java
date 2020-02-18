@@ -210,18 +210,41 @@ public class GameServiceImpl implements GameService {
 	
 	private class PlayerComparator implements Comparator {
 	
-		public static final int pcm_Actual    = 0;
-		public static final int pcm_Projected = 1;
+		public static final int pcm_OverallRating     = 0;
+		public static final int pcm_Rating            = 1;
+		public static final int pcm_PerformanceRating = 2;
+		public static final int pcm_Statistical       = 3;
 		
 		private Connection dbConn;
 		private String     year;
 		private int        mode;
+		private boolean    useAge;
+		private boolean    useConfidence;
+		private boolean    useFatigue;
 		
 		public PlayerComparator( Connection dbConn, String year, int mode ) {
 		
-			this.dbConn = dbConn;
-			this.year   = year;
-			this.mode   = mode;
+			this.dbConn        = dbConn;
+			this.year          = year;
+			this.mode          = mode;
+			this.useAge        = false;
+			this.useConfidence = false;
+			this.useFatigue    = false;
+		}
+
+		public PlayerComparator( Connection dbConn,
+				/**/             String     year,
+				/**/             int        mode,
+				/**/             boolean    useAge,
+				/**/             boolean    useConfidence,
+				/**/             boolean    useFatigue     ) {
+		
+			this.dbConn        = dbConn;
+			this.year          = year;
+			this.mode          = mode;
+			this.useAge        = useAge;
+			this.useConfidence = useConfidence;
+			this.useFatigue    = useFatigue;
 		}
 
 		public int compare( Object arg0, Object arg1 ) {
@@ -229,12 +252,22 @@ public class GameServiceImpl implements GameService {
 			Player player0 = (Player)arg0;
 			Player player1 = (Player)arg1;
 			
-			if ( mode == pcm_Projected ) {
+			if ( mode == pcm_OverallRating ) {
 				
-				return (player0.getRating() > player1.getRating()) ? 1 : -1;
+				return (player0.getOverallRating() > player1.getOverallRating()) ? 1 : -1;
+			}
+
+			if ( mode == pcm_Rating ) {
+				
+				return (player0.getAdjustedRating( useAge, useConfidence, useFatigue ) > player1.getAdjustedRating( useAge, useConfidence, useFatigue )) ? 1 : -1;
+			}
+
+			if ( mode == pcm_PerformanceRating ) {
+				
+				return (player0.getAdjustedPerformanceRating( useAge, useConfidence, useFatigue ) > player1.getAdjustedPerformanceRating( useAge, useConfidence, useFatigue )) ? 1 : -1;
 			}
 			
-			if ( mode == pcm_Actual ) {
+			if ( mode == pcm_Statistical ) {
 					
 				if ( player0.getScore() == 0 ) player0.setScore( getPlayerScore( player0.getPlayer_id() ) );
 				if ( player1.getScore() == 0 ) player1.setScore( getPlayerScore( player1.getPlayer_id() ) );
@@ -276,15 +309,6 @@ public class GameServiceImpl implements GameService {
 			
 			return 0;
 		}
-		
-		public int getMode() {
-			return mode;
-		}
-
-		public void setMode(int mode) {
-			this.mode = mode;
-		}
-		
 	}
 
 	private int getNextGameId() throws SQLException {
@@ -315,7 +339,7 @@ public class GameServiceImpl implements GameService {
 
 	private boolean isPenaltyShotGood( Player shooter, Team offense, Team defense ) {
 	
-		double pbb = 42.5 + shooter.getPenalty_shot() + (offense.getPs_offense() - defense.getPs_defense())/2.0;
+		double pbb = 50.0 + (40.0 * shooter.getAdjustedPenalty_shot()) + (10.0 * (offense.getPs_offense() - defense.getPs_defense()));
 		
 		if ( (Math.random() * 100.0) < pbb ) {
 		
@@ -330,48 +354,63 @@ public class GameServiceImpl implements GameService {
 		homeTeam.getGame().setOvertime( true );
 		roadTeam.getGame().setOvertime( true );
 		
+		ArrayList homeShooters = new ArrayList( homeTeam.getPlayers() );
+		ArrayList roadShooters = new ArrayList( roadTeam.getPlayers() );
+		
+		//Collections.copy( homeShooters, homeTeam.getPlayers() );
+		//Collections.copy( roadShooters, roadTeam.getPlayers() );
+		
 		// overtime penalty shots - sort the player list by penalty shot attribute
-		Collections.sort( homeTeam.getPlayers(), new Comparator() { public int compare( Object arg1, Object arg2 ){
-			/**/                                                                 Player p1 = (Player)arg1;
-			/**/                                                                 Player p2 = (Player)arg2;
-			/**/                                                                 return (p1.getPenalty_shot() > p2.getPenalty_shot()) ? 1 : -1; } });
+		Collections.sort( homeShooters, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_shot() > p2.getAdjustedPenalty_shot()) ? 1 : -1; } });
+		Collections.reverse( homeShooters );
 		
-		Collections.sort( roadTeam.getPlayers(), new Comparator() { public int compare( Object arg1, Object arg2 ){
-			/**/                                                                 Player p1 = (Player)arg1;
-			/**/                                                                 Player p2 = (Player)arg2;
-			/**/                                                                 return (p1.getPenalty_shot() > p2.getPenalty_shot()) ? 1 : -1; } });
-		
+		Collections.sort( roadShooters, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_shot() > p2.getAdjustedPenalty_shot()) ? 1 : -1; } });
+		Collections.reverse( roadShooters );
 
 		int p = 0;
 		
 		while ( homeTeam.getGame().getScore().getScore() == roadTeam.getGame().getScore().getScore() ) {
 		
-			Player player = (Player)roadTeam.getPlayers().get( p );
+			Player shooter = (Player)roadShooters.get( p );
 			
 			// Player and road team get an attempt
-			player.getGame().setOt_psa( player.getGame().getOt_psa() + 1 );
+			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
 			roadTeam.getGame().getScore().setOt_psa( roadTeam.getGame().getScore().getOt_psa() + 1 );
 			
-			if ( isPenaltyShotGood( player, roadTeam, homeTeam ) ) {
+			// Select the offensive and defensive line ups
+			roadTeam.selectOtPenaltyOffense( shooter );
+			homeTeam.selectOtPenaltyDefense();
+			
+			if ( isPenaltyShotGood( shooter, roadTeam, homeTeam ) ) {
 				
 				// Player and road team get a make
-				player.getGame().setOt_psm( player.getGame().getOt_psm() + 1 );
+				shooter.getGame().setOt_psm( shooter.getGame().getOt_psm() + 1 );
 				roadTeam.getGame().getScore().setOt_psm( roadTeam.getGame().getScore().getOt_psm() + 1 );
 				
 				// Update road score
 				roadTeam.getGame().getScore().setScore( roadTeam.getGame().getScore().getScore() + 1 );
 			}
 			
-			player = (Player)homeTeam.getPlayers().get( p );
+			shooter = (Player)homeShooters.get( p );
 			
 			// Player and home team get an attempt
-			player.getGame().setOt_psa( player.getGame().getOt_psa() + 1 );
+			shooter.getGame().setOt_psa( shooter.getGame().getOt_psa() + 1 );
 			homeTeam.getGame().getScore().setOt_psa( homeTeam.getGame().getScore().getOt_psa() + 1 );
 
-			if ( isPenaltyShotGood( player, homeTeam, roadTeam ) ) {
+			// Select the offensive and defensive line ups
+			homeTeam.selectOtPenaltyOffense( shooter );
+			roadTeam.selectOtPenaltyDefense();
+			
+			if ( isPenaltyShotGood( shooter, homeTeam, roadTeam ) ) {
 
 				// Player and home team get a make
-				player.getGame().setOt_psm( player.getGame().getOt_psm() + 1 );
+				shooter.getGame().setOt_psm( shooter.getGame().getOt_psm() + 1 );
 				homeTeam.getGame().getScore().setOt_psm( homeTeam.getGame().getScore().getOt_psm() + 1 );
 
 				// Update home score
@@ -392,6 +431,26 @@ public class GameServiceImpl implements GameService {
 		
 		for ( int period = 1; period <= 5; ++period ) {
 		
+			if ( game_type == TeamGame.gt_Preseason  &&  period == ((homeTeam.getPreseason_games() / 2) + 2) ) {
+			
+				// For pre-season games, put in the weakest players after a certain point
+				Collections.reverse( homeTeam.getPlayers() );
+				Collections.reverse( roadTeam.getPlayers() );
+				
+				/*
+				// For preseason games, after a certain point re-sort players by age ascending
+				Collections.sort( homeTeam.getPlayers(), new Comparator() { public int compare( Object arg1, Object arg2 ){
+					/oo/                                                                        Player p1 = (Player)arg1;
+					/oo/                                                                        Player p2 = (Player)arg2;
+					/oo/                                                                        return (p1.getAge() > p2.getAge()) ? 1 : -1; } });
+				
+				Collections.sort( roadTeam.getPlayers(), new Comparator() { public int compare( Object arg1, Object arg2 ){
+					/oo/                                                                        Player p1 = (Player)arg1;
+					/oo/                                                                        Player p2 = (Player)arg2;
+					/oo/                                                                        return (p1.getAge() > p2.getAge()) ? 1 : -1; } });
+				*/
+			}
+			
 			roadTeam.determineActivePlayers( 720 );
 			homeTeam.determineActivePlayers( 720 );
 			
@@ -580,8 +639,12 @@ public class GameServiceImpl implements GameService {
 		if ( homeTeam.getPlayoff_rank() != roadTeam.getPlayoff_rank() ) return;
 		
 		// Sorter players on each team by rating.
-		Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Projected ) );
-		Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_Projected ) );
+		Collections.sort( homeTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_PerformanceRating, true, true, false ) );
+		Collections.sort( roadTeam.getPlayers(), new PlayerComparator( dbConn, year, PlayerComparator.pcm_PerformanceRating, true, true, false ) );
+		
+		// Sorting puts the lowest rated players in front, so reverse the lists
+		Collections.reverse( homeTeam.getPlayers() );
+		Collections.reverse( roadTeam.getPlayers() );
 		
 		int game_id = getNextGameId();
 
@@ -912,15 +975,39 @@ public class GameServiceImpl implements GameService {
 		TeamService   teamService   = new TeamServiceImpl( dbConn, lastYear );
 		PlayerService playerService = new PlayerServiceImpl( dbConn, event.getYear() );
 		
-		if ( (teamList = teamService.getTeamList()) == null ) return;
+		if ( (teamList = teamService.getTeamList()) != null ) {
 		
-		// Rank teams - sort list using compareto of team object
-		Collections.sort( teamList, new TeamComparator( dbConn, lastYear ) );
+			// Rank teams - sort list using compareto of team object
+			Collections.sort( teamList, new TeamComparator( dbConn, lastYear ) );
+		}
+		else {
+		
+			// No teams last year, this must be the first season, get this years teams and sort by rating descending
+			teamService = new TeamServiceImpl( dbConn, event.getYear() );
+			
+			if ( (teamList = teamService.getTeamList()) == null ) return;
+			
+			Iterator i = teamList.iterator();
+			
+			while ( i.hasNext() ) {
+			
+				Team team = (Team)i.next();
+				
+				team.setPlayers( playerService.getPlayersByTeamId( team.getTeam_id() ) );
+				
+				team.calcTeamRatings();
+			}
+			
+			Collections.sort( teamList, new Comparator() { public int compare( Object arg1, Object arg2 ){
+				/**/                                                           Team t1 = (Team)arg1;
+				/**/                                                           Team t2 = (Team)arg2;
+				/**/                                                           return ((t1.getOffense() + t1.getDefense() + t1.getDiscipline()) > (t2.getOffense() + t2.getDefense() + t2.getDiscipline())) ? 1 : -1; } } );
+		}
 		
 		if ( event.getType().getValue() == ScheduleType.ROOKIE_DRAFT_ROUND_1 ) {
 			
 			// Generate 100 new players for this year and no team_id
-			for ( int i = 0; i < 100; ++i ) {
+			for ( int i = 0; i < 80; ++i ) {
 			
 				playerService.generatePlayer( false, 0 );
 			}
@@ -935,8 +1022,8 @@ public class GameServiceImpl implements GameService {
 		// Get list of remaining undrafted players
 		if ( (playerList = playerService.getFreePlayers()) == null ) return;
 		
-		// Rank players - sort list using comparetp of player object
-		Collections.sort( playerList, new PlayerComparator( dbConn, lastYear, PlayerComparator.pcm_Projected ) );
+		// Rank players - sort list using player comparator of player object
+		Collections.sort( playerList, new PlayerComparator( dbConn, lastYear, PlayerComparator.pcm_OverallRating ) );
 		
 		Iterator i = teamList.iterator();
 		
@@ -976,9 +1063,6 @@ public class GameServiceImpl implements GameService {
 			
 			playerService.updatePlayer( player, true, false );
 		}
-		
-		// All undrafted rookies age should be incremented as well (but they aren't in training camp so no stat change
-		playerService.ageUndraftedRookies();
 	}
 	
 	private void processPreseasonGame( Schedule event ) throws SQLException {
@@ -1027,11 +1111,11 @@ public class GameServiceImpl implements GameService {
 			
 			if ( (playerList = playerService.getPlayersByTeamId( team.getTeam_id() )) != null ) {
 			
-				if ( playerList.size() > 10 ) {
+				if ( playerList.size() > Constants.PLAYERS_PER_TEAM ) {
 				
-					Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Projected ) );
+					Collections.sort( playerList, new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_PerformanceRating, true, false, false ) );
 					
-					for ( int j = 0; j < playerList.size() - 10; ++j ) {
+					for ( int j = 0; j < playerList.size() - Constants.PLAYERS_PER_TEAM; ++j ) {
 					
 						Player player = (Player)playerList.get( j );
 						
@@ -1064,7 +1148,7 @@ public class GameServiceImpl implements GameService {
 
 			if ( (freeAgentList = playerService.getFreePlayers()) == null ) return;
 			
-			PlayerComparator pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_Projected );
+			PlayerComparator pc = new PlayerComparator( dbConn, event.getYear(), PlayerComparator.pcm_PerformanceRating, true, false, false );
 			
 			Collections.sort( freeAgentList, pc );
 			
@@ -1657,7 +1741,43 @@ public class GameServiceImpl implements GameService {
 		Collections.sort( teamsList, tc );
 		
 		Collections.reverse( teamsList );
+
+		Iterator i = teamsList.iterator();
 		
+		while ( i.hasNext() ) {
+		
+			Team team = (Team)i.next();
+			
+			PreparedStatement ps          = null;
+			ResultSet         dbRs        = null;
+			
+			try {
+				
+				ps = DatabaseImpl.getWinsByStreakPs( dbConn );
+				
+				ps.setInt(     1, TeamGame.gt_RegularSeason );
+				ps.setString(  2, year                      );
+				ps.setInt(     3, team.getTeam_id()         );
+				ps.setInt(     4, 10                        );
+				
+				dbRs = ps.executeQuery();
+				
+				if ( dbRs.next() ) {
+				
+					team.setStreak_wins(   dbRs.getInt( 1 )   );
+					team.setStreak_losses( Math.min( 10, team.getGames() ) - team.getStreak_wins() );
+				}
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+			finally {
+
+				DatabaseImpl.closeDbRs( dbRs );
+				DatabaseImpl.closeDbStmt( ps );
+			}
+		}
+
 		return teamsList;
 	}
 	
@@ -1684,7 +1804,7 @@ public class GameServiceImpl implements GameService {
 		
 		playersList = playerService.getRookiePlayerList();
 		
-		PlayerComparator pc = new PlayerComparator( dbConn, year, PlayerComparator.pcm_Projected );
+		PlayerComparator pc = new PlayerComparator( dbConn, year, PlayerComparator.pcm_Rating );
 		
 		Collections.sort( playersList, pc );
 		
@@ -2020,5 +2140,45 @@ public class GameServiceImpl implements GameService {
 		
 		return playersList;
 	}
-	
+
+	public List getAbandonedRookiePlayers() throws SQLException {
+
+		PreparedStatement ps          = null;
+		ResultSet         dbRs        = null;
+		List              playersList = null;
+		
+		try {
+			
+			ps = DatabaseImpl.getAbandonedRookiesSelectPs( dbConn );
+			
+			ps.setString(  1, year );
+			ps.setBoolean( 2, true );
+			
+			dbRs = ps.executeQuery();
+			
+			while ( dbRs.next() ) {
+			
+				ReleaseView releaseView = new ReleaseView();
+				
+				releaseView.setPlayer_id(   dbRs.getInt(    1 ));
+				releaseView.setFirst_name(  dbRs.getString( 2 ));
+				releaseView.setLast_name(   dbRs.getString( 3 ));
+				releaseView.setTeam_id(     dbRs.getInt(    4 ));
+				releaseView.setTeam_abbrev( dbRs.getString( 5 ));
+				releaseView.setDraft_pick(  dbRs.getInt(    6 ));
+				
+				if ( playersList == null ) playersList = new ArrayList();
+				
+				playersList.add( releaseView );
+			}
+		}
+		finally {
+			
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+		
+		return playersList;
+	}
+
 }

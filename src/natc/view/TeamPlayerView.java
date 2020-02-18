@@ -1,5 +1,7 @@
 package natc.view;
 
+import java.text.DecimalFormat;
+
 public class TeamPlayerView {
 
 	private int     player_id;
@@ -16,6 +18,7 @@ public class TeamPlayerView {
 	private double  rating;
 	
 	private int     games;
+	private int     time_per_game;
 	private int     goals;
 	private int     assists;
 	private int     stops;
@@ -33,6 +36,7 @@ public class TeamPlayerView {
 		this.allstar_team_id = 0;
 		this.rating          = 0.0;
 		this.games           = 0;
+		this.time_per_game   = 0;
 		this.goals           = 0;
 		this.assists         = 0;
 		this.stops           = 0;
@@ -40,6 +44,13 @@ public class TeamPlayerView {
 		this.psm             = 0;
 	}
 
+	public String getTimePerGameDsp() {
+	
+		DecimalFormat df = new DecimalFormat( "00" );
+		
+		return df.format( this.time_per_game / 60 ) + ":" + df.format( this.time_per_game % 60 );
+	}
+	
 	public int getPlayer_id() {
 		return player_id;
 	}
@@ -150,6 +161,14 @@ public class TeamPlayerView {
 
 	public void setGames(int games) {
 		this.games = games;
+	}
+
+	public int getTime_per_game() {
+		return time_per_game;
+	}
+
+	public void setTime_per_game(int timePerGame) {
+		time_per_game = timePerGame;
 	}
 	
 }

@@ -112,14 +112,10 @@ public class TeamServiceImpl implements TeamService {
 				for ( int j = 0; j < Constants.PLAYERS_PER_TEAM; ++j ) {
 					
 					Player player = playerService.generatePlayer( true, team_id );
-
-					int final_age = (int)Math.floor( (Math.random() * 10.0) + 20.0 );
-
-					while ( player.getAge() < final_age ) {
-
-						player.agePlayer();
-					}
-
+					
+					player.setAge( (int)Math.floor( (Math.random() * 12.0) + 18.0 ) );
+					player.setRookie( false );
+					
 					playerService.updatePlayer( player, true, false );
 				}
 			}
@@ -1264,12 +1260,15 @@ public class TeamServiceImpl implements TeamService {
 			
 			if ( dbRs.next() ) {
 			
-				teamPlayer.setGames(   dbRs.getInt( 1 ) );
-				teamPlayer.setGoals(   dbRs.getInt( 2 ) );
-				teamPlayer.setAssists( dbRs.getInt( 3 ) );
-				teamPlayer.setStops(   dbRs.getInt( 4 ) );
-				teamPlayer.setSteals(  dbRs.getInt( 5 ) );
-				teamPlayer.setPsm(     dbRs.getInt( 6 ) );
+				teamPlayer.setGames(         dbRs.getInt( 1 ) );
+				teamPlayer.setGoals(         dbRs.getInt( 3 ) );
+				teamPlayer.setAssists(       dbRs.getInt( 4 ) );
+				teamPlayer.setStops(         dbRs.getInt( 5 ) );
+				teamPlayer.setSteals(        dbRs.getInt( 6 ) );
+				teamPlayer.setPsm(           dbRs.getInt( 7 ) );
+				
+				if   ( teamPlayer.getGames() == 0 ) teamPlayer.setTime_per_game( 0 );
+				else                                teamPlayer.setTime_per_game( dbRs.getInt( 2 ) / teamPlayer.getGames() );
 			}
 		}
 		finally {

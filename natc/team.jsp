@@ -279,15 +279,16 @@
     <td colspan="3"><bean:message key="team.label.players"/></td>
   </tr>
   <tr class="heading">
-    <td><bean:message key="team.label.player"   /></td>
-    <td><bean:message key="team.label.age"      /></td>
-    <td><bean:message key="team.label.skill"    /></td>
-    <td><bean:message key="team.label.games"    /></td>
-    <td><bean:message key="team.label.goals"    /></td>
-    <td><bean:message key="team.label.assists"  /></td>
-    <td><bean:message key="team.label.stops"    /></td>
-    <td><bean:message key="team.label.steals"   /></td>
-    <td><bean:message key="team.label.psm"      /></td>
+    <td><bean:message key="team.label.player"        /></td>
+    <td><bean:message key="team.label.age"           /></td>
+    <td><bean:message key="team.label.skill"         /></td>
+    <td><bean:message key="team.label.games"         /></td>
+    <td><bean:message key="team.label.time_per_game" /></td>
+    <td><bean:message key="team.label.goals"         /></td>
+    <td><bean:message key="team.label.assists"       /></td>
+    <td><bean:message key="team.label.stops"         /></td>
+    <td><bean:message key="team.label.steals"        /></td>
+    <td><bean:message key="team.label.psm"           /></td>
   </tr>
   <logic:iterate id="teamPlayer" name="teamPlayers">
     <tr>
@@ -317,12 +318,13 @@
       <td>
         <img src='drawbar.jsp?background=000000&foreground=ff0000&width=150&height=16&value=<bean:write name="teamPlayer" property="rating"/>'>
       </td>
-      <td><bean:write name="teamPlayer" property="games"   /></td>
-      <td><bean:write name="teamPlayer" property="goals"   /></td>
-      <td><bean:write name="teamPlayer" property="assists" /></td>
-      <td><bean:write name="teamPlayer" property="stops"   /></td>
-      <td><bean:write name="teamPlayer" property="steals"  /></td>
-      <td><bean:write name="teamPlayer" property="psm"     /></td>
+      <td><bean:write name="teamPlayer" property="games"          /></td>
+      <td><bean:write name="teamPlayer" property="timePerGameDsp" /></td>
+      <td><bean:write name="teamPlayer" property="goals"          /></td>
+      <td><bean:write name="teamPlayer" property="assists"        /></td>
+      <td><bean:write name="teamPlayer" property="stops"          /></td>
+      <td><bean:write name="teamPlayer" property="steals"         /></td>
+      <td><bean:write name="teamPlayer" property="psm"            /></td>
     </tr>
   </logic:iterate>
   <tr class="separator"></tr>

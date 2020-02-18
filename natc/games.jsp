@@ -56,7 +56,7 @@
       <td>
         <table class="standing">
           <tr class="heading">
-            <td colspan="3"><bean:message key="division.greene"/></td>
+            <td colspan="4"><bean:message key="division.greene"/></td>
           </tr>
           <logic:iterate id="team" name="div0teams">
             <tr>
@@ -68,10 +68,12 @@
               <logic:equal name="team" property="games" value="0" >
                 <td><bean:write name="team" property="preseason_wins"     /></td>
                 <td><bean:write name="team" property="preseason_losses"   /></td>
+                <td></td>
               </logic:equal>
               <logic:greaterThan name="team" property="games" value="0" >
                 <td><bean:write name="team" property="wins"     /></td>
                 <td><bean:write name="team" property="losses"   /></td>
+                <td><bean:write name="team" property="streak_wins" />-<bean:write name="team" property="streak_losses" /></td>
               </logic:greaterThan>
             </tr>
           </logic:iterate>
@@ -81,7 +83,7 @@
       <td>
         <table class="standing">
           <tr class="heading">
-            <td colspan="3"><bean:message key="division.davis"/></td>
+            <td colspan="4"><bean:message key="division.davis"/></td>
           </tr>
           <logic:iterate id="team" name="div1teams">
             <tr>
@@ -93,10 +95,12 @@
               <logic:equal name="team" property="games" value="0" >
                 <td><bean:write name="team" property="preseason_wins"     /></td>
                 <td><bean:write name="team" property="preseason_losses"   /></td>
+                <td></td>
               </logic:equal>
               <logic:greaterThan name="team" property="games" value="0" >
                 <td><bean:write name="team" property="wins"     /></td>
                 <td><bean:write name="team" property="losses"   /></td>
+                <td><bean:write name="team" property="streak_wins" />-<bean:write name="team" property="streak_losses" /></td>
               </logic:greaterThan>
             </tr>
           </logic:iterate>
@@ -106,7 +110,7 @@
       <td>
         <table class="standing">
           <tr class="heading">
-            <td colspan="3"><bean:message key="division.smith"/></td>
+            <td colspan="4"><bean:message key="division.smith"/></td>
           </tr>
           <logic:iterate id="team" name="div2teams">
             <tr>
@@ -118,10 +122,12 @@
               <logic:equal name="team" property="games" value="0" >
                 <td><bean:write name="team" property="preseason_wins"     /></td>
                 <td><bean:write name="team" property="preseason_losses"   /></td>
+                <td></td>
               </logic:equal>
               <logic:greaterThan name="team" property="games" value="0" >
                 <td><bean:write name="team" property="wins"     /></td>
                 <td><bean:write name="team" property="losses"   /></td>
+                <td><bean:write name="team" property="streak_wins" />-<bean:write name="team" property="streak_losses" /></td>
               </logic:greaterThan>
             </tr>
           </logic:iterate>
@@ -131,7 +137,7 @@
       <td>
         <table class="standing">
           <tr class="heading">
-            <td colspan="3"><bean:message key="division.lawrence"/></td>
+            <td colspan="4"><bean:message key="division.lawrence"/></td>
           </tr>
           <logic:iterate id="team" name="div3teams">
             <tr>
@@ -143,10 +149,12 @@
               <logic:equal name="team" property="games" value="0" >
                 <td><bean:write name="team" property="preseason_wins"     /></td>
                 <td><bean:write name="team" property="preseason_losses"   /></td>
+                <td></td>
               </logic:equal>
               <logic:greaterThan name="team" property="games" value="0" >
                 <td><bean:write name="team" property="wins"     /></td>
                 <td><bean:write name="team" property="losses"   /></td>
+                <td><bean:write name="team" property="streak_wins" />-<bean:write name="team" property="streak_losses" /></td>
               </logic:greaterThan>
             </tr>
           </logic:iterate>

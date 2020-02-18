@@ -97,6 +97,32 @@
       </tr>
     </logic:iterate>
   </logic:present>
+  <tr class="separator"></tr>
+  <logic:present name="abandoned_rookies">
+    <tr class="label"><td colspan="4"><bean:message key="retired.label.rookies"  /></td></tr>
+    <tr class="heading">
+      <td><bean:message key="releases.label.player"  /></td>
+      <td><bean:message key="releases.label.team"    /></td>
+      <td><bean:message key="releases.label.pick" /></td>
+      <td></td>
+    </tr>
+    <logic:iterate id="player" name="abandoned_rookies">
+      <tr>
+        <td>
+          <html:link page="/Player.do" paramId="player_id" paramName="player" paramProperty="player_id">
+            <bean:write name="player" property="last_name" />, <bean:write name="player" property="first_name" />
+          </html:link>
+        </td>
+        <td>
+          <html:link page="/Team.do" paramId="team_id" paramName="player" paramProperty="team_id">
+            <bean:write name="player" property="team_abbrev" />
+          </html:link>
+        </td>
+        <td><bean:write name="player" property="draft_pick" /></td>
+        <td></td>
+      </tr>
+    </logic:iterate>
+  </logic:present>
 </table>
 
 </body>

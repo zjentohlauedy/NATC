@@ -2,6 +2,8 @@ package natc.action;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,12 +97,20 @@ public class TeamAction extends Action {
 				teamPlayerView.setRookie(          player.isRookie()           );
 				teamPlayerView.setAward(           player.getAward()           );
 				teamPlayerView.setAllstar_team_id( player.getAllstar_team_id() );
-				teamPlayerView.setRating(          player.getRating()          );
+				teamPlayerView.setRating(          player.getAdjustedPerformanceRating( true, false, false ) / 10.0 ); // 10 is theoretical max - convert to 0-1 ratio
 				
 				teamService.getTeamPlayerData( teamPlayerView );
 				
 				teamPlayers.add( teamPlayerView );
 			}
+			
+			// Sort players by games played and time per game
+			Collections.sort( teamPlayers, new Comparator() { public int compare( Object arg1, Object arg2 ){
+				/**/                                                              TeamPlayerView tp1 = (TeamPlayerView)arg1;
+				/**/                                                              TeamPlayerView tp2 = (TeamPlayerView)arg2;
+				/**/                                                              if ( tp1.getGames() == tp2.getGames() ) return (tp1.getTime_per_game() > tp2.getTime_per_game()) ? 1 : -1;
+				/**/                                                              return (tp1.getGames() > tp2.getGames()) ? 1 : -1; } });
+			Collections.reverse( teamPlayers );
 			
 			request.setAttribute( "teamPlayers", teamPlayers );
 			

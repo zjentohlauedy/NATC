@@ -26,6 +26,10 @@ public class PlayerStatsView {
 	private int     award;
 	private int     allstar_team_id;
 	
+	// team info
+	private int     team_id;
+	private String  team_abbrev;
+	
 	public PlayerStatsView() {
 	
 		this.year                = null;
@@ -45,6 +49,8 @@ public class PlayerStatsView {
 		this.ot_psm              = 0;
 		this.award               = 0;
 		this.allstar_team_id     = 0;
+		this.team_id             = 0;
+		this.team_abbrev         = null;
 	}
 
 	public String getScoringEfficiencyDsp() {
@@ -115,9 +121,12 @@ public class PlayerStatsView {
 	
 	public String getTimePerGameDsp() {
 	
-		int t = this.playing_time / this.games;
+		int t = 0;
 		
 		DecimalFormat df = new DecimalFormat( "00" );
+		
+		if   ( this.games == 0 ) t = 0;
+		else                     t = this.playing_time / this.games;
 		
 		return df.format( t / 60 ) + ":" + df.format( t % 60 );
 	}
@@ -264,6 +273,22 @@ public class PlayerStatsView {
 
 	public void setOffensive_penalties(int offensive_penalties) {
 		this.offensive_penalties = offensive_penalties;
+	}
+
+	public int getTeam_id() {
+		return team_id;
+	}
+
+	public void setTeam_id(int teamId) {
+		team_id = teamId;
+	}
+
+	public String getTeam_abbrev() {
+		return team_abbrev;
+	}
+
+	public void setTeam_abbrev(String teamAbbrev) {
+		team_abbrev = teamAbbrev;
 	}
 
 }

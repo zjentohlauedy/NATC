@@ -273,11 +273,10 @@ public class GamesAction extends Action {
 				
 			case ScheduleType.FREE_AGENT_DRAFT:
 				
-				if ( (data = gameService.getResignedPlayers()) != null ) request.setAttribute( "resigned_players", data );
-				if ( (data = gameService.getRetiredPlayers())  != null ) request.setAttribute( "retired_players",  data );
+				if ( (data = gameService.getResignedPlayers())        != null ) request.setAttribute( "resigned_players",  data );
+				if ( (data = gameService.getRetiredPlayers())         != null ) request.setAttribute( "retired_players",   data );
+				if ( (data = gameService.getAbandonedRookiePlayers()) != null ) request.setAttribute( "abandoned_rookies", data );
 
-				// TODO: Maybe get top 10 rookies released for free agents
-				
 				nextPage = "free_agents";
 				
 				break;

@@ -1,5 +1,7 @@
 package natc.data;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +48,9 @@ public class Team {
 	private int    preseason_wins;
 	private int    preseason_losses;
 	
+	private int    streak_wins;
+	private int    streak_losses;
+	
 	// Team Ratings
 	private double offense;
 	private double defense;
@@ -90,6 +95,8 @@ public class Team {
 		this.preseason_games  = 0;
 		this.preseason_wins   = 0;
 		this.preseason_losses = 0;
+		this.streak_wins      = 0;
+		this.streak_losses    = 0;
 		this.offense          = 0.0;
 		this.defense          = 0.0;
 		this.discipline       = 0.0;
@@ -116,6 +123,116 @@ public class Team {
 			
 			player.restPlayer( rest_time );
 		}
+	}
+	
+	public void selectOtPenaltyOffense( Player shooter ) {
+		
+		// Sort players by penalty offense
+		Collections.sort( this.players, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_offense() > p2.getAdjustedPenalty_offense()) ? 1 : -1; } });
+		Collections.reverse( this.players );
+		
+		Iterator i = this.players.iterator();
+		
+		int active_players = 0;
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			// Shooter is always playing
+			if ( player.getPlayer_id() == shooter.getPlayer_id() ) {
+			
+				player.setPlaying( true  );
+				player.setResting( false );
+				player.setPlayed_in_game( true );
+				
+				continue;
+			}
+
+			// once 4 players (other than shooter who makes it 5) have been picked nobody else is playing
+			if ( active_players == 4 ) {
+
+				player.setPlaying( false  );
+				player.setResting( true );
+
+				continue;
+			}
+
+			active_players++;
+
+			player.setPlaying( true  );
+			player.setResting( false );
+			player.setPlayed_in_game( true );
+		}
+		/*
+		System.out.println( "Ot Offense for " + this.abbrev + ", shooter: " + shooter.getFirst_name() + " " + shooter.getLast_name() + ", Rating: " + String.valueOf( shooter.getAdjustedPenalty_shot() ) );
+		
+		i = this.players.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player p = (Player)i.next();
+			
+			if ( p.isPlaying() ) {
+			
+				System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Rating: " + String.valueOf( p.getAdjustedPenalty_offense() ) );
+			}
+		}
+		*/
+		this.calcTeamRatings();
+	}
+
+	public void selectOtPenaltyDefense() {
+		
+		// sort players by penalty defense
+		Collections.sort( this.players, new Comparator() { public int compare( Object arg1, Object arg2 ){
+			/**/                                                               Player p1 = (Player)arg1;
+			/**/                                                               Player p2 = (Player)arg2;
+			/**/                                                               return (p1.getAdjustedPenalty_defense() > p2.getAdjustedPenalty_defense()) ? 1 : -1; } });
+		Collections.reverse( this.players );
+
+		Iterator i = this.players.iterator();
+		
+		int active_players = 0;
+		
+		while ( i.hasNext() ) {
+		
+			Player player = (Player)i.next();
+			
+			// once 5 players have been picked nobody else is playing
+			if ( active_players == 5 ) {
+
+				player.setPlaying( false  );
+				player.setResting( true );
+
+				continue;
+			}
+
+			active_players++;
+
+			player.setPlaying( true  );
+			player.setResting( false );
+			player.setPlayed_in_game( true );
+		}
+		/*
+		System.out.println( "Ot Defense for " + this.abbrev );
+		
+		i = this.players.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Player p = (Player)i.next();
+			
+			if ( p.isPlaying() ) {
+			
+				System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Rating: " + String.valueOf( p.getAdjustedPenalty_defense() ) );
+			}
+		}
+		*/
+		this.calcTeamRatings();
 	}
 	
 	public void determineActivePlayers( int time_remaining ) {
@@ -158,6 +275,7 @@ public class Team {
 
 						player.setPlaying( true  );
 						player.setResting( false );
+						player.setPlayed_in_game( true );
 					}
 				}
 				else {
@@ -166,6 +284,7 @@ public class Team {
 					active_players++;
 
 					player.setPlaying( true  );
+					player.setPlayed_in_game( true );
 				}
 			}
 		}
@@ -198,11 +317,29 @@ public class Team {
 				
 				p.setResting( false );
 				p.setPlaying( true  );
+				p.setPlayed_in_game( true );
 				
 				active_players++;
 			}
 		}
-
+		/*
+		if ( this.team_id == 1 ) {
+		
+			System.out.println( "Active Players for " + this.abbrev + " with time remaining: " + String.valueOf( time_remaining / 60 ) + ":" + String.valueOf( time_remaining % 60 ) + "." );
+			
+			i = this.players.iterator();
+			
+			while ( i.hasNext() ) {
+			
+				Player p = (Player)i.next();
+				
+				if ( p.isPlaying() ) {
+				
+					System.out.println( p.getFirst_name() + " " + p.getLast_name() + ", Age: " + String.valueOf( p.getAge() ) + ", Rating: " + String.valueOf( p.getAdjustedPerformanceRating() ) + ", Fatigue: " + String.valueOf( p.getFatigue() ) );
+				}
+			}
+		}
+		*/
 		this.calcTeamRatings();
 	}
 
@@ -222,22 +359,24 @@ public class Team {
 
 			Player player = (Player)i.next();
 			
-			if ( this.isIn_game() && ! player.isPlaying() ) continue;
-
-			this.offense += ( player.getScoring() +
-					/**/      player.getPassing() +
-					/**/      player.getBlocking() ) / 3;
-
-			this.defense += ( player.getTackling() +
-					/**/      player.getStealing() +
-					/**/      player.getPresence() ) / 3;
-
-			this.discipline += player.getDiscipline();
-
-			this.ps_offense += ( player.getPenalty_shot() +
-					/**/         player.getPenalty_offense() ) / 2;
-
-			this.ps_defense += player.getPenalty_defense();
+			if ( this.isIn_game() ) {
+			
+				if ( ! player.isPlaying() ) continue;
+				
+				this.offense    += player.getAdjustedOffensiveRating();
+				this.defense    += player.getAdjustedDefensiveRating();
+				this.discipline += player.getAdjustedDiscipline();
+				this.ps_offense += player.getAdjustedPenalty_offense();
+				this.ps_defense += player.getAdjustedPenalty_defense();
+			}
+			else {
+				
+				this.offense    += player.getAdjustedOffensiveRating( true, false, false );
+				this.defense    += player.getAdjustedDefensiveRating( true, false, false );
+				this.discipline += player.getAdjustedDiscipline( true, false, false );
+				this.ps_offense += player.getAdjustedPenalty_offense( true, false, false );
+				this.ps_defense += player.getAdjustedPenalty_defense( true, false, false );
+			}
 		}
 
 		if ( this.isIn_game() ) {
@@ -266,12 +405,15 @@ public class Team {
 		//               att   sco   trn   stl  dpen  open
 		double[] tbl = { 0.37, 0.26, 0.20, 0.0, 0.17, 0.0 };
 		
-		// calc general probs, failed attempts, scoring attempts, turnovers and penalties
-		tbl[0] = tbl[0] + ((this.offense - opponent.getDefense()) / 600.0) * 2.0;
-		tbl[1] = tbl[1] + ((this.offense - opponent.getDefense()) / 600.0);
-		tbl[2] = tbl[2] + ((this.offense - opponent.getDefense()) / 200.0);
-		tbl[4] = tbl[4] + (2.0 / opponent.getDiscipline()) - 0.06;
-		tbl[2] = tbl[2] + 0.17 - tbl[4];
+		tbl[0] = tbl[0] + (0.10 * (this.offense - opponent.getDefense()));
+		tbl[1] = tbl[1] + (0.05 * (this.offense - opponent.getDefense()));
+		tbl[2] = tbl[2] + (0.15 * (opponent.getDefense() - this.offense));
+		tbl[2] = tbl[2] - (0.04 * (1.0 - opponent.getDiscipline()));
+		tbl[3] = tbl[2] * (opponent.getDefense() * opponent.getDiscipline());
+		tbl[2] = tbl[2] * (1.0 - (opponent.getDefense() * opponent.getDiscipline()));
+		tbl[4] = tbl[4] + (0.04 * (1.0 - opponent.getDiscipline()));
+		tbl[5] = tbl[4] * ((1.0 - this.discipline) / 10.0);
+		tbl[4] = tbl[4] - tbl[5];
 		
 		// home team advantage
 		if ( isRoad ) {
@@ -294,15 +436,6 @@ public class Team {
 			case TeamGame.gt_Allstar:                                         break;
 			}
 		}
-		
-		// break turnovers into turnovers and steals
-		tbl[3] = tbl[2] * (0.45 + ((opponent.getDefense() - this.offense) / 100.0));
-		tbl[3] = tbl[3] - (tbl[3] * (2.0 / opponent.getDiscipline()));
-		tbl[2] = tbl[2] - tbl[3];
-		
-		// break penalties into defensive and offensive
-		tbl[5] = tbl[4] * (2.0 / this.discipline);
-		tbl[4] = tbl[4] - tbl[5];
 		
 		this.game.setPb_table( tbl );
 	}
@@ -376,7 +509,7 @@ public class Team {
 			
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += p.getRating();
+			total_rating += p.getAdjustedOffensiveRating();
 		}
 		
 		i = this.players.iterator();
@@ -389,7 +522,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getRating();
+			x -= p.getAdjustedOffensiveRating();
 			
 			if ( x <= 0 ) {
 			
@@ -418,7 +551,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += p.getTackling();
+			total_rating += p.getAdjustedTackling();
 		}
 		
 		i = this.players.iterator();
@@ -431,7 +564,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getTackling();
+			x -= p.getAdjustedTackling();
 			
 			if ( x <= 0 ) {
 			
@@ -461,8 +594,8 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_scoring += p.getScoring();
-			total_passing += p.getPassing();
+			total_scoring += p.getAdjustedScoring();
+			total_passing += p.getAdjustedPassing();
 		}
 		
 		// Goal
@@ -476,7 +609,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getScoring();
+			x -= p.getAdjustedScoring();
 			
 			if ( x <= 0 ) {
 			
@@ -500,7 +633,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getPassing();
+			x -= p.getAdjustedPassing();
 			
 			if ( x <= 0 ) {
 			
@@ -530,7 +663,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += p.getTurnoverRating();
+			total_rating += p.getAdjustedTurnoverRating();
 		}
 		
 		i = this.players.iterator();
@@ -543,7 +676,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getTurnoverRating();
+			x -= p.getAdjustedTurnoverRating();
 			
 			if ( x <= 0 ) {
 			
@@ -572,7 +705,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += p.getStealing();
+			total_rating += p.getAdjustedStealing();
 		}
 		
 		i = this.players.iterator();
@@ -585,7 +718,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getStealing();
+			x -= p.getAdjustedStealing();
 			
 			if ( x <= 0 ) {
 			
@@ -614,7 +747,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += (100.0 - p.getDiscipline());
+			total_rating += (100.0 - p.getAdjustedDiscipline());
 		}
 		
 		i = this.players.iterator();
@@ -627,7 +760,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= (100.0 - p.getDiscipline());
+			x -= (100.0 - p.getAdjustedDiscipline());
 			
 			if ( x <= 0 ) {
 			
@@ -656,7 +789,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			total_rating += p.getRating();
+			total_rating += p.getAdjustedRating();
 		}
 		
 		i = this.players.iterator();
@@ -669,7 +802,7 @@ public class Team {
 
 			if ( ! p.isPlaying() ) continue;
 			
-			x -= p.getRating();
+			x -= p.getAdjustedRating();
 			
 			if ( x <= 0 ) {
 			
@@ -685,11 +818,11 @@ public class Team {
 	}
 	
 	public int getPostseason_losses() {
-		return playoff_games - (round1_wins + round2_wins + round3_wins);
+		return playoff_games - (round1_wins + round2_wins + round3_wins + ((playoff_rank == 5) ? 1 : 0) );
 	}
 
 	public int getPostseason_wins() {
-		return round1_wins + round2_wins + round3_wins;
+		return round1_wins + round2_wins + round3_wins + ((playoff_rank == 5) ? 1 : 0);
 	}
 
 	public String getAbbrev() {
@@ -986,6 +1119,22 @@ public class Team {
 
 	public void setIn_game(boolean inGame) {
 		in_game = inGame;
+	}
+
+	public int getStreak_wins() {
+		return streak_wins;
+	}
+
+	public void setStreak_wins(int streakWins) {
+		streak_wins = streakWins;
+	}
+
+	public int getStreak_losses() {
+		return streak_losses;
+	}
+
+	public void setStreak_losses(int streakLosses) {
+		streak_losses = streakLosses;
 	}
 
 }
