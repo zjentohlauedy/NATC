@@ -353,9 +353,37 @@
               <bean:write name="game" property="home_score"/>
             </logic:equal>
           </html:link>
-          <logic:equal name="game" property="overtime" value="true">
-            <h7><bean:message key="games.label.ot_indicator"/></h7>
-          </logic:equal>
+          <h7>
+            <logic:equal name="game" property="home_win" value="true">
+              <logic:equal name="game" property="overtime" value="true">
+                <bean:message key="games.label.final_indicator"/><bean:message key="games.label.ot_indicator"/>
+              </logic:equal>
+              <logic:equal name="game" property="overtime" value="false">
+                <bean:message key="games.label.final_indicator"/>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="road_win" value="true">
+              <logic:equal name="game" property="overtime" value="true">
+                <bean:message key="games.label.final_indicator"/><bean:message key="games.label.ot_indicator"/>
+              </logic:equal>
+              <logic:equal name="game" property="overtime" value="false">
+                <bean:message key="games.label.final_indicator"/>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="home_win" value="false">
+              <logic:equal name="game" property="road_win" value="true">
+                <logic:equal name="game" property="overtime" value="true">
+                  <bean:message key="games.label.ot_indicator"/>
+                </logic:equal>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="started" value="false">
+              <bean:write name="game" property="startTimeDsp"/>
+            </logic:equal>
+            <logic:notEqual name="game" property="period" value="0">
+              <bean:write name="game" property="period"/>
+            </logic:notEqual>
+          </h7>
         </td>
         <td></td>
       </tr>

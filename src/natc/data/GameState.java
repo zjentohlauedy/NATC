@@ -1,5 +1,7 @@
 package natc.data;
 
+import java.text.DecimalFormat;
+
 public class GameState {
 
 	public static final int ps_NONE = 0;
@@ -7,6 +9,8 @@ public class GameState {
 	public static final int ps_ROAD = 2;
 	
 	private int     game_id;
+	private boolean started;
+	private int     start_time;
 	private int     sequence;
 	private int     period;
 	private boolean overtime;
@@ -18,6 +22,8 @@ public class GameState {
 	public GameState( int game_id) {
 	
 		this.game_id        = game_id;
+		this.started        = false;
+		this.start_time     = 0;
 		this.sequence       = 0;
 		this.period         = 0;
 		this.overtime       = false;
@@ -32,6 +38,8 @@ public class GameState {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append( "<game_id>"        + String.valueOf( game_id        ) + "</game_id>"        );
+		sb.append( "<started>"        + String.valueOf( started        ) + "</started>"        );
+		sb.append( "<start_time>"     + String.valueOf( start_time     ) + "</start_time>"     );
 		sb.append( "<sequence>"       + String.valueOf( sequence       ) + "</sequence>"       );
 		sb.append( "<period>"         + String.valueOf( period         ) + "</period>"         );
 		sb.append( "<overtime>"       + String.valueOf( overtime       ) + "</overtime>"       );
@@ -41,6 +49,13 @@ public class GameState {
 		sb.append( "<last_event>"     + String.valueOf( last_event     ) + "</last_event>"     );
 
 		return sb.toString();
+	}
+
+	public String getStartTimeDsp() {
+	
+		DecimalFormat df = new DecimalFormat( "00" );
+		
+		return df.format( start_time / 60 ) + ":" + df.format( start_time % 60 );
 	}
 	
 	public void incrementSequence() {
@@ -111,4 +126,21 @@ public class GameState {
 	public void setLast_event(String lastEvent) {
 		last_event = lastEvent;
 	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+
+	public int getStart_time() {
+		return start_time;
+	}
+
+	public void setStart_time(int startTime) {
+		start_time = startTime;
+	}
+	
 }

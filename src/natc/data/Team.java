@@ -20,6 +20,8 @@ public class Team {
 	private String   location;
 	private String   name;
 	private String   abbrev;
+	private String   time_zone;
+	private int      game_time;
 	
 	private int      conference;
 	private int      division;
@@ -80,6 +82,8 @@ public class Team {
 		this.location         = null;
 		this.name             = null;
 		this.abbrev           = null;
+		this.time_zone        = null;
+		this.game_time        = 0;
 		this.conference       = 0;
 		this.division         = 0;
 		this.allstar_team     = false;
@@ -1206,6 +1210,22 @@ public class Team {
 
 	public void setAllstar_team(boolean allstarTeam) {
 		allstar_team = allstarTeam;
+	}
+
+	public String getTime_zone() {
+		return time_zone;
+	}
+
+	public void setTime_zone(String timeZone) {
+		time_zone = timeZone;
+	}
+
+	public int getGame_time() {
+		return game_time;
+	}
+
+	public void setGame_time(int gameTime) {
+		game_time = gameTime;
 	}
 
 }

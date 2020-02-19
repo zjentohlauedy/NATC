@@ -72,6 +72,8 @@ public class DatabaseImpl {
 		/**/                                    + "Location,         "
 		/**/                                    + "Name,             "
 		/**/                                    + "Abbrev,           "
+		/**/                                    + "Time_Zone,        "
+		/**/                                    + "Game_Time,        "
 		/**/                                    + "Conference,       "
 		/**/                                    + "Division,         "
 		/**/                                    + "Allstar_Team,     "
@@ -203,8 +205,8 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getTeamInsertPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "INSERT INTO Teams_t ( Team_Id, Year, Location, Name, Abbrev, Conference, Division, Allstar_Team ) " +
-		/**/         "             VALUES (       ?,    ?,        ?,    ?,      ?,          ?,        ?,            ? )";
+		String sql = "INSERT INTO Teams_t ( Team_Id, Year, Location, Name, Abbrev, Time_Zone, Game_Time, Conference, Division, Allstar_Team ) " +
+		/**/         "             VALUES (       ?,    ?,        ?,    ?,      ?,         ?,         ?,          ?,        ?,            ? )";
 		
 		return dbConn.prepareStatement( sql );
 	}
@@ -216,6 +218,8 @@ public class DatabaseImpl {
 			/**/   + "SET Location         = ?, "
 			/**/   + "    Name             = ?, "
 			/**/   + "    Abbrev           = ?, "
+			/**/   + "    Time_Zone        = ?, "
+			/**/   + "    Game_Time        = ?, "
 			/**/   + "    Conference       = ?, "
 			/**/   + "    Division         = ?, "
 			/**/   + "    Allstar_Team     = ?, "
@@ -1790,7 +1794,7 @@ public class DatabaseImpl {
 		
 		switch ( stat ) {
 		
-		case STAT_SCORE:       queryStr = "tg.Score";                 break;
+		case STAT_SCORE:       queryStr = "tg.Total_Score";           break;
 		case STAT_ATTEMPTS:    queryStr = "tg.Attempts";              break;
 		case STAT_GOALS:       queryStr = "tg.Goals";                 break;
 		case STAT_TURNOVERS:   queryStr = "tg.Turnovers";             break;
@@ -2026,6 +2030,8 @@ public class DatabaseImpl {
 	public static PreparedStatement getGameStateInsertPs( Connection dbConn ) throws SQLException {
 	
 		String sql = "INSERT INTO GameState_T ( Game_Id,             "
+			/**/   + "                          Started,             "
+			/**/   + "                          Start_Time,          "
 			/**/   + "                          Sequence,            "
 			/**/   + "                          Period,              "
 			/**/   + "                          Overtime,            "
@@ -2033,7 +2039,7 @@ public class DatabaseImpl {
 			/**/   + "                          Clock_Stopped,       "
 			/**/   + "                          Possession,          "
 			/**/   + "                          Last_Event )         "
-			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )";
+			/**/   + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 		
 		return dbConn.prepareStatement( sql );
 	}
@@ -2043,6 +2049,8 @@ public class DatabaseImpl {
 		String sql = "UPDATE GameState_T "
 		    /**/
 		    /**/   + "   SET Period              = ?, "
+		    /**/   + "       Started             = ?, "
+		    /**/   + "       Start_Time          = ?, "
 		    /**/   + "       Sequence            = ?, "
 		    /**/   + "       Overtime            = ?, "
 		    /**/   + "       Time_Remaining      = ?, "
@@ -2057,7 +2065,9 @@ public class DatabaseImpl {
 
 	public static PreparedStatement getGameStateSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT Period,              "
+		String sql = "SELECT Started,             "
+			/**/   +        "Start_Time,          "
+			/**/   +        "Period,              "
 			/**/   +        "Sequence,            "
 			/**/   +        "Overtime,            "
 			/**/   +        "Time_Remaining,      "
@@ -2136,11 +2146,24 @@ public class DatabaseImpl {
 	
 	public static PreparedStatement getGamesByDateSelectPs( Connection dbConn ) throws SQLException {
 	
-		String sql = "SELECT tg.Game_Id, t.Team_Id, t.Abbrev, tg.Road, tg.Overtime, tg.Win, tg.Total_Score "
-			/**/   + "  FROM Teamgames_T tg, Teams_T t"
-			/**/   + " WHERE tg.Team_Id   = t.Team_Id "
-			/**/   + "   AND tg.Year      = t.Year "
-			/**/   + "   AND tg.Datestamp =   ? "
+		String sql = "SELECT tg.Game_Id,        "
+			/**/   + "        t.Team_Id,        "
+			/**/   + "        t.Abbrev,         "
+			/**/   + "       tg.Road,           "
+			/**/   + "       tg.Overtime,       "
+			/**/   + "       gs.Started,        "
+			/**/   + "       gs.Start_Time,     "
+			/**/   + "       gs.Period,         "
+			/**/   + "       gs.Time_Remaining, "
+			/**/   + "       gs.Possession,     "
+			/**/   + "       tg.Win,            "
+			/**/   + "       tg.Total_Score     "
+			/**/
+			/**/   + "  FROM GameState_T gs, Teamgames_T tg, Teams_T t"
+			/**/   + " WHERE tg.Team_Id   =  t.Team_Id "
+			/**/   + "   AND tg.Year      =  t.Year "
+			/**/   + "   AND tg.Game_Id   = gs.Game_Id "
+			/**/   + "   AND tg.Datestamp =    ? "
 			/**/   + "ORDER BY Game_Id";
 		
 		return dbConn.prepareStatement( sql );

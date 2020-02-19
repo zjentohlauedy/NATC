@@ -27,49 +27,49 @@ public class TeamServiceImpl implements TeamService {
 
 	private Connection dbConn = null;
 	private String     year   = null;
-	
-	//                                               Location          Name           Abbrev.
-	private static final String[][] teamData  = { { "Indianapolis",   "Titans",      "IND." },
-		/**/                                      { "Cincinnati",     "Whirlwind",   "CIN." },
-		/**/                                      { "Kansas City",    "Flames",      "K.C." },
-		/**/                                      { "Dallas",         "Rustlers",    "DAL." },
-		/**/                                      { "Washington",     "Olympians",   "WAS." },
-		/**/                                      { "Minneapolis",    "Marauders",   "MIN." },
-		/**/                                      { "New Orleans",    "Tigersharks", "N.O." },
-		/**/                                      { "Oakland",        "Aces",        "OAK." },
-		/**/                                      { "Vancouver",      "Comets",      "VAN." },
-		/**/                                      { "Salt Lake City", "Lightning",   "SLC." },
-		/**/                                      { "Boston",         "Blacks",      "BOS." },
-		/**/                                      { "Pittsburgh",     "Pirahnas",    "PIT." },
-		/**/                                      { "San Diego",      "Stingrays",   "S.D." },
-		/**/                                      { "Philadelphia",   "Photons",     "PHI." },
-		/**/                                      { "Detroit",        "Thunder",     "DET." },
-		/**/                                      { "Atlanta",        "Renegades",   "ATL." },
-		/**/                                      { "Baltimore",      "Crabbers",    "BAL." },
-		/**/                                      { "St. Louis",      "Juggernauts", "S.L." },
-		/**/                                      { "Orlando",        "Hurricanes",  "ORL." },
-		/**/                                      { "Las Vegas",      "Vampires",    "L.V." },
-		/**/                                      { "Miami",          "Voyagers",    "MIA." },
-		/**/                                      { "Houston",        "Hammers",     "HOU." },
-		/**/                                      { "Los Angeles",    "Legends",     "L.A." },
-		/**/                                      { "New York",       "Knights",     "N.Y." },
-		/**/                                      { "Chicago",        "Goblins",     "CHI." },
-		/**/                                      { "Tampa Bay",      "Terror",      "T.B." },
-		/**/                                      { "San Francisco",  "Tsunami",     "S.F." },
-		/**/                                      { "Montreal",       "Dragons",     "MON." },
-		/**/                                      { "New Jersey",     "Phantoms",    "N.J." },
-		/**/                                      { "Mexico City",    "Aztecs",      "MEX." },
-		/**/                                      { "Buffalo",        "Icers",       "BUF." },
-		/**/                                      { "Cleveland",      "Scorpions",   "CLE." },
-		/**/                                      { "Denver",         "Nukes",       "DEN." },
-		/**/                                      { "Seattle",        "Psychotics",  "SEA." },
-		/**/                                      { "Phoenix",        "Eclipse",     "PHX." },
-		/**/                                      { "Milwaukee",      "Warriors",    "MIL." },
-		/**/                                      { "Kingston",       "Outlaws",     "KIN." },
-		/**/                                      { "Toronto",        "Overlords",   "TOR." },
-		/**/                                      { "Charlotte",      "Serpents",    "CHA." },
-		/**/                                      { "Portland",       "Rhinos",      "POR." } };
-	
+
+	//                                               Location          Name           Abbr.,  Time Zone
+	private static final String[][] teamData  = { { "Indianapolis",   "Titans",      "IND.", "America/Indianapolis" },
+		/**/                                      { "Cincinnati",     "Whirlwind",   "CIN.", "America/New_York"     },
+		/**/                                      { "Kansas City",    "Flames",      "K.C.", "America/Chicago"      },
+		/**/                                      { "Dallas",         "Rustlers",    "DAL.", "America/Chicago"      },
+		/**/                                      { "Washington",     "Olympians",   "WAS.", "America/New_York"     },
+		/**/                                      { "Minneapolis",    "Marauders",   "MIN.", "America/Chicago"      },
+		/**/                                      { "New Orleans",    "Tigersharks", "N.O.", "America/Chicago"      },
+		/**/                                      { "Oakland",        "Aces",        "OAK.", "America/Los_Angeles"  },
+		/**/                                      { "Vancouver",      "Comets",      "VAN.", "America/Vancouver"    },
+		/**/                                      { "Salt Lake City", "Lightning",   "SLC.", "America/Phoenix"      },
+		/**/                                      { "Boston",         "Blacks",      "BOS.", "America/New_York"     },
+		/**/                                      { "Pittsburgh",     "Pirahnas",    "PIT.", "America/New_York"     },
+		/**/                                      { "San Diego",      "Stingrays",   "S.D.", "America/Los_Angeles"  },
+		/**/                                      { "Philadelphia",   "Photons",     "PHI.", "America/New_York"     },
+		/**/                                      { "Detroit",        "Thunder",     "DET.", "America/New_York"     },
+		/**/                                      { "Atlanta",        "Renegades",   "ATL.", "America/New_York"     },
+		/**/                                      { "Baltimore",      "Crabbers",    "BAL.", "America/New_York"     },
+		/**/                                      { "St. Louis",      "Juggernauts", "S.L.", "America/Chicago"      },
+		/**/                                      { "Orlando",        "Hurricanes",  "ORL.", "America/New_York"     },
+		/**/                                      { "Las Vegas",      "Vampires",    "L.V.", "America/Los_Angeles"  },
+		/**/                                      { "Miami",          "Voyagers",    "MIA.", "America/New_York"     },
+		/**/                                      { "Houston",        "Hammers",     "HOU.", "America/Chicago"      },
+		/**/                                      { "Los Angeles",    "Legends",     "L.A.", "America/Los_Angeles"  },
+		/**/                                      { "New York",       "Knights",     "N.Y.", "America/New_York"     },
+		/**/                                      { "Chicago",        "Goblins",     "CHI.", "America/Chicago"      },
+		/**/                                      { "Tampa Bay",      "Terror",      "T.B.", "America/New_York"     },
+		/**/                                      { "San Francisco",  "Tsunami",     "S.F.", "America/Los_Angeles"  },
+		/**/                                      { "Montreal",       "Dragons",     "MON.", "America/New_York"     },
+		/**/                                      { "New Jersey",     "Phantoms",    "N.J.", "America/New_York"     },
+		/**/                                      { "Mexico City",    "Aztecs",      "MEX.", "America/Mexico_City"  },
+		/**/                                      { "Buffalo",        "Icers",       "BUF.", "America/New_York"     },
+		/**/                                      { "Cleveland",      "Scorpions",   "CLE.", "America/New_York"     },
+		/**/                                      { "Denver",         "Nukes",       "DEN.", "America/Denver"       },
+		/**/                                      { "Seattle",        "Psychotics",  "SEA.", "America/Los_Angeles"  },
+		/**/                                      { "Phoenix",        "Eclipse",     "PHX.", "America/Phoenix"      },
+		/**/                                      { "Milwaukee",      "Warriors",    "MIL.", "America/Chicago"      },
+		/**/                                      { "Kingston",       "Outlaws",     "KIN.", "America/Jamaica"      },
+		/**/                                      { "Toronto",        "Overlords",   "TOR.", "America/New_York"     },
+		/**/                                      { "Charlotte",      "Serpents",    "CHA.", "America/New_York"     },
+		/**/                                      { "Portland",       "Rhinos",      "POR.", "America/Los_Angeles"  } };
+
 	public TeamServiceImpl( Connection dbConn, String year ) {
 	
 		this.dbConn = dbConn;
@@ -83,33 +83,35 @@ public class TeamServiceImpl implements TeamService {
 		team.setLocation(         resultSet.getString(   3 ) );
 		team.setName(             resultSet.getString(   4 ) );
 		team.setAbbrev(           resultSet.getString(   5 ) );
-		team.setConference(       resultSet.getInt(      6 ) );
-		team.setDivision(         resultSet.getInt(      7 ) );
-		team.setAllstar_team(     resultSet.getBoolean(  8 ) );
-		team.setPreseason_games(  resultSet.getInt(      9 ) );
-		team.setPreseason_wins(   resultSet.getInt(     10 ) );
-		team.setPreseason_losses( resultSet.getInt(     11 ) );
-		team.setGames(            resultSet.getInt(     12 ) );
-		team.setWins(             resultSet.getInt(     13 ) );
-		team.setLosses(           resultSet.getInt(     14 ) );
-		team.setDivision_wins(    resultSet.getInt(     15 ) );
-		team.setDivision_losses(  resultSet.getInt(     16 ) );
-		team.setOoc_wins(         resultSet.getInt(     17 ) );
-		team.setOoc_losses(       resultSet.getInt(     18 ) );
-		team.setOt_wins(          resultSet.getInt(     19 ) );
-		team.setOt_losses(        resultSet.getInt(     20 ) );
-		team.setRoad_wins(        resultSet.getInt(     21 ) );
-		team.setRoad_losses(      resultSet.getInt(     22 ) );
-		team.setHome_wins(        resultSet.getInt(     23 ) );
-		team.setHome_losses(      resultSet.getInt(     24 ) );
-		team.setDivision_rank(    resultSet.getInt(     25 ) );
-		team.setPlayoff_rank(     resultSet.getInt(     26 ) );
-		team.setPlayoff_games(    resultSet.getInt(     27 ) );
-		team.setRound1_wins(      resultSet.getInt(     28 ) );
-		team.setRound2_wins(      resultSet.getInt(     29 ) );
-		team.setRound3_wins(      resultSet.getInt(     30 ) );
-		team.setExpectation(      resultSet.getDouble(  31 ) );
-		team.setDrought(          resultSet.getInt(     32 ) );
+		team.setTime_zone(        resultSet.getString(   6 ) );
+		team.setGame_time(        resultSet.getInt(      7 ) );
+		team.setConference(       resultSet.getInt(      8 ) );
+		team.setDivision(         resultSet.getInt(      9 ) );
+		team.setAllstar_team(     resultSet.getBoolean( 10 ) );
+		team.setPreseason_games(  resultSet.getInt(     11 ) );
+		team.setPreseason_wins(   resultSet.getInt(     12 ) );
+		team.setPreseason_losses( resultSet.getInt(     13 ) );
+		team.setGames(            resultSet.getInt(     14 ) );
+		team.setWins(             resultSet.getInt(     15 ) );
+		team.setLosses(           resultSet.getInt(     16 ) );
+		team.setDivision_wins(    resultSet.getInt(     17 ) );
+		team.setDivision_losses(  resultSet.getInt(     18 ) );
+		team.setOoc_wins(         resultSet.getInt(     19 ) );
+		team.setOoc_losses(       resultSet.getInt(     20 ) );
+		team.setOt_wins(          resultSet.getInt(     21 ) );
+		team.setOt_losses(        resultSet.getInt(     22 ) );
+		team.setRoad_wins(        resultSet.getInt(     23 ) );
+		team.setRoad_losses(      resultSet.getInt(     24 ) );
+		team.setHome_wins(        resultSet.getInt(     25 ) );
+		team.setHome_losses(      resultSet.getInt(     26 ) );
+		team.setDivision_rank(    resultSet.getInt(     27 ) );
+		team.setPlayoff_rank(     resultSet.getInt(     28 ) );
+		team.setPlayoff_games(    resultSet.getInt(     29 ) );
+		team.setRound1_wins(      resultSet.getInt(     30 ) );
+		team.setRound2_wins(      resultSet.getInt(     31 ) );
+		team.setRound3_wins(      resultSet.getInt(     32 ) );
+		team.setExpectation(      resultSet.getDouble(  33 ) );
+		team.setDrought(          resultSet.getInt(     34 ) );
 	}
 	
 	public void generateTeams() throws SQLException {
@@ -133,60 +135,70 @@ public class TeamServiceImpl implements TeamService {
 			
 			for ( int i = 0; i < Constants.NUMBER_OF_TEAMS; ++i ) {
 			
-				ps.setInt(     1, ++team_id                          );
-				ps.setString(  2, year                               );
-				ps.setString(  3, teamData[i][0]                     );
-				ps.setString(  4, teamData[i][1]                     );
-				ps.setString(  5, teamData[i][2]                     );
-				ps.setInt(     6, i / Constants.TEAMS_PER_CONFERENCE );
-				ps.setInt(     7, i / Constants.TEAMS_PER_DIVISION   );
-				ps.setBoolean( 8, false                              );
+				ps.setInt(      1, ++team_id                          );
+				ps.setString(   2, year                               );
+				ps.setString(   3, teamData[i][0]                     );
+				ps.setString(   4, teamData[i][1]                     );
+				ps.setString(   5, teamData[i][2]                     );
+				ps.setString(   6, teamData[i][3]                     );
+				ps.setString(   7, teamData[i][4]                     );
+				ps.setInt(      8, i / Constants.TEAMS_PER_CONFERENCE );
+				ps.setInt(      9, i / Constants.TEAMS_PER_DIVISION   );
+				ps.setBoolean( 10, false                              );
 				
 				ps.executeUpdate();
 			}
 			
 			// All Star Teams
-			ps.setInt(     1, ++team_id   );
-			ps.setString(  2, year        );
-			ps.setString(  3, "Greene"    );
-			ps.setString(  4, "All Stars" );
-			ps.setString(  5, "GRN."      );
-			ps.setInt(     6, 0           );
-			ps.setInt(     7, 0           );
-			ps.setBoolean( 8, true        );
+			ps.setInt(      1, ++team_id          );
+			ps.setString(   2, year               );
+			ps.setString(   3, "Greene"           );
+			ps.setString(   4, "All Stars"        );
+			ps.setString(   5, "GRN."             );
+			ps.setString(   6, "America/New_York" );
+			ps.setInt(      7, 965                );
+			ps.setInt(      8, 0                  );
+			ps.setInt(      9, 0                  );
+			ps.setBoolean( 10, true               );
 			
 			ps.executeUpdate();
 			
-			ps.setInt(     1, ++team_id   );
-			ps.setString(  2, year        );
-			ps.setString(  3, "Davis"     );
-			ps.setString(  4, "All Stars" );
-			ps.setString(  5, "DVS."      );
-			ps.setInt(     6, 0           );
-			ps.setInt(     7, 1           );
-			ps.setBoolean( 8, true        );
-			
-			ps.executeUpdate();
-
-			ps.setInt(     1, ++team_id   );
-			ps.setString(  2, year        );
-			ps.setString(  3, "Smith"     );
-			ps.setString(  4, "All Stars" );
-			ps.setString(  5, "SMI."      );
-			ps.setInt(     6, 1           );
-			ps.setInt(     7, 2           );
-			ps.setBoolean( 8, true        );
+			ps.setInt(      1, ++team_id          );
+			ps.setString(   2, year               );
+			ps.setString(   3, "Davis"            );
+			ps.setString(   4, "All Stars"        );
+			ps.setString(   5, "DVS."             );
+			ps.setString(   6, "America/New_York" );
+			ps.setInt(      7, 965                );
+			ps.setInt(      8, 0                  );
+			ps.setInt(      9, 1                  );
+			ps.setBoolean( 10, true               );
 			
 			ps.executeUpdate();
 
-			ps.setInt(     1, ++team_id   );
-			ps.setString(  2, year        );
-			ps.setString(  3, "Lawrence"  );
-			ps.setString(  4, "All Stars" );
-			ps.setString(  5, "LAW."      );
-			ps.setInt(     6, 1           );
-			ps.setInt(     7, 3           );
-			ps.setBoolean( 8, true        );
+			ps.setInt(      1, ++team_id          );
+			ps.setString(   2, year               );
+			ps.setString(   3, "Smith"            );
+			ps.setString(   4, "All Stars"        );
+			ps.setString(   5, "SMI."             );
+			ps.setString(   6, "America/New_York" );
+			ps.setInt(      7, 965                );
+			ps.setInt(      8, 1                  );
+			ps.setInt(      9, 2                  );
+			ps.setBoolean( 10, true               );
+			
+			ps.executeUpdate();
+
+			ps.setInt(      1, ++team_id          );
+			ps.setString(   2, year               );
+			ps.setString(   3, "Lawrence"         );
+			ps.setString(   4, "All Stars"        );
+			ps.setString(   5, "LAW."             );
+			ps.setString(   6, "America/New_York" );
+			ps.setInt(      7, 965                );
+			ps.setInt(      8, 1                  );
+			ps.setInt(      9, 3                  );
+			ps.setBoolean( 10, true               );
 			
 			ps.executeUpdate();
 			
@@ -436,36 +448,38 @@ public class TeamServiceImpl implements TeamService {
 			ps.setString(  1, team.getLocation()         );
 			ps.setString(  2, team.getName()             );
 			ps.setString(  3, team.getAbbrev()           );
-			ps.setInt(     4, team.getConference()       );
-			ps.setInt(     5, team.getDivision()         );
-			ps.setBoolean( 6, team.isAllstar_team()      );
-			ps.setInt(     7, team.getPreseason_games()  );
-			ps.setInt(     8, team.getPreseason_wins()   );
-			ps.setInt(     9, team.getPreseason_losses() );
-			ps.setInt(    10, team.getGames()            );
-			ps.setInt(    11, team.getWins()             );
-			ps.setInt(    12, team.getLosses()           );
-			ps.setInt(    13, team.getDivision_wins()    );
-			ps.setInt(    14, team.getDivision_losses()  );
-			ps.setInt(    15, team.getOoc_wins()         );
-			ps.setInt(    16, team.getOoc_losses()       );
-			ps.setInt(    17, team.getOt_wins()          );
-			ps.setInt(    18, team.getOt_losses()        );
-			ps.setInt(    19, team.getRoad_wins()        );
-			ps.setInt(    20, team.getRoad_losses()      );
-			ps.setInt(    21, team.getHome_wins()        );
-			ps.setInt(    22, team.getHome_losses()      );
-			ps.setInt(    23, team.getDivision_rank()    );
-			ps.setInt(    24, team.getPlayoff_rank()     );
-			ps.setInt(    25, team.getPlayoff_games()    );
-			ps.setInt(    26, team.getRound1_wins()      );
-			ps.setInt(    27, team.getRound2_wins()      );
-			ps.setInt(    28, team.getRound3_wins()      );
-			ps.setDouble( 29, team.getExpectation()      );
-			ps.setInt(    30, team.getDrought()          );
+			ps.setString(  4, team.getTime_zone()        );
+			ps.setInt(     5, team.getGame_time()        );
+			ps.setInt(     6, team.getConference()       );
+			ps.setInt(     7, team.getDivision()         );
+			ps.setBoolean( 8, team.isAllstar_team()      );
+			ps.setInt(     9, team.getPreseason_games()  );
+			ps.setInt(    10, team.getPreseason_wins()   );
+			ps.setInt(    11, team.getPreseason_losses() );
+			ps.setInt(    12, team.getGames()            );
+			ps.setInt(    13, team.getWins()             );
+			ps.setInt(    14, team.getLosses()           );
+			ps.setInt(    15, team.getDivision_wins()    );
+			ps.setInt(    16, team.getDivision_losses()  );
+			ps.setInt(    17, team.getOoc_wins()         );
+			ps.setInt(    18, team.getOoc_losses()       );
+			ps.setInt(    19, team.getOt_wins()          );
+			ps.setInt(    20, team.getOt_losses()        );
+			ps.setInt(    21, team.getRoad_wins()        );
+			ps.setInt(    22, team.getRoad_losses()      );
+			ps.setInt(    23, team.getHome_wins()        );
+			ps.setInt(    24, team.getHome_losses()      );
+			ps.setInt(    25, team.getDivision_rank()    );
+			ps.setInt(    26, team.getPlayoff_rank()     );
+			ps.setInt(    27, team.getPlayoff_games()    );
+			ps.setInt(    28, team.getRound1_wins()      );
+			ps.setInt(    29, team.getRound2_wins()      );
+			ps.setInt(    30, team.getRound3_wins()      );
+			ps.setDouble( 31, team.getExpectation()      );
+			ps.setInt(    32, team.getDrought()          );
 			
-			ps.setString( 31, this.year         );
-			ps.setInt(    32, team.getTeam_id() );
+			ps.setString( 33, this.year         );
+			ps.setInt(    34, team.getTeam_id() );
 			
 			ps.executeUpdate();
 		}

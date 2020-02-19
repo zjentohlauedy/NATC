@@ -4,13 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import natc.data.Constants;
 import natc.data.GameState;
@@ -476,14 +478,14 @@ public class RealtimeGameServiceImpl implements GameService {
 			if ( player.isInjured() ) i.remove();
 		}
 	}
-	
+	/*
 	private String getTimeRemainingDsp( int time ) {
 	
 		DecimalFormat df = new DecimalFormat( "00" );
 		
 		return "(" + df.format( time / 60 ) + ":" + df.format( time % 60 ) + ") ";
 	}
-	
+	*/
 	private void pause( int seconds ) {
 
 		try {
@@ -497,6 +499,52 @@ public class RealtimeGameServiceImpl implements GameService {
 		
 	}
 
+	private void pause( long time ) {
+
+		try {
+			
+			Thread.sleep( time );
+		}
+		catch ( InterruptedException ie) {
+			
+			System.out.println( "Warning: sleep period interrupted." );
+		}
+		
+	}
+
+	private void waitForScheduledStart( Team host, GameState gameState ) throws SQLException {
+
+		Calendar cal = Calendar.getInstance();
+
+		cal.setTime( new Date() );
+
+		int year  = cal.get( Calendar.YEAR         );
+		int month = cal.get( Calendar.MONTH        );
+		int day   = cal.get( Calendar.DAY_OF_MONTH );
+		int hour  = host.getGame_time() / 60;
+		int min   = host.getGame_time() % 60;
+
+		cal.setTimeZone( TimeZone.getTimeZone( host.getTime_zone() ) );
+
+		cal.set( year, month, day, hour, min );
+
+		long timeDifference = cal.getTime().getTime() - (new Date()).getTime();
+		
+		if ( timeDifference > 0 ) {
+
+			System.out.println( "Game (" + String.valueOf( host.getGame().getGame_id() ) + ") scheduled for " + cal.getTime() + ". Sleeping for " + String.valueOf( ((float)timeDifference / 1000.0) ) + " seconds." );
+			
+			// reset to default time zone so hour and minute are respective to it
+			cal.setTimeZone( TimeZone.getDefault() );
+			
+			gameState.setStart_time( cal.get( Calendar.HOUR_OF_DAY ) * 60 + cal.get( Calendar.MINUTE ) );
+			
+			updateGameState( gameState );
+			
+			pause( timeDifference );
+		}
+	}
+	
 	private void setWinsAndLosses( Team homeTeam, Team roadTeam, int type ) {
 
 		Score homeScore = homeTeam.getGame().getScore();
@@ -1252,13 +1300,6 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	private void processMatch( Match match, Date gameDate, int type ) throws SQLException {
-		
-		int game_id = getNextGameId();
-		
-		processMatch( match, gameDate, type, game_id );
-	}
-	
 	public void processMatch( Match match, Date gameDate, int type, int game_id ) throws SQLException {
 		
 		teamService   = new TeamServiceImpl(   dbConn, year );
@@ -1310,6 +1351,12 @@ public class RealtimeGameServiceImpl implements GameService {
 		System.out.println( "Processing Match (" + String.valueOf( game_id ) + "): " + roadTeam.getLocation() + " at " + homeTeam.getLocation() + "." );
 
 		insertGameRecords( gameState, homeTeam, roadTeam );
+		
+		waitForScheduledStart( homeTeam, gameState );
+		
+		gameState.setStarted( true );
+		
+		updateGameState( gameState );
 		
 		simulateGame( gameState, roadTeam, homeTeam, injuries, type );
 
@@ -1371,6 +1418,49 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 
+	private void processMatches( List matches, Date scheduled, int gameType ) throws SQLException {
+
+		List threads = null;
+		
+		Iterator i       = matches.iterator();
+		int      game_id = getNextGameId();
+		
+		while ( i.hasNext() ) {
+		
+			Match match = (Match)i.next();
+			
+			GameDriver gameDriver = new GameDriver( dbConn, year, game_id );
+			
+			gameDriver.setMatch( match );
+			gameDriver.setDate( scheduled );
+			gameDriver.setType( gameType );
+			
+			Thread thread = new Thread( gameDriver );
+			thread.start();
+
+			if ( threads == null ) threads = new ArrayList();
+			
+			threads.add( thread );
+			
+			game_id++;
+		}
+		
+		i = threads.iterator();
+		
+		while ( i.hasNext() ) {
+		
+			Thread thread = (Thread)i.next();
+			
+			try {
+				
+				thread.join();
+			}
+			catch ( InterruptedException e ) {
+
+			}
+		}	
+	}
+	
 	private boolean newManagerNeeded( Team team ) throws SQLException {
 	
 		Manager manager = null;
@@ -1923,31 +2013,10 @@ public class RealtimeGameServiceImpl implements GameService {
 	}
 	
 	private void processPreseasonGame( Schedule event ) throws SQLException {
-		
+
 		event.parseMatches();
 		
-		List matches = event.getMatches();
-		
-		Iterator i = matches.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Match match = (Match)i.next();
-			
-			try {
-				DatabaseImpl.beginTransaction( dbConn );
-			
-				processMatch( match, event.getScheduled(), TeamGame.gt_Preseason );
-			
-				DatabaseImpl.endTransaction( dbConn );
-			}
-			catch ( SQLException e ) {
-			
-				DatabaseImpl.cancelTransaction( dbConn );
-				
-				throw e;
-			}
-		}
+		processMatches( event.getMatches(), event.getScheduled(), TeamGame.gt_Preseason );
 	}
 	
 	private void processRosterCut( Schedule event ) throws SQLException {
@@ -2000,31 +2069,10 @@ public class RealtimeGameServiceImpl implements GameService {
 	}
 	
 	private void processSeasonGame( Schedule event ) throws SQLException {
-		
+
 		event.parseMatches();
 		
-		List matches = event.getMatches();
-		
-		Iterator i = matches.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Match match = (Match)i.next();
-			
-			try {
-				DatabaseImpl.beginTransaction( dbConn );
-			
-				processMatch( match, event.getScheduled(), TeamGame.gt_RegularSeason );
-			
-				DatabaseImpl.endTransaction( dbConn );
-			}
-			catch ( SQLException e ) {
-			
-				DatabaseImpl.cancelTransaction( dbConn );
-				
-				throw e;
-			}
-		}
+		processMatches( event.getMatches(), event.getScheduled(), TeamGame.gt_RegularSeason );
 	}
 
 	private void processFinalRankings( Schedule event ) throws SQLException {
@@ -2232,19 +2280,10 @@ public class RealtimeGameServiceImpl implements GameService {
 	}
 	
 	private void processPostseasonGame( Schedule event )  throws SQLException {
-	
+
 		event.parseMatches();
 		
-		List matches = event.getMatches();
-		
-		Iterator i = matches.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Match match = (Match)i.next();
-			
-			processMatch( match, event.getScheduled(), TeamGame.gt_Postseason );
-		}
+		processMatches( event.getMatches(), event.getScheduled(), TeamGame.gt_Postseason );
 		
 		ScheduleService scheduleService = new ScheduleServiceImpl( dbConn, year );
 		
@@ -2332,49 +2371,10 @@ public class RealtimeGameServiceImpl implements GameService {
 	}
 	
 	private void processAllstarGame( Schedule event )  throws SQLException {
-	
+
 		event.parseMatches();
 		
-		List matches = event.getMatches();
-		List threads = null;
-		
-		Iterator i       = matches.iterator();
-		int      game_id = getNextGameId();
-		
-		while ( i.hasNext() ) {
-		
-			Match match = (Match)i.next();
-			
-			GameDriver gameDriver = new GameDriver( dbConn, year, game_id );
-			
-			gameDriver.setMatch( match );
-			gameDriver.setDate( event.getScheduled() );
-			gameDriver.setType( TeamGame.gt_Allstar );
-			
-			Thread thread = new Thread( gameDriver );
-			thread.start();
-
-			if ( threads == null ) threads = new ArrayList();
-			
-			threads.add( thread );
-			
-			game_id++;
-		}
-		
-		i = threads.iterator();
-		
-		while ( i.hasNext() ) {
-		
-			Thread thread = (Thread)i.next();
-			
-			try {
-				
-				thread.join();
-			}
-			catch ( InterruptedException e ) {
-
-			}
-		}
+		processMatches( event.getMatches(), event.getScheduled(), TeamGame.gt_Allstar );
 		
 		if ( event.getType().getValue() == ScheduleType.ALL_STAR_DAY_1 ) {
 			
@@ -3063,13 +3063,15 @@ public class RealtimeGameServiceImpl implements GameService {
 				
 				gameState = new GameState( game_id );
 				
-				gameState.setPeriod(         dbRs.getInt(     1 ) );
-				gameState.setSequence(       dbRs.getInt(     2 ) );
-				gameState.setOvertime(       dbRs.getBoolean( 3 ) );
-				gameState.setTime_remaining( dbRs.getInt(     4 ) );
-				gameState.setClock_stopped(  dbRs.getBoolean( 5 ) );
-				gameState.setPossession(     dbRs.getInt(     6 ) );
-				gameState.setLast_event(     dbRs.getString(  7 ) );
+				gameState.setStarted(        dbRs.getBoolean( 1 ) );
+				gameState.setStart_time(     dbRs.getInt(     2 ) );
+				gameState.setPeriod(         dbRs.getInt(     3 ) );
+				gameState.setSequence(       dbRs.getInt(     4 ) );
+				gameState.setOvertime(       dbRs.getBoolean( 5 ) );
+				gameState.setTime_remaining( dbRs.getInt(     6 ) );
+				gameState.setClock_stopped(  dbRs.getBoolean( 7 ) );
+				gameState.setPossession(     dbRs.getInt(     8 ) );
+				gameState.setLast_event(     dbRs.getString(  9 ) );
 			}
 			
 		}
@@ -3090,14 +3092,16 @@ public class RealtimeGameServiceImpl implements GameService {
 			
 			ps = DatabaseImpl.getGameStateInsertPs( dbConn );
 			
-			ps.setInt(     1, gameState.getGame_id()        );
-			ps.setInt(     2, gameState.getSequence()       );
-			ps.setInt(     3, gameState.getPeriod()         );
-			ps.setBoolean( 4, gameState.isOvertime()        );
-			ps.setInt(     5, gameState.getTime_remaining() );
-			ps.setBoolean( 6, gameState.isClock_stopped()   );
-			ps.setInt(     7, gameState.getPossession()     );
-			ps.setString(  8, gameState.getLast_event()     );
+			ps.setInt(      1, gameState.getGame_id()        );
+			ps.setBoolean(  2, gameState.isStarted()         );
+			ps.setInt(      3, gameState.getStart_time()     );
+			ps.setInt(      4, gameState.getSequence()       );
+			ps.setInt(      5, gameState.getPeriod()         );
+			ps.setBoolean(  6, gameState.isOvertime()        );
+			ps.setInt(      7, gameState.getTime_remaining() );
+			ps.setBoolean(  8, gameState.isClock_stopped()   );
+			ps.setInt(      9, gameState.getPossession()     );
+			ps.setString(  10, gameState.getLast_event()     );
 			
 			ps.executeUpdate();
 		}
@@ -3117,15 +3121,17 @@ public class RealtimeGameServiceImpl implements GameService {
 			
 			ps = DatabaseImpl.getGameStateUpdatePs( dbConn );
 			
-			ps.setInt(     1, gameState.getPeriod()         );
-			ps.setInt(     2, gameState.getSequence()       );
-			ps.setBoolean( 3, gameState.isOvertime()        );
-			ps.setInt(     4, gameState.getTime_remaining() );
-			ps.setBoolean( 5, gameState.isClock_stopped()   );
-			ps.setInt(     6, gameState.getPossession()     );
-			ps.setString(  7, gameState.getLast_event()     );
+			ps.setInt(      1, gameState.getPeriod()         );
+			ps.setBoolean(  2, gameState.isStarted()         );
+			ps.setInt(      3, gameState.getStart_time()     );
+			ps.setInt(      4, gameState.getSequence()       );
+			ps.setBoolean(  5, gameState.isOvertime()        );
+			ps.setInt(      6, gameState.getTime_remaining() );
+			ps.setBoolean(  7, gameState.isClock_stopped()   );
+			ps.setInt(      8, gameState.getPossession()     );
+			ps.setString(   9, gameState.getLast_event()     );
 			
-			ps.setInt(     8, gameState.getGame_id()        );
+			ps.setInt(     10, gameState.getGame_id()        );
 			
 			ps.executeUpdate();
 		}

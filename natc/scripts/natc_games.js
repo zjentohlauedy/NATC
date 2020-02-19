@@ -8,6 +8,16 @@ function updateGameScore( gameData ) {
 	var column;
 	var text;
 	
+	node = gameData.getElementsByTagName('state')[0];
+	
+	if ( node.childNodes[1].textContent == "false" ) {
+	
+		// Game has not yet started
+		finished = false;
+		
+		return;
+	}
+	
 	node = gameData.getElementsByTagName('gameId')[0];
 	
 	gameTable = document.getElementById( 'g' + node.textContent );
@@ -36,13 +46,42 @@ function updateGameScore( gameData ) {
 
 	node = gameData.getElementsByTagName('state')[0];
 	
+	if (    gameData.getElementsByTagName('roadWin')[0].textContent == "true" ||
+			gameData.getElementsByTagName('homeWin')[0].textContent == "true"    ) {
+	
+		// overtime
+		if ( node.childNodes[5].textContent == "true" ) {
+		
+			column.childNodes[3].innerHTML = 'FOT';
+		}
+		else {
+		
+			column.childNodes[3].innerHTML = 'F';
+		}
+	}
+	else {
+
+		finished = false;
+		
+		// overtime
+		if ( node.childNodes[5].textContent == "true" ) {
+		
+			column.childNodes[3].innerHTML = 'OT';
+		}
+		else {
+		
+			column.childNodes[3].innerHTML = node.childNodes[4].textContent;
+		}
+	}
+	
+	/*
 	text = column.childNodes[1].innerHTML;
 	
 	if (    gameData.getElementsByTagName('roadWin')[0].textContent == "true" ||
 			gameData.getElementsByTagName('homeWin')[0].textContent == "true"    ) {
 	
 		// overtime
-		if ( node.childNodes[3].textContent == "true" ) {
+		if ( node.childNodes[5].textContent == "true" ) {
 		
 			column.childNodes[1].innerHTML = text + '<h7>FOT</h7>';
 		}
@@ -56,15 +95,16 @@ function updateGameScore( gameData ) {
 		finished = false;
 		
 		// overtime
-		if ( node.childNodes[3].textContent == "true" ) {
+		if ( node.childNodes[5].textContent == "true" ) {
 		
 			column.childNodes[1].innerHTML = text + '<h7>OT</h7>';
 		}
 		else {
 		
-			column.childNodes[1].innerHTML = text + '<h7>' + node.childNodes[2].textContent + '</h7>';
+			column.childNodes[1].innerHTML = text + '<h7>' + node.childNodes[4].textContent + '</h7>';
 		}
 	}
+	*/
 }
 
 function updateScores( response ) {

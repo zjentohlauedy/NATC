@@ -2199,21 +2199,26 @@ public class GameServiceImpl implements GameService {
 				
 				if ( dbRs.getBoolean( "Road" ) ) {
 					
-					gameView.setRoad_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
-					gameView.setRoad_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setRoad_team_id( new Integer( dbRs.getInt(   "Team_Id"     ) ) );
+					gameView.setRoad_team(               dbRs.getString(  "Abbrev"      )   );
 					gameView.setRoad_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
 					gameView.setRoad_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				else {
 					
-					gameView.setHome_team_id( new Integer( dbRs.getInt( "Team_Id"       ) ) );
-					gameView.setHome_team(               dbRs.getString( "Abbrev"       )   );
+					gameView.setHome_team_id( new Integer( dbRs.getInt(   "Team_Id"     ) ) );
+					gameView.setHome_team(               dbRs.getString(  "Abbrev"      )   );
 					gameView.setHome_score( new Integer( dbRs.getInt(     "Total_Score" ) ) );
 					gameView.setHome_win(   new Boolean( dbRs.getBoolean( "Win"         ) ) );
 				}
 				
-				gameView.setGame_id(  new Integer( game_id                       ) );
-				gameView.setOvertime( new Boolean( dbRs.getBoolean( "Overtime" ) ) );
+				gameView.setGame_id(    new Integer( game_id                             ) );
+				gameView.setOvertime(   new Boolean( dbRs.getBoolean( "Overtime"       ) ) );
+				gameView.setStarted(    new Boolean( dbRs.getBoolean( "Started"        ) ) );
+				gameView.setStart_time( new Integer( dbRs.getInt(     "Start_Time"     ) ) );
+				gameView.setPeriod(     new Integer( dbRs.getInt(     "Period"         ) ) );
+				gameView.setPeriod(     new Integer( dbRs.getInt(     "Time_Remaining" ) ) );
+				gameView.setPeriod(     new Integer( dbRs.getInt(     "Possession"     ) ) );
 			}
 			
 			if ( gameView != null ) {
@@ -2772,13 +2777,15 @@ public class GameServiceImpl implements GameService {
 				
 				gameState = new GameState( game_id );
 				
-				gameState.setPeriod(         dbRs.getInt(     1 ) );
-				gameState.setSequence(       dbRs.getInt(     2 ) );
-				gameState.setOvertime(       dbRs.getBoolean( 3 ) );
-				gameState.setTime_remaining( dbRs.getInt(     4 ) );
-				gameState.setClock_stopped(  dbRs.getBoolean( 5 ) );
-				gameState.setPossession(     dbRs.getInt(     6 ) );
-				gameState.setLast_event(     dbRs.getString(  7 ) );
+				gameState.setStarted(        dbRs.getBoolean( 1 ) );
+				gameState.setStart_time(     dbRs.getInt(     2 ) );
+				gameState.setPeriod(         dbRs.getInt(     3 ) );
+				gameState.setSequence(       dbRs.getInt(     4 ) );
+				gameState.setOvertime(       dbRs.getBoolean( 5 ) );
+				gameState.setTime_remaining( dbRs.getInt(     6 ) );
+				gameState.setClock_stopped(  dbRs.getBoolean( 7 ) );
+				gameState.setPossession(     dbRs.getInt(     8 ) );
+				gameState.setLast_event(     dbRs.getString(  9 ) );
 			}
 			
 		}

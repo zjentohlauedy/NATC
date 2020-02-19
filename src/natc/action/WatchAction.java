@@ -14,7 +14,6 @@ import natc.service.TeamService;
 import natc.service.impl.GameServiceImpl;
 import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.TeamServiceImpl;
-import natc.view.StringView;
 import natc.view.TeamGameView;
 
 import org.apache.struts.action.Action;

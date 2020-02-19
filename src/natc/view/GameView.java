@@ -1,6 +1,7 @@
 package natc.view;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,6 +24,11 @@ public class GameView {
 	private Boolean road_win;
 	
 	private Boolean overtime;
+	private Boolean started;
+	private Integer start_time;
+	private Integer period;
+	private Integer time_remaining;
+	private Integer possession;
 	
 	public GameView() {
 	
@@ -39,8 +45,24 @@ public class GameView {
 		road_score     = null;
 		road_win       = null;
 		overtime       = null;
+		started        = null;
+		start_time     = null;
+		period         = null;
+		time_remaining = null;
+		possession     = null;
 	}
 
+	public String getStartTimeDsp() {
+	
+		if ( this.start_time == null ) return "";
+		
+		DecimalFormat df = new DecimalFormat( "00" );
+		
+		int time = this.start_time.intValue();
+		
+		return df.format( time / 60 ) + ":" + df.format( time % 60 );
+	}
+	
 	public String getDateDsp() {
 	
 		if ( this.date == null ) return "";
@@ -161,6 +183,46 @@ public class GameView {
 
 	public void setRoad_team_name(String roadTeamName) {
 		road_team_name = roadTeamName;
+	}
+
+	public Boolean getStarted() {
+		return started;
+	}
+
+	public void setStarted(Boolean started) {
+		this.started = started;
+	}
+
+	public Integer getStart_time() {
+		return start_time;
+	}
+
+	public void setStart_time(Integer startTime) {
+		start_time = startTime;
+	}
+
+	public Integer getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
+
+	public Integer getTime_remaining() {
+		return time_remaining;
+	}
+
+	public void setTime_remaining(Integer timeRemaining) {
+		time_remaining = timeRemaining;
+	}
+
+	public Integer getPossession() {
+		return possession;
+	}
+
+	public void setPossession(Integer possession) {
+		this.possession = possession;
 	}
 
 }

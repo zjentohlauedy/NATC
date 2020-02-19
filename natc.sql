@@ -5,6 +5,8 @@ CREATE TABLE Teams_T
     Location         VARCHAR(30),
     Name             VARCHAR(30),
     Abbrev           VARCHAR( 5),
+    Time_Zone        VARCHAR(20),
+    Game_Time        INTEGER,
     Conference       INTEGER,
     Division         INTEGER,
     Allstar_Team     INTEGER,
@@ -113,6 +115,8 @@ CREATE INDEX Player_Team_Id   ON Players_T ( Team_Id   );
 CREATE TABLE GameState_T
 (
     Game_Id             INTEGER,
+    Started             INTEGER,
+    Start_Time          INTEGER,
     Sequence            INTEGER,
     Period              INTEGER,
     Overtime            INTEGER,
@@ -343,6 +347,7 @@ BEGIN
   DECLARE location_var     VARCHAR(30);
   DECLARE name_var         VARCHAR(30);
   DECLARE abbrev_var       VARCHAR( 5);
+  DECLARE time_zone_var    VARCHAR(20);
   DECLARE conference_var   INT;
   DECLARE division_var     INT;
   DECLARE allstar_team_var INT;
@@ -351,17 +356,63 @@ BEGIN
 
   DECLARE done             INT DEFAULT 0;
 
-  DECLARE teams_cur CURSOR FOR SELECT Team_Id, Location, Name, Abbrev, Conference, Division, Allstar_Team, Expectation, Drought FROM Teams_T WHERE Year = lastYear;
+  DECLARE teams_cur CURSOR FOR
+    SELECT Team_Id,
+           Location,
+           Name,
+           Abbrev,
+           Time_Zone,
+           Conference,
+           Division,
+           Allstar_Team,
+           Expectation,
+           Drought
+    FROM   Teams_T
+    WHERE  Year = lastYear;
+    
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
   OPEN teams_cur;
 
   REPEAT
-    FETCH teams_cur INTO team_id_var, location_var, name_var, abbrev_var, conference_var, division_var, allstar_team_var, expectation_var, drought_var;
+    FETCH teams_cur INTO team_id_var,
+                         location_var,
+                         name_var,
+                         abbrev_var,
+                         time_zone_var,
+                         conference_var,
+                         division_var,
+                         allstar_team_var,
+                         expectation_var,
+                         drought_var;
 
     IF NOT done THEN
-      INSERT INTO Teams_T ( Team_Id,         Year, Location,     Name,     Abbrev,     Conference,     Division,     Allstar_Team,     Expectation,     Drought     )
-                   VALUES ( team_id_var, thisYear, location_var, name_var, abbrev_var, conference_var, division_var, allstar_team_var, expectation_var, drought_var );
+      INSERT INTO Teams_T ( Team_Id,
+                            Year,
+                            Location,
+                            Name,
+                            Abbrev,
+                            Time_Zone,
+                            Game_Time,
+                            Conference,
+                            Division,
+                            Allstar_Team,
+                            Expectation,
+                            Drought
+                          )
+                   VALUES ( team_id_var,
+                            thisYear,
+                            location_var,
+                            name_var,
+                            abbrev_var,
+                            time_zone_var,
+                            965,
+                            conference_var,
+                            division_var,
+                            allstar_team_var,
+                            expectation_var,
+                            drought_var
+                          );
     END IF;
   UNTIL done END REPEAT;
 

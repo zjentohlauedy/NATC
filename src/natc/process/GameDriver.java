@@ -14,7 +14,6 @@ import natc.data.Match;
 import natc.data.TeamGame;
 import natc.service.GameService;
 import natc.service.impl.DatabaseImpl;
-import natc.service.impl.GameServiceImpl;
 import natc.service.impl.RealtimeGameServiceImpl;
 
 public class GameDriver implements Runnable {
@@ -160,27 +159,6 @@ public class GameDriver implements Runnable {
 		GameService      gameService = new RealtimeGameServiceImpl( dbConn, year );
 		SimpleDateFormat dateFormat  = new SimpleDateFormat( "yyyy.MM.dd.HH.mm.ss" );
 
-		Calendar cal = Calendar.getInstance();
-
-		cal.setTime( new Date() );
-
-		int year  = cal.get( Calendar.YEAR         );
-		int month = cal.get( Calendar.MONTH        );
-		int day   = cal.get( Calendar.DAY_OF_MONTH );
-
-		cal.setTimeZone( TimeZone.getTimeZone( "America/Indianapolis" ) );
-
-		cal.set( year, month, day, 16, 5 );
-
-		long timeDifference = cal.getTime().getTime() - (new Date()).getTime();
-		
-		if ( timeDifference > 0 ) {
-
-			System.out.println( dateFormat.format( new Date() ) + " Sleeping for " + String.valueOf( ((float)timeDifference / 1000.0) ) + " seconds." );
-			
-			//Thread.sleep( timeDifference );
-		}
-		
 		try {
 			
 			gameService.processMatch( match, date, type, game_id );

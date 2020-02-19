@@ -4,6 +4,7 @@ var possession     = 0;
 var period         = 0;
 var overtime       = false;
 var clock_stopped  = false;
+var ajax_delay     = 0;
 var ajax_timer     = null;
 var clock_timer    = null;
 
@@ -84,15 +85,15 @@ function manageClock() {
 
 function updateGameState( state ) {
 
-	if ( state.childNodes[1].textContent == state_sequence ) return;
+	if ( state.childNodes[3].textContent == state_sequence ) return;
 
-	state_sequence = parseInt( state.childNodes[1].textContent );
-	period         = parseInt( state.childNodes[2].textContent );
-	time_remaining = parseInt( state.childNodes[4].textContent );
-	possession     = parseInt( state.childNodes[6].textContent );
+	state_sequence = parseInt( state.childNodes[3].textContent );
+	period         = parseInt( state.childNodes[4].textContent );
+	time_remaining = parseInt( state.childNodes[6].textContent );
+	possession     = parseInt( state.childNodes[8].textContent );
 
-	overtime       = (state.childNodes[3].textContent == "true");
-	clock_stopped  = (state.childNodes[5].textContent == "true");
+	overtime       = (state.childNodes[5].textContent == "true");
+	clock_stopped  = (state.childNodes[7].textContent == "true");
 	
 	if ( clock_stopped ) {
 	
@@ -109,7 +110,7 @@ function updateGameState( state ) {
 	displayPeriod();
 	updatePossession();
 
-	document.getElementById('event').innerHTML = state.childNodes[7].textContent;
+	document.getElementById('event').innerHTML = state.childNodes[9].textContent;
 }
 
 function updatePlayerTotals( tableBody, playerNode ) {
@@ -174,6 +175,22 @@ function updateStats( response ) {
 	var i;
 
 	node = response.getElementsByTagName('gameState')[0];
+	
+	if ( node.getElementsByTagName('started')[0].textContent == 'false' ) {
+	
+		return;
+	}
+	else {
+	
+		if ( ajax_delay == 60 ) {
+		
+			ajax_delay = 5;
+			
+			window.clearInterval( ajax_timer );
+			
+			ajax_timer  = window.setInterval( 'sendAjaxRequest()', ajax_delay * 1000 );
+		}
+	}
 
 	updateGameState( node );
 
@@ -252,7 +269,7 @@ function updateStats( response ) {
 	sortTable( 'roadPlayers', document.getElementById('roadPtsSort') );
 }
 
-function initGame( gameId, seq, prd, ot, poss, time, clock ) {
+function initGame( gameId, seq, started, prd, ot, poss, time, clock ) {
 
 	state_sequence = parseInt( seq  );
 	period         = parseInt( prd  );
@@ -262,13 +279,26 @@ function initGame( gameId, seq, prd, ot, poss, time, clock ) {
 	overtime       = (ot    == 'true');
 	clock_stopped  = (clock == 'true');
 	
+	if ( started == 'false' ) {
+	
+		clock_stopped = true;
+		ajax_delay    = 60;
+	}
+	else {
+	
+		ajax_delay = 5;
+	}
+	
 	setAjaxURL( '/natc/Game.do?game_id=' + gameId + '&ajax=1' );
 	setAjaxCallback( updateStats );
 
-	ajax_timer  = window.setInterval( 'sendAjaxRequest()', 5000 );
-	clock_timer = window.setInterval( 'manageClock()', 1000 );
+	ajax_timer  = window.setInterval( 'sendAjaxRequest()', ajax_delay * 1000 );
+	clock_timer = window.setInterval( 'manageClock()',                  1000 );
 
-	displayTime();
-	displayPeriod();
-	updatePossession();
+	if ( started == 'true' ) {
+		
+		displayTime();
+		displayPeriod();
+		updatePossession();
+	}
 }

@@ -27,6 +27,7 @@
     function init() {
    	  initGame( '<bean:write name="gameState" property="game_id" />',
   			  	'<bean:write name="gameState" property="sequence" />',
+  			    '<bean:write name="gameState" property="started" />',
   			  	'<bean:write name="gameState" property="period" />',
   			  	'<bean:write name="gameState" property="overtime" />',
    	    	  	'<bean:write name="gameState" property="possession" />',
@@ -121,12 +122,22 @@
   <table class="gamestate">
     <tr>
       <td>
-        <div id="period"></div>
+        <logic:equal name="gameState" property="started" value="false">
+          <div id="period"><bean:message key="game.label.est_start" /></div>
+        </logic:equal>
+        <logic:equal name="gameState" property="started" value="true">
+          <div id="period"></div>
+        </logic:equal>
       </td>
     </tr>
     <tr>
       <td>
-        <div id="clock"></div>
+        <logic:equal name="gameState" property="started" value="false">
+          <div id="clock"><bean:write name="gameState" property="startTimeDsp"/></div>
+        </logic:equal>
+        <logic:equal name="gameState" property="started" value="true">
+          <div id="clock"></div>
+        </logic:equal>
       </td>
     </tr>
   </table>

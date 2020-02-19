@@ -2,17 +2,14 @@ package natc.process;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import natc.data.Schedule;
 import natc.data.ScheduleType;
 import natc.service.GameService;
-import natc.service.PlayerService;
 import natc.service.ScheduleService;
 import natc.service.impl.GameServiceImpl;
-import natc.service.impl.PlayerServiceImpl;
 import natc.service.impl.RealtimeGameServiceImpl;
 import natc.service.impl.ScheduleServiceImpl;
 
@@ -78,19 +75,9 @@ public class SeasonDriver {
 			// Get the next scheduled event
 			scheduleEntry = scheduleService.getNextScheduleEntry( scheduleEntry );
 
-			/*
-			if (    scheduleEntry.getType().getValue() == ScheduleType.NATC_CHAMPIONSHIP ||
-					scheduleEntry.getType().getValue() == ScheduleType.ALL_STAR_DAY_1    ||
-					scheduleEntry.getType().getValue() == ScheduleType.ALL_STAR_DAY_2       ) {
-				
-				gameService = new RealtimeGameServiceImpl( dbConn, scheduleEntry.getYear() );
-			}
-			else {
-
-				gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
-			}
-			*/
-			gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
+			// Get the game service to process the schedule entry
+			gameService = new RealtimeGameServiceImpl( dbConn, scheduleEntry.getYear() );
+			//gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
 			
 			System.out.println( dateFormat.format( new Date() ) + " Processing Schedule Entry..." );
 
