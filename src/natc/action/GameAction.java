@@ -136,7 +136,6 @@ public class GameAction extends Action {
 	) throws Exception {
 		
 		DataSource      dataSource      = null;
-		Connection      dbConn          = null;
 		TeamService     teamService     = null;
 		PlayerService   playerService   = null;
 		String          game_id_str     = null;

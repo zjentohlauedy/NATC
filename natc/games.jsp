@@ -327,7 +327,7 @@
           </html:link>
         </td>
         <td>
-          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+          <html:link page="/Watch.do" paramId="game_id" paramName="game" paramProperty="game_id">
             <logic:equal name="game" property="road_win" value="true">
               <em><bean:write name="game" property="road_score"/></em>
             </logic:equal>
@@ -345,7 +345,7 @@
           </html:link>
         </td>
         <td>
-          <html:link page="/Game.do" paramId="game_id" paramName="game" paramProperty="game_id">
+          <html:link page="/Watch.do" paramId="game_id" paramName="game" paramProperty="game_id">
             <logic:equal name="game" property="home_win" value="true">
               <em><bean:write name="game" property="home_score"/></em>
             </logic:equal>

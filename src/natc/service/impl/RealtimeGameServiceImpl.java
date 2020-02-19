@@ -1149,7 +1149,7 @@ public class RealtimeGameServiceImpl implements GameService {
 					defender.getGame().getScore().setPsa(                 defender.getGame().getScore().getPsa()                 + 1 );
 					
 					oPlayer = attacker.distributePenalty();
-					dPlayer = attacker.distributePenaltyShot();
+					dPlayer = defender.distributePenaltyShot();
 
 					gameState.setTime_remaining( time_remaining );
 					gameState.setClock_stopped( true );
@@ -1252,7 +1252,14 @@ public class RealtimeGameServiceImpl implements GameService {
 		}
 	}
 	
-	public void processMatch( Match match, Date gameDate, int type ) throws SQLException {
+	private void processMatch( Match match, Date gameDate, int type ) throws SQLException {
+		
+		int game_id = getNextGameId();
+		
+		processMatch( match, gameDate, type, game_id );
+	}
+	
+	public void processMatch( Match match, Date gameDate, int type, int game_id ) throws SQLException {
 		
 		teamService   = new TeamServiceImpl(   dbConn, year );
 		playerService = new PlayerServiceImpl( dbConn, year );
@@ -1288,7 +1295,7 @@ public class RealtimeGameServiceImpl implements GameService {
 		Collections.reverse( homeTeam.getPlayers() );
 		Collections.reverse( roadTeam.getPlayers() );
 		
-		int game_id = getNextGameId();
+		//int game_id = getNextGameId();
 
 		GameState gameState = new GameState( game_id );
 		
@@ -2331,13 +2338,14 @@ public class RealtimeGameServiceImpl implements GameService {
 		List matches = event.getMatches();
 		List threads = null;
 		
-		Iterator i = matches.iterator();
+		Iterator i       = matches.iterator();
+		int      game_id = getNextGameId();
 		
 		while ( i.hasNext() ) {
 		
 			Match match = (Match)i.next();
 			
-			GameDriver gameDriver = new GameDriver( dbConn, year );
+			GameDriver gameDriver = new GameDriver( dbConn, year, game_id );
 			
 			gameDriver.setMatch( match );
 			gameDriver.setDate( event.getScheduled() );
@@ -2349,6 +2357,8 @@ public class RealtimeGameServiceImpl implements GameService {
 			if ( threads == null ) threads = new ArrayList();
 			
 			threads.add( thread );
+			
+			game_id++;
 		}
 		
 		i = threads.iterator();

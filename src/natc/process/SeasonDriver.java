@@ -78,7 +78,10 @@ public class SeasonDriver {
 			// Get the next scheduled event
 			scheduleEntry = scheduleService.getNextScheduleEntry( scheduleEntry );
 
-			if ( scheduleEntry.getType().getValue() == ScheduleType.NATC_CHAMPIONSHIP ) {
+			/*
+			if (    scheduleEntry.getType().getValue() == ScheduleType.NATC_CHAMPIONSHIP ||
+					scheduleEntry.getType().getValue() == ScheduleType.ALL_STAR_DAY_1    ||
+					scheduleEntry.getType().getValue() == ScheduleType.ALL_STAR_DAY_2       ) {
 				
 				gameService = new RealtimeGameServiceImpl( dbConn, scheduleEntry.getYear() );
 			}
@@ -86,6 +89,8 @@ public class SeasonDriver {
 
 				gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
 			}
+			*/
+			gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
 			
 			System.out.println( dateFormat.format( new Date() ) + " Processing Schedule Entry..." );
 

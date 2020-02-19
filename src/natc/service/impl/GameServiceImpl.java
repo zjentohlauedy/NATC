@@ -764,8 +764,15 @@ public class GameServiceImpl implements GameService {
 			simulateOvertime( homeTeam, roadTeam );
 		}
 	}
+
+	private void processMatch( Match match, Date gameDate, int type ) throws SQLException {
+		
+		int game_id = getNextGameId();
+		
+		processMatch( match, gameDate, type, game_id );
+	}
 	
-	public void processMatch( Match match, Date gameDate, int type ) throws SQLException {
+	public void processMatch( Match match, Date gameDate, int type, int game_id ) throws SQLException {
 		
 		TeamService teamService = new TeamServiceImpl( dbConn, year );
 		
@@ -800,7 +807,7 @@ public class GameServiceImpl implements GameService {
 		Collections.reverse( homeTeam.getPlayers() );
 		Collections.reverse( roadTeam.getPlayers() );
 		
-		int game_id = getNextGameId();
+		//int game_id = getNextGameId();
 
 		roadTeam.initTeamGame( homeTeam, game_id, year, type, gameDate, true  );
 		homeTeam.initTeamGame( roadTeam, game_id, year, type, gameDate, false );

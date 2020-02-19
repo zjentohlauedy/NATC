@@ -14,7 +14,7 @@ function updateGameScore( gameData ) {
 	
 	column = gameTable.rows[0].cells[1];
 	
-	if ( gameData.getElementsByTagName('roadWin')[0].textContent = "true" ) {
+	if ( gameData.getElementsByTagName('roadWin')[0].textContent == "true" ) {
 		
 		column.childNodes[1].innerHTML = '<em>' + gameData.getElementsByTagName('roadScore')[0].textContent + '<em>';
 	}
@@ -25,21 +25,21 @@ function updateGameScore( gameData ) {
 	
 	column = gameTable.rows[1].cells[1];
 
-	if ( gameData.getElementsByTagName('roadWin')[0].textContent = "true" ) {
+	if ( gameData.getElementsByTagName('homeWin')[0].textContent == "true" ) {
 		
-		column.childNodes[1].innerHTML = '<em>' + gameData.getElementsByTagName('roadScore')[0].textContent + '<em>';
+		column.childNodes[1].innerHTML = '<em>' + gameData.getElementsByTagName('homeScore')[0].textContent + '<em>';
 	}
 	else {
 		
-		column.childNodes[1].innerHTML = gameData.getElementsByTagName('roadScore')[0].textContent;
+		column.childNodes[1].innerHTML = gameData.getElementsByTagName('homeScore')[0].textContent;
 	}
 
 	node = gameData.getElementsByTagName('state')[0];
 	
 	text = column.childNodes[1].innerHTML;
 	
-	if (    gameData.getElementsByTagName('roadWin')[0].textContent = "true" ||
-			gameData.getElementsByTagName('homeWin')[0].textContent = "true"    ) {
+	if (    gameData.getElementsByTagName('roadWin')[0].textContent == "true" ||
+			gameData.getElementsByTagName('homeWin')[0].textContent == "true"    ) {
 	
 		// overtime
 		if ( node.childNodes[3].textContent == "true" ) {
@@ -74,9 +74,9 @@ function updateScores( response ) {
 	
 	finished = true;
 	
-	for ( i = 0; i < response.childNodes.length; ++i ) {
+	for ( i = 0; i < response.childNodes[0].childNodes.length; ++i ) {
 
-		gameNode = teamNode.childNodes[i];
+		gameNode = response.childNodes[0].childNodes[i];
 
 		updateGameScore( gameNode );
 	}

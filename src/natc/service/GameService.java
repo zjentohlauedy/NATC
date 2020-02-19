@@ -13,7 +13,7 @@ public interface GameService {
 
 	public void      initializeDatabase() throws SQLException;
 	public void      startNewSeason( String lastYear ) throws SQLException;
-	public void      processMatch( Match match, Date gameDate, int type ) throws SQLException;
+	public void      processMatch( Match match, Date gameDate, int type, int game_id ) throws SQLException;
 	public void      processScheduleEvent( Schedule event ) throws SQLException;
 	public List      getGamesByDate( Date datestamp ) throws SQLException;
 	public List      getGamesByTeamId( int team_id ) throws SQLException;

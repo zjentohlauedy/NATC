@@ -2,6 +2,9 @@ package natc.process;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +13,7 @@ import java.util.TimeZone;
 import natc.data.Match;
 import natc.data.TeamGame;
 import natc.service.GameService;
+import natc.service.impl.DatabaseImpl;
 import natc.service.impl.GameServiceImpl;
 import natc.service.impl.RealtimeGameServiceImpl;
 
@@ -22,14 +26,16 @@ public class GameDriver implements Runnable {
 	private Match      match;
 	private Date       date;
 	private int        type;
+	private int        game_id;
 	
-	public GameDriver( Connection dbConn, String year ) {
+	public GameDriver( Connection dbConn, String year, int game_id ) {
 	
-		this.dbConn = dbConn;
-		this.year   = year;
-		this.match  = null;
-		this.date   = null;
-		this.type   = 0;
+		this.dbConn  = dbConn;
+		this.year    = year;
+		this.match   = null;
+		this.date    = null;
+		this.type    = 0;
+		this.game_id = game_id;
 	}
 	
 	/**
@@ -79,7 +85,7 @@ public class GameDriver implements Runnable {
 			
 			System.out.println( dateFormat.format( new Date() ) + " Begin processing game." );
 			
-			gameService.processMatch( match, new Date(), TeamGame.gt_RegularSeason );
+			gameService.processMatch( match, new Date(), TeamGame.gt_RegularSeason, getNextGameId( dbConn ) );
 			
 			System.out.println( dateFormat.format( new Date() ) + " End processing game." );
 		}
@@ -107,6 +113,32 @@ public class GameDriver implements Runnable {
 		}
 		
 		return String.valueOf( new_seed );
+	}
+
+	private static int getNextGameId( Connection dbConn ) throws SQLException {
+
+		PreparedStatement ps   = null;
+		ResultSet         dbRs = null;
+		int               id   = 0;
+
+		try {
+
+			ps = DatabaseImpl.getNextGameIdSelectPs( dbConn );
+			
+			dbRs = ps.executeQuery();
+
+			if ( dbRs.next() ) {
+
+				id = dbRs.getInt( 1 ) + 1;
+			}
+		}
+		finally {
+
+			DatabaseImpl.closeDbRs( dbRs );
+			DatabaseImpl.closeDbStmt( ps );
+		}
+
+		return id;
 	}
 
 	public void run() {
@@ -151,7 +183,7 @@ public class GameDriver implements Runnable {
 		
 		try {
 			
-			gameService.processMatch( match, date, type );
+			gameService.processMatch( match, date, type, game_id );
 		}
 		catch ( Exception e ) {
 			

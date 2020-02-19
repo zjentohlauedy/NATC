@@ -58,10 +58,14 @@ public class GamesAction extends Action {
 
 		// First check for an in-progress schedule entry
 		if ( (scheduleEntry = scheduleService.getCurrentScheduleEntry()) == null ) {
-			
-			return null;
+
+			// Nothing in-progress, find the last completed schedule entry
+			if ( (scheduleEntry = scheduleService.getLastScheduleEntry()) == null ) {
+
+				return null;
+			}
 		}
-		
+
 		gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
 
 		if ( (games = gameService.getGamesByDate( scheduleEntry.getScheduled() )) == null ) {
@@ -94,7 +98,7 @@ public class GamesAction extends Action {
 				
 				stringBuffer.append( gameState.toXML() );
 				
-				stringBuffer.append( "<state>" );
+				stringBuffer.append( "</state>" );
 			}
 			
 			stringBuffer.append( "</game>" );
