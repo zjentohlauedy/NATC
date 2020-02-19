@@ -8,7 +8,7 @@
 <html:html locale="true">
 <head>
   <html:base/>
-  <title><bean:message key="title.news"/></title>
+  <title><bean:message key="title.playoffs"/></title>
   
   <link rel="stylesheet" type="text/css" href="styles/natc_layout.css" media='screen' />
   <link rel="stylesheet" type="text/css" href="styles/natc_playoff.css" media='screen' />
@@ -16,9 +16,23 @@
   <style type="text/css">
     @import "styles/natc_markup.css";
   </style>
+  
+  <script type="text/javascript" src="scripts/natc_ajax.js"></script>
+  <script type="text/javascript" src="scripts/natc_games.js"></script>
+  
 </head>
-<body>
+<body onload="init()">
 
+<logic:present name="schedule">
+  <logic:equal name="schedule" property="status" value="1" >
+    <script type="text/javascript">
+      function init() {
+   	    initGames();
+      }
+    </script>
+  </logic:equal>
+</logic:present>
+  
 <jsp:include page="menu.jsp" />
 
 <h1>NATC PLAYOFFS</h1>
@@ -147,7 +161,7 @@
 
 <logic:present name="games">
   <logic:iterate id="game" name="games">
-    <table class="game">
+    <table class="game" id='g<bean:write name="game" property="game_id" />'>
       <tr>
         <td>
           <html:link page="/Team.do" paramId="team_id" paramName="game" paramProperty="road_team_id">
@@ -181,9 +195,37 @@
               <bean:write name="game" property="home_score"/>
             </logic:equal>
           </html:link>
-          <logic:equal name="game" property="overtime" value="true">
-            <h7><bean:message key="games.label.ot_indicator"/></h7>
-          </logic:equal>
+          <h7>
+            <logic:equal name="game" property="home_win" value="true">
+              <logic:equal name="game" property="overtime" value="true">
+                <bean:message key="games.label.final_indicator"/><bean:message key="games.label.ot_indicator"/>
+              </logic:equal>
+              <logic:equal name="game" property="overtime" value="false">
+                <bean:message key="games.label.final_indicator"/>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="road_win" value="true">
+              <logic:equal name="game" property="overtime" value="true">
+                <bean:message key="games.label.final_indicator"/><bean:message key="games.label.ot_indicator"/>
+              </logic:equal>
+              <logic:equal name="game" property="overtime" value="false">
+                <bean:message key="games.label.final_indicator"/>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="home_win" value="false">
+              <logic:equal name="game" property="road_win" value="false">
+                <logic:equal name="game" property="overtime" value="true">
+                  <bean:message key="games.label.ot_indicator"/>
+                </logic:equal>
+              </logic:equal>
+            </logic:equal>
+            <logic:equal name="game" property="started" value="false">
+              <bean:write name="game" property="startTimeDsp"/>
+            </logic:equal>
+            <logic:notEqual name="game" property="period" value="0">
+              <bean:write name="game" property="period"/>
+            </logic:notEqual>
+          </h7>
         </td>
         <td></td>
       </tr>

@@ -371,7 +371,7 @@
               </logic:equal>
             </logic:equal>
             <logic:equal name="game" property="home_win" value="false">
-              <logic:equal name="game" property="road_win" value="true">
+              <logic:equal name="game" property="road_win" value="false">
                 <logic:equal name="game" property="overtime" value="true">
                   <bean:message key="games.label.ot_indicator"/>
                 </logic:equal>

@@ -75,6 +75,13 @@ public class SeasonDriver {
 			// Get the next scheduled event
 			scheduleEntry = scheduleService.getNextScheduleEntry( scheduleEntry );
 
+			if ( scheduleEntry.getScheduled().compareTo( new Date() ) > 0 ) {
+				
+				System.out.println( "Scheduled date <" + scheduleEntry.getScheduled() + "> for event is in the future, today is <" + new Date() + ">. Not processing." );
+				
+				return;
+			}
+			
 			// Get the game service to process the schedule entry
 			gameService = new RealtimeGameServiceImpl( dbConn, scheduleEntry.getYear() );
 			//gameService = new GameServiceImpl( dbConn, scheduleEntry.getYear() );
