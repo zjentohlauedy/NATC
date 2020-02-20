@@ -1,3 +1,4 @@
+.DS_Store
 natc/WEB-INF/classes
 natc/WEB-INF/lib
 *.war
