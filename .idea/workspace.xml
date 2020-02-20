@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="natc" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="d052b306-47b8-4752-982c-c8a7ff4a8797" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/$CACHE_FILE$" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/NATC.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/natc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NATC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/NATC.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-bean.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-bean.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-config.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-html.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-html.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-logic.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-logic.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-nested.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-nested.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-template.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-template.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-tiles.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-tiles.tld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,10 +72,16 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="configurable.group.language" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/web/WEB-INF" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="Applet">
@@ -114,7 +123,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1582133466119</updated>
-      <workItem from="1582133489323" duration="9412000" />
+      <workItem from="1582133489323" duration="11094000" />
     </task>
     <servers />
   </component>
@@ -138,10 +147,10 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="699" y="313" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582136279995" />
-    <state x="349" y="175" key="SettingsEditor" timestamp="1582136283308">
+    <state x="349" y="175" key="SettingsEditor" timestamp="1582235494665">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="349" y="175" key="SettingsEditor/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582136283308" />
+    <state x="349" y="175" key="SettingsEditor/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582235494665" />
     <state x="505" y="250" key="search.everywhere.popup" timestamp="1582141341485">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>

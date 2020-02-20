@@ -1,6 +1,6 @@
 .DS_Store
-natc/WEB-INF/classes
-natc/WEB-INF/lib
+classes
+lib
 *.war
 *.jar
 *.bat
