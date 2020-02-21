@@ -7,17 +7,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d052b306-47b8-4752-982c-c8a7ff4a8797" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/natc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/WEB-INF/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/natc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/natc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NATC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/NATC.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-bean.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-bean.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-html.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-html.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-logic.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-logic.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-nested.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-nested.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-template.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-template.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/struts-tiles.tld" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/struts-tiles.tld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/natc/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/natc/data/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/natc/data/Game.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +42,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
@@ -72,10 +73,10 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.language" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -112,6 +113,102 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Tomcat 8" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="OPEN_IN_BROWSER" value="false" />
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/natc/" />
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="natc">
+          <settings>
+            <option name="CONTEXT_PATH" value="/natc" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="Unnamed_NATC" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="61973" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="natc" />
+        </option>
+      </method>
+    </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+                <item name="Finished" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -123,7 +220,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1582133466119</updated>
-      <workItem from="1582133489323" duration="11094000" />
+      <workItem from="1582133489323" duration="19322000" />
     </task>
     <servers />
   </component>
@@ -131,26 +228,86 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="763" y="353" key="#BuildArtifactsBeforeRunChooser" timestamp="1582236230297">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="763" y="353" key="#BuildArtifactsBeforeRunChooser/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582236230297" />
     <state x="440" y="203" key="#SQL_Dialects" timestamp="1582150158465">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="440" y="203" key="#SQL_Dialects/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582150158465" />
-    <state x="440" y="203" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1582155797515">
+    <state x="440" y="203" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1582236674651">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="440" y="203" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582155797515" />
+    <state x="440" y="203" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582236674651" />
     <state x="674" y="445" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1582133847557">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="674" y="445" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582133847557" />
+    <state x="575" y="206" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable" timestamp="1582236639282">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="575" y="206" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582236639282" />
     <state x="699" y="313" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog" timestamp="1582136279995">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="699" y="313" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582136279995" />
-    <state x="349" y="175" key="SettingsEditor" timestamp="1582235494665">
+    <state width="1126" height="280" key="GridCell.Tab.0.bottom" timestamp="1582243000620">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="349" y="175" key="SettingsEditor/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582235494665" />
+    <state width="1126" height="280" key="GridCell.Tab.0.bottom/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582243000620" />
+    <state width="1126" height="280" key="GridCell.Tab.0.center" timestamp="1582243000619">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.0.center/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582243000619" />
+    <state width="1126" height="280" key="GridCell.Tab.0.left" timestamp="1582243000618">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.0.left/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582243000618" />
+    <state width="1126" height="280" key="GridCell.Tab.0.right" timestamp="1582243000619">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.0.right/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582243000619" />
+    <state width="1126" height="280" key="GridCell.Tab.1.bottom" timestamp="1582242984126">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.1.bottom/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984126" />
+    <state width="1126" height="280" key="GridCell.Tab.1.center" timestamp="1582242984126">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.1.center/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984126" />
+    <state width="1126" height="280" key="GridCell.Tab.1.left" timestamp="1582242984126">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.1.left/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984126" />
+    <state width="1126" height="280" key="GridCell.Tab.1.right" timestamp="1582242984126">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.1.right/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984126" />
+    <state width="1126" height="280" key="GridCell.Tab.2.bottom" timestamp="1582242984127">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.2.bottom/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984127" />
+    <state width="1126" height="280" key="GridCell.Tab.2.center" timestamp="1582242984127">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.2.center/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984127" />
+    <state width="1126" height="280" key="GridCell.Tab.2.left" timestamp="1582242984127">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.2.left/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984127" />
+    <state width="1126" height="280" key="GridCell.Tab.2.right" timestamp="1582242984127">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1126" height="280" key="GridCell.Tab.2.right/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582242984127" />
+    <state x="349" y="175" key="SettingsEditor" timestamp="1582237239978">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="349" y="175" key="SettingsEditor/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582237239978" />
+    <state x="570" y="275" width="543" height="524" key="StructurePopup" timestamp="1582245764607">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="570" y="275" width="543" height="524" key="StructurePopup/0.23.1680.1027/-131.-1057.1920.1057@0.23.1680.1027" timestamp="1582245764607" />
     <state x="505" y="250" key="search.everywhere.popup" timestamp="1582141341485">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>

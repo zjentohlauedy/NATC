@@ -22,6 +22,10 @@
           <element id="file-copy" path="$PROJECT_DIR$/lib/mysql-connector-java-5.0.8.jar" />
         </element>
       </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/natc" />
     </root>
   </artifact>
 </component>
