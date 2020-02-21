@@ -4,6 +4,7 @@
 .project
 .settings
 classes
+artifacts
 lib
 *.iml
 *.war
