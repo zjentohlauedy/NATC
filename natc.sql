@@ -235,14 +235,30 @@ CREATE TABLE PlayerGames_T
     Psa                 INTEGER,
     Psm                 INTEGER,
     Ot_Psa              INTEGER,
-    Ot_Psm              INTEGER
+    Ot_Psm              INTEGER,
+    Offense             INTEGER as (Goals + Assists),
+    Points              INTEGER as (Goals * 3 + Psm)
 );
 
-CREATE INDEX PlayerGames_Game_Id   ON PlayerGames_T ( Game_Id   );
-CREATE INDEX PlayerGames_Year      ON PlayerGames_T ( Year      );
-CREATE INDEX PlayerGames_Datestamp ON PlayerGames_T ( Datestamp );
-CREATE INDEX PlayerGames_Player_Id ON PlayerGames_T ( Player_Id );
-CREATE INDEX PlayerGames_Team_Id   ON PlayerGames_T ( Team_Id   );
+CREATE INDEX PlayerGames_Game_Id      ON PlayerGames_T ( Game_Id      );
+CREATE INDEX PlayerGames_Year         ON PlayerGames_T ( Year         );
+CREATE INDEX PlayerGames_Datestamp    ON PlayerGames_T ( Datestamp    );
+CREATE INDEX PlayerGames_Player_Id    ON PlayerGames_T ( Player_Id    );
+CREATE INDEX PlayerGames_Team_Id      ON PlayerGames_T ( Team_Id      );
+CREATE INDEX PlayerGames_Attempts     ON Playergames_T ( Attempts     );
+CREATE INDEX PlayerGames_Goals        ON Playergames_T ( Goals        );
+CREATE INDEX PlayerGames_Assists      ON Playergames_T ( Assists      );
+CREATE INDEX PlayerGames_Turnovers    ON Playergames_T ( Turnovers    );
+CREATE INDEX PlayerGames_Stops        ON Playergames_T ( Stops        );
+CREATE INDEX PlayerGames_Steals       ON Playergames_T ( Steals       );
+CREATE INDEX PlayerGames_Penalties    ON Playergames_T ( Penalties    );
+CREATE INDEX PlayerGames_Psa          ON Playergames_T ( Psa          );
+CREATE INDEX PlayerGames_Psm          ON Playergames_T ( Psm          );
+CREATE INDEX PlayerGames_Ot_Psa       ON Playergames_T ( Ot_Psa       );
+CREATE INDEX PlayerGames_Ot_Psm       ON Playergames_T ( Ot_Psm       );
+CREATE INDEX PlayerGames_Playing_Time ON Playergames_T ( Playing_Time );
+CREATE INDEX PlayerGames_Offense      ON Playergames_T ( Offense      );
+CREATE INDEX PlayerGames_Points       ON Playergames_T ( Points       );
 
 CREATE TABLE Player_Stats_Sum_T
 (

@@ -1635,11 +1635,11 @@ public class DatabaseImpl {
 		
 		switch ( stat ) {
 		
-		case STAT_SCORE:         queryStr = "pg.Goals*3+pg.Psm";        break;
+		case STAT_SCORE:         queryStr = "pg.Points";                break;
 		case STAT_ATTEMPTS:      queryStr = "pg.Attempts";              break;
 		case STAT_GOALS:         queryStr = "pg.Goals";                 break;
 		case STAT_ASSISTS:       queryStr = "pg.Assists";               break;
-		case STAT_OFFENSE:       queryStr = "pg.Goals+pg.Assists";      break;
+		case STAT_OFFENSE:       queryStr = "pg.Offense";               break;
 		case STAT_TURNOVERS:     queryStr = "pg.Turnovers";             break;
 		case STAT_STOPS:         queryStr = "pg.Stops";                 break;
 		case STAT_STEALS:        queryStr = "pg.Steals";                break;
@@ -1653,24 +1653,27 @@ public class DatabaseImpl {
 		default: return null;
 		}
 
-		if   ( ascending ) orderClause = "ORDER BY 1 ASC,  pg.Game_Id ASC ";
-		else               orderClause = "ORDER BY 1 DESC, pg.Game_Id ASC ";
+		if   ( ascending ) orderClause = "ORDER BY 1 ASC ";
+		else               orderClause = "ORDER BY 1 DESC ";
+
+		String sql = "SELECT * FROM ("
+				+ "SELECT " +    queryStr + ", "
+				+               "p1.Player_Id, "
+				+               "p1.First_Name, "
+				+               "p1.Last_Name, "
+				+               "pg.Year, "
+				+               "pg.Game_Id "
 		
-		String sql = "SELECT " +  queryStr + ",  "
-		/**/                   + "p1.Player_Id,  "
-		/**/                   + "p1.First_Name, "
-		/**/                   + "p1.Last_Name,  "
-		/**/                   + "pg.Year,       "
-		/**/                   + "pg.Game_Id     "
-		/**/
-		/**/       + "FROM Playergames_T pg, "
-		/**/       +      "Players_T     p1  "
-		/**/
-		/**/       + "WHERE pg.Player_Id = p1.Player_Id "
-		/**/       + "AND   pg.Year      = p1.Year      "
-		/**/       + "AND   pg.Type      = ?            "
-		/**/
-		/**/       + orderClause + "LIMIT ?";
+				+ "FROM Playergames_T pg, "
+				+      "Players_T     p1 "
+
+				+ "WHERE pg.Player_Id = p1.Player_Id "
+				+ "AND   pg.Year      = p1.Year "
+				+ "AND   pg.Type      = ? "
+
+				+ orderClause + "LIMIT ? "
+				+ ") pg "
+				+ orderClause + ", pg.Game_Id ASC ";
 
 		return dbConn.prepareStatement( sql );
 	}
