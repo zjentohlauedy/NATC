@@ -1,6 +1,11 @@
 .DS_Store
+.classpath
+.idea
+.project
+.settings
 classes
 lib
+*.iml
 *.war
 *.jar
 *.bat
